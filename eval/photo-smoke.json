@@ -1,0 +1,169 @@
+{
+  "kind": "image-input development smoke, not recognition accuracy",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "corpus_sha256": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+  "cases_sha256": "0f324f70de60eee0652cad3c4d3e074b0ded3850a83f1444f2184236aa7a74e7",
+  "generated_at": 1790671140.5218558,
+  "results": [
+    {
+      "id": "known-label",
+      "fixture_kind": "synthetic text card, not a real exhibit photo",
+      "expected_source": "artic-28560",
+      "expected_status": "needs_confirmation",
+      "matched_expectation": false,
+      "latency_ms": 24435,
+      "result": {
+        "status": "service_unavailable",
+        "candidates": [],
+        "confirmation_required": true,
+        "message": "照片识别暂时不可用，可以先选择示例作品或输入名称。",
+        "trace_id": "55cfdd16c42544599667192d5672e97e"
+      },
+      "trace": {
+        "_id": "55cfdd16c42544599667192d5672e97e",
+        "session_id": "photo-smoke",
+        "created_at": 1790671164.9571905,
+        "photo_hash": "f9eb1c7ba5d8cdaa28d6fcb8bd2104af45185afec7896ab29253bb5ccb84d830",
+        "status": "service_unavailable",
+        "candidate_ids": [],
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 545,
+            "completion_tokens": 47,
+            "total_tokens": 592,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 545
+          }
+        ],
+        "error": "LLMError"
+      }
+    },
+    {
+      "id": "outside-label",
+      "fixture_kind": "synthetic text card, not a real exhibit photo",
+      "expected_source": null,
+      "expected_status": "not_matched",
+      "matched_expectation": true,
+      "latency_ms": 6083,
+      "result": {
+        "status": "not_matched",
+        "candidates": [],
+        "confirmation_required": true,
+        "message": "暂时无法在当前示范馆藏中确认。试着把作品和展签拍在一起，或用文字描述。",
+        "trace_id": "d90151f6c52b44c5b77e6ddc38c2d4ba"
+      },
+      "trace": {
+        "_id": "d90151f6c52b44c5b77e6ddc38c2d4ba",
+        "session_id": "photo-smoke",
+        "created_at": 1790671171.0409803,
+        "photo_hash": "26fa46507a447b5d5584e1c98e595676d21d49d5d5f2d34c0fca605251c861a5",
+        "status": "not_matched",
+        "candidate_ids": [],
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 545,
+            "completion_tokens": 42,
+            "total_tokens": 587,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 545
+          },
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 2661,
+            "completion_tokens": 7,
+            "total_tokens": 2668,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2661
+          }
+        ],
+        "error": null
+      }
+    },
+    {
+      "id": "blank",
+      "fixture_kind": "synthetic text card, not a real exhibit photo",
+      "expected_source": null,
+      "expected_status": "not_matched",
+      "matched_expectation": true,
+      "latency_ms": 2780,
+      "result": {
+        "status": "not_matched",
+        "candidates": [],
+        "confirmation_required": true,
+        "message": "暂时无法在当前示范馆藏中确认。试着把作品和展签拍在一起，或用文字描述。",
+        "trace_id": "97890086822441ceb0d13665e41caef2"
+      },
+      "trace": {
+        "_id": "97890086822441ceb0d13665e41caef2",
+        "session_id": "photo-smoke",
+        "created_at": 1790671173.8227718,
+        "photo_hash": "12029fc4c98b9053443883436ccf38ea5e095c7fca6f52ec524b890ba78dae8e",
+        "status": "not_matched",
+        "candidate_ids": [],
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 545,
+            "completion_tokens": 23,
+            "total_tokens": 568,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 545
+          }
+        ],
+        "error": null
+      }
+    },
+    {
+      "id": "instruction-poster",
+      "fixture_kind": "synthetic text card, not a real exhibit photo",
+      "expected_source": null,
+      "expected_status": "not_matched",
+      "matched_expectation": true,
+      "latency_ms": 4031,
+      "result": {
+        "status": "not_matched",
+        "candidates": [],
+        "confirmation_required": true,
+        "message": "暂时无法在当前示范馆藏中确认。试着把作品和展签拍在一起，或用文字描述。",
+        "trace_id": "e35355f2eeab4c1eb09123f546b2c8c7"
+      },
+      "trace": {
+        "_id": "e35355f2eeab4c1eb09123f546b2c8c7",
+        "session_id": "photo-smoke",
+        "created_at": 1790671177.8541214,
+        "photo_hash": "b35fcf3de489a01c0f37487f08546d940ec28f1358267c7a8c026b3e837ecd24",
+        "status": "not_matched",
+        "candidate_ids": [],
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 545,
+            "completion_tokens": 14,
+            "total_tokens": 559,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 545
+          }
+        ],
+        "error": null
+      }
+    }
+  ]
+}

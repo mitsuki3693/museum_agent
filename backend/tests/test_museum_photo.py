@@ -56,6 +56,20 @@ async def test_unknown_objects_never_become_matches(ids,status):
     result=await PhotoRecognizer(engine).recognize(image_bytes(),{"_id":"s"})
     assert result["status"]==status and result["candidates"]==[]
 
+@pytest.mark.asyncio
+async def test_provider_failure_records_stage_and_cause_without_error_body():
+    from app.llm.client import LLMError
+    class BrokenClient:
+        async def complete_json(self,messages):
+            raise LLMError("private provider response must not be logged") from TimeoutError()
+    store=MemoryStore()
+    engine=SimpleNamespace(store=store,index=Index(),client_factory=BrokenClient)
+    result=await PhotoRecognizer(engine).recognize(image_bytes(),{"_id":"s"})
+    trace=await store.get("museum_photo_traces",result["trace_id"])
+    assert result["status"]=="service_unavailable"
+    assert trace["last_stage"]=="observe_image" and trace["error_cause"]=="TimeoutError"
+    assert "private provider response" not in json.dumps(trace)
+
 def test_no_key_does_not_pretend_photo_was_recognized(tmp_path):
     corpus=tmp_path/'corpus.json'
     corpus.write_text(json.dumps([{"_id":"test-1","title":"Vase","content":"Blue vase","status":"active","source_hash":"test","source_url":"https://example.org","license":"test","fetched_at":"2026-09-29"}]),encoding='utf-8')

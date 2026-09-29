@@ -1,0 +1,72 @@
+{
+  "kind": "image-input development smoke, not recognition accuracy",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "corpus_sha256": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+  "prompt_version": "museum-photo-v1",
+  "case_filter": "known-label",
+  "cases_sha256": "0f324f70de60eee0652cad3c4d3e074b0ded3850a83f1444f2184236aa7a74e7",
+  "generated_at": 1790671297.5288546,
+  "results": [
+    {
+      "id": "known-label",
+      "fixture_kind": "synthetic text card, not a real exhibit photo",
+      "expected_source": "artic-28560",
+      "expected_status": "needs_confirmation",
+      "matched_expectation": true,
+      "latency_ms": 7852,
+      "result": {
+        "status": "needs_confirmation",
+        "candidates": [
+          {
+            "id": "artic-28560",
+            "title": "The Bedroom",
+            "source_url": "https://www.artic.edu/artworks/28560",
+            "artist": "Vincent van Gogh (Dutch, 1853–1890)"
+          }
+        ],
+        "confirmation_required": true,
+        "message": "可能是以下作品。请先确认，再开始讲解。",
+        "trace_id": "01f3833ec75c47f188e5bc6b491539c2"
+      },
+      "trace": {
+        "_id": "01f3833ec75c47f188e5bc6b491539c2",
+        "session_id": "photo-smoke",
+        "created_at": 1790671305.381681,
+        "photo_hash": "f9eb1c7ba5d8cdaa28d6fcb8bd2104af45185afec7896ab29253bb5ccb84d830",
+        "status": "needs_confirmation",
+        "candidate_ids": [
+          "artic-28560"
+        ],
+        "prompt_version": "museum-photo-v1",
+        "last_stage": "compare_candidates",
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 545,
+            "completion_tokens": 47,
+            "total_tokens": 592,
+            "prompt_tokens_details": {
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 161
+          },
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 2619,
+            "completion_tokens": 12,
+            "total_tokens": 2631,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2619
+          }
+        ],
+        "error": null,
+        "error_cause": null
+      }
+    }
+  ]
+}
