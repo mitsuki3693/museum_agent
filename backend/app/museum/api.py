@@ -20,6 +20,7 @@ from .retrieval import MuseumIndex
 from .engine import MuseumEngine
 from .vision import PhotoRecognizer, MAX_UPLOAD_BYTES
 from .routes import RoutePlanner, RoutePreferences, RouteService, is_route_question
+from .floor_demo import FloorDemo
 
 class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=600)
@@ -53,6 +54,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         app.state.store, app.state.index = store, index
         app.state.engine = MuseumEngine(config, store, index, client_factory)
         app.state.routes = RouteService(RoutePlanner(config.museum_route_manifest), app.state.engine)
+        app.state.floor_demo = FloorDemo(config.museum_floor_demo_manifest)
         if config.museum_visual_manifest:
             from .visual_index import MuseumVisualIndex
             visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records)
@@ -94,6 +96,17 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
     @app.get("/api/museum/routes/options")
     async def route_options():
         return app.state.routes.planner.options()
+
+    @app.get("/api/museum/routes/floor-demo")
+    async def floor_demo():
+        return app.state.floor_demo.describe()
+
+    @app.get("/api/museum/routes/floor-demo/tiles/{tile_id}")
+    async def floor_demo_tile(tile_id: str):
+        path = app.state.floor_demo.tile_path(tile_id)
+        if path is None:
+            raise HTTPException(404, "地图图片不可用")
+        return FileResponse(path, media_type="image/png", headers={"Cache-Control": "private, max-age=3600"})
 
     @app.get("/api/museum/objects")
     async def objects():

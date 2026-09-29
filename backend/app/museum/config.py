@@ -25,3 +25,4 @@ class MuseumSettings(BaseSettings):
     museum_visual_model: Path = ROOT / "models/dinov2-small"
     # A separately sourced, optional route snapshot; never inferred from artwork descriptions.
     museum_route_manifest: Path | None = None
+    museum_floor_demo_manifest: Path | None = None

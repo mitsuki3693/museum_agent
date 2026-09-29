@@ -20,8 +20,8 @@ export default function RoutePanel({options, initial, route, facilities, busy, o
       {facilities.sources.length > 0 && <details className="route-directions"><summary>设施资料来源</summary>{facilities.sources.map(source => <p key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title} ↗</a></p>)}</details>}
       <button className="quiet" disabled={busy} onClick={() => onFind("帮我规划参观路线")}>继续安排参观路线</button>
     </div>}
+    {!facilities && <RouteMapDemo/>}
     {route && <>
-      <RouteMapDemo route={route}/>
       <div className="route-metrics"><strong>约 {route.total_minutes} <small>分钟</small></strong><span>{route.steps.length} 个展厅 · 停留 {route.view_minutes} 分钟<br/>移动 {route.walk_minutes} 分钟 · 余量 {route.remaining_minutes} 分钟</span></div>
       <p className="route-time-note">{route.time_note}</p>
       <p className="route-start">从 <strong>{route.start.title}</strong> 出发 · {route.start.level}</p>
