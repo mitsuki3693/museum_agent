@@ -1,0 +1,196 @@
+{
+  "kind": "Clean digital reproductions, not phone or museum field photos",
+  "human_reviewed": false,
+  "frozen_cases": [
+    {
+      "object_id": "artic-16568",
+      "path": "web\\public\\collection\\artic-16568.jpg",
+      "sha256": "a5e1e83bcc19f33c2880755df124406b4ea3136807b95f6eedbfd15f25869df6",
+      "expected_candidate_id": "artic-16568"
+    },
+    {
+      "object_id": "artic-28560",
+      "path": "web\\public\\collection\\artic-28560.jpg",
+      "sha256": "34c2a15bbc1721cd49d9e51f1522b0ec27fedd504d6e491b00e6ddad1f59f832",
+      "expected_candidate_id": "artic-28560"
+    },
+    {
+      "object_id": "artic-27992",
+      "path": "web\\public\\collection\\artic-27992.jpg",
+      "sha256": "0e680658e81ea276432a4aab8e03e96dbd438d8675ccba9efc2bed516e1b3f32",
+      "expected_candidate_id": "artic-27992"
+    }
+  ],
+  "results": [
+    {
+      "object_id": "artic-16568",
+      "result": {
+        "status": "needs_confirmation",
+        "candidates": [
+          {
+            "id": "artic-16568",
+            "title": "Water Lilies",
+            "source_url": "https://www.artic.edu/artworks/16568",
+            "artist": "Claude Monet (French, 1840–1926)"
+          }
+        ],
+        "confirmation_required": true,
+        "message": "可能是以下作品。请先确认，再开始讲解。",
+        "trace_id": "2def863312154f90aa012391e76ae135"
+      },
+      "expected_in_candidates": true
+    },
+    {
+      "object_id": "artic-28560",
+      "result": {
+        "status": "needs_confirmation",
+        "candidates": [
+          {
+            "id": "artic-28560",
+            "title": "The Bedroom",
+            "source_url": "https://www.artic.edu/artworks/28560",
+            "artist": "Vincent van Gogh (Dutch, 1853–1890)"
+          }
+        ],
+        "confirmation_required": true,
+        "message": "可能是以下作品。请先确认，再开始讲解。",
+        "trace_id": "be1f9f2fe4194825b23face463b00dec"
+      },
+      "expected_in_candidates": true
+    },
+    {
+      "object_id": "artic-27992",
+      "result": {
+        "status": "needs_confirmation",
+        "candidates": [
+          {
+            "id": "artic-27992",
+            "title": "A Sunday on La Grande Jatte — 1884",
+            "source_url": "https://www.artic.edu/artworks/27992",
+            "artist": "Georges Seurat (French, 1859–1891)"
+          }
+        ],
+        "confirmation_required": true,
+        "message": "可能是以下作品。请先确认，再开始讲解。",
+        "trace_id": "64db3d889bc14706bbba5a25e69890eb"
+      },
+      "expected_in_candidates": true
+    }
+  ],
+  "traces": [
+    {
+      "_id": "64db3d889bc14706bbba5a25e69890eb",
+      "session_id": "public-artwork-smoke",
+      "created_at": 1790684087.0829558,
+      "photo_hash": "21cafce74e8da300300e7b23506f371bc2d82fb4cd53982d43c4380013ab0faa",
+      "status": "needs_confirmation",
+      "candidate_ids": [
+        "artic-27992"
+      ],
+      "prompt_version": "museum-photo-v1",
+      "last_stage": "compare_candidates",
+      "usage": [
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 481,
+          "completion_tokens": 71,
+          "total_tokens": 552,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 481
+        },
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 3024,
+          "completion_tokens": 12,
+          "total_tokens": 3036,
+          "prompt_tokens_details": {
+            "cached_tokens": 384
+          },
+          "prompt_cache_hit_tokens": 384,
+          "prompt_cache_miss_tokens": 2640
+        }
+      ],
+      "error": null,
+      "error_cause": null
+    },
+    {
+      "_id": "be1f9f2fe4194825b23face463b00dec",
+      "session_id": "public-artwork-smoke",
+      "created_at": 1790684079.9243402,
+      "photo_hash": "f2ecaf3b662cf2e52a9df87136a29f82372488984a87d4a388e0855bbc9a85f6",
+      "status": "needs_confirmation",
+      "candidate_ids": [
+        "artic-28560"
+      ],
+      "prompt_version": "museum-photo-v1",
+      "last_stage": "compare_candidates",
+      "usage": [
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 529,
+          "completion_tokens": 109,
+          "total_tokens": 638,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 529
+        },
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 2786,
+          "completion_tokens": 12,
+          "total_tokens": 2798,
+          "prompt_tokens_details": {
+            "cached_tokens": 896
+          },
+          "prompt_cache_hit_tokens": 896,
+          "prompt_cache_miss_tokens": 1890
+        }
+      ],
+      "error": null,
+      "error_cause": null
+    },
+    {
+      "_id": "2def863312154f90aa012391e76ae135",
+      "session_id": "public-artwork-smoke",
+      "created_at": 1790684071.6791844,
+      "photo_hash": "67fb10a25c60f5af75192c2b6ed7dc5f7a05a441b15c6006d8e6ef44ce757e20",
+      "status": "needs_confirmation",
+      "candidate_ids": [
+        "artic-16568"
+      ],
+      "prompt_version": "museum-photo-v1",
+      "last_stage": "compare_candidates",
+      "usage": [
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 292,
+          "completion_tokens": 56,
+          "total_tokens": 348,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 292
+        },
+        {
+          "model": "deepseek-flash",
+          "prompt_tokens": 2664,
+          "completion_tokens": 12,
+          "total_tokens": 2676,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 2664
+        }
+      ],
+      "error": null,
+      "error_cause": null
+    }
+  ]
+}

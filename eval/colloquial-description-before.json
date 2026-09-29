@@ -1,0 +1,326 @@
+{
+  "query": "很多睡莲的画",
+  "human_reviewed": false,
+  "result": {
+    "trace_id": "1ae4412aee1d498f9b3f277dd94c6cad",
+    "status": "verification_failed",
+    "answer": "这次回答未能通过依据核对，暂不展示生成内容。你可以查看原始资料或换个问法。",
+    "claims": [],
+    "sources": [
+      {
+        "id": "artic-16568",
+        "title": "Water Lilies",
+        "content": "名称 Title: Water Lilies\n藏品编号 Object ID: 16568\n作者 Artist: Claude Monet (French, 1840–1926)\n年代 Date: 1906\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 89.9 × 94.1 cm (35 3/8 × 37 1/16 in.); Framed: 103.2 × 107 × 5.8 cm (40 5/8 × 42 1/8 × 2 1/4 in.)\n创作地 Origin: France\n入藏信息 Credit line: Mr. and Mrs. Martin A. Ryerson Collection\n馆藏编号 Accession number: 1933.1157\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Little did Claude Monet know that the water garden he created three years after buying his Giverny, France, property in 1890 would become his primary inspiration over the next two and a half decades. These paintings, numbering around 250, mark Monet’s artistic journey from more straightforward depictions of the pond spanned by the wooden Japanese bridge to the monumental and near-abstract series on the water lily theme he made in preparation for his murals at the Musée de l’Orangerie in Paris between 1914 and 1926. Water Lilies , one of a group of paintings on the subject made between 1903 and 1908, comes at the midpoint of Monet’s developing style and spatial experimentations. The nearly square format underscores his move away from painting the conventional zones of land, sky, and water to focus solely on the water’s surface. Clusters of water lilies at bottom left and top right frame a watery path, while the water’s surface reflects trees and clouds. Although the dreamlike quality of floating forms might seem to be a natural development for the artist, he considered these works “an obsession,” a sentiment borne out by technical examinations on the Art Institute’s canvas, revealing many significant changes made to the painting in progress.",
+        "source_url": "https://www.artic.edu/artworks/16568",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.848708+00:00",
+        "source_hash": "eb63ee77750f9d1c30014bebd657018ed6495c473478ec01d69b014e6c30d08f",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "id": "artic-27992",
+        "title": "A Sunday on La Grande Jatte — 1884",
+        "content": "名称 Title: A Sunday on La Grande Jatte — 1884\n藏品编号 Object ID: 27992\n作者 Artist: Georges Seurat (French, 1859–1891)\n年代 Date: 1884–86, border added 1888–89\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 207.5 × 308.1 cm (81 3/4 × 121 1/4 in.)\n创作地 Origin: France\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.224\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: In Ferris Bueller’s Day Off , Ferris’s best friend Cameron Frye intensely studies this nearly ten-foot-wide painting during a scene set at the Art Institute. Featuring people of every age and social class on the banks of the River Seine, A Sunday on La Grande Jatte—1884 has captivated visitors ever since its arrival at the museum in 1924. If we, like Cameron, come closer to the painting, figures and forms dissolve into dots and dashes of complementary colors laid side by side, characteristic of Seurat’s pointillist technique. Many smaller painted and drawn sketches and several larger canvases, in which Seurat laid out the parameters for the landscape and figures, led up to this majestically composed scene. Seurat returned to the work two years after its start date, amplifying the silhouettes of some figures and adding others. Some of these, like the monkey on the leash, seem so integral to the final composition that it is hard to imagine them as add-ons, but others, like the man carrying a rolled newspaper in the furthest distance, are barely noticeable. To the artist, however, every decision was essential to his aim of making a painting of modern life equivalent to a classical Greek frieze.",
+        "source_url": "https://www.artic.edu/artworks/27992",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.849713+00:00",
+        "source_hash": "ff1d40d623f50d5284b18bf2893e32d30f78fac5e4d90a20e41fabcbb1274cab",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "id": "artic-6565",
+        "title": "American Gothic",
+        "content": "名称 Title: American Gothic\n藏品编号 Object ID: 6565\n作者 Artist: Grant Wood (American, 1891–1942)\n年代 Date: 1930\n材质 Medium: Oil on Beaver Board\n尺寸 Dimensions: 78 × 65.3 cm (30 3/4 × 25 3/4 in.)\n创作地 Origin: Cedar Rapids\n入藏信息 Credit line: Friends of American Art Collection\n馆藏编号 Accession number: 1930.934\n分类 Classification: oil paintings (visual works)\n馆藏部门 Department: Arts of the Americas\n馆方介绍 Description: In American Gothic , Grant Wood directly evoked images of an earlier generation by featuring a farmer and his daughter posed stiffly and dressed as if they were, as the artist put it, “tintypes from my old family album.” They stand outside of their home, built in an 1880s style known as Carpenter Gothic. Wood had seen a similar farmhouse during a visit to Eldon, Iowa. When it was exhibited at the Art Institute in 1930, the painting became an instant sensation, its ambiguity prompting viewers to speculate about the figures and their story. Many understood the work to be a satirical comment on midwesterners out of step with a modernizing world. Yet Wood intended it to convey a positive image of rural American values, offering a vision of reassurance at the beginning of the Great Depression.",
+        "source_url": "https://www.artic.edu/artworks/6565",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.832605+00:00",
+        "source_hash": "82cd53669350fd93d9cdfb0c619aac5af1ded2ed61193e2f043db9bc1a2bc9f1",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "id": "artic-80607",
+        "title": "Self-Portrait",
+        "content": "名称 Title: Self-Portrait\n藏品编号 Object ID: 80607\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1887\n材质 Medium: Oil on artist's board, mounted on cradled panel\n尺寸 Dimensions: 41 × 32.5 cm (16 1/8 × 12 13/16 in.); Framed: 61.6 × 53.4 × 8.9 cm (24 1/4 × 21 × 3 1/2 in.)\n创作地 Origin: Netherlands\n入藏信息 Credit line: Joseph Winterbotham Collection\n馆藏编号 Accession number: 1954.326\n分类 Classification: oil on board\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: In 1886 Vincent van Gogh left his native Holland and settled in Paris, where his beloved brother Theo was a dealer in paintings. Van Gogh was apparently inspired by the energy of the city and by his introduction to Impressionism, and he created at least twenty-four self-portraits during his two-year stay in the French capital. This early example is modest in size and was painted on prepared artist’s board rather than canvas. Its densely dabbed brushwork, which became a hallmark of Van Gogh’s style, reﬂects the artist’s response to Georges Seurat’s revolutionary pointillist technique in A Sunday on La Grande Jatte—1884 . What was for Seurat a method based on the cool objectivity of science became in Van Gogh’s hands an intense emotional language. The surface of the painting dances with particles of color—intense greens, blues, reds, and oranges. Dominating this dazzling array of staccato dots and dashes are the artist’s deep green eyes and the intensity of their gaze. “I prefer painting people’s eyes to cathedrals,” Van Gogh once wrote to Theo. “However solemn and imposing the latter may be—a human soul, be it that of a poor streetwalker, is more interesting to me.” From Paris, Van Gogh traveled to the southern town of Arles for fifteen months. At the time of his death, in 1890, he had actively pursued his art for only five years. Van Gogh’s career as a painter was actually very brief. From Paris, he traveled to the southern town of Arles for ﬁ ft een months. At the time of his death, in 1890, he had actively pursued his art for just ﬁve years. This is one of thirty-five works that comprise the Winterbotham Collection. Click here to learn more about the collection.",
+        "source_url": "https://www.artic.edu/artworks/80607",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.849713+00:00",
+        "source_hash": "eebd0765f34f29d5cc52cce738580fb84f6e25a528acadda43d4bfc530457c45",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "id": "artic-28560",
+        "title": "The Bedroom",
+        "content": "名称 Title: The Bedroom\n藏品编号 Object ID: 28560\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1889\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 73.6 × 92.3 cm (29 × 36 5/8 in.); Framed: 88.9 × 108 × 8.9 cm (35 × 42 1/2 × 3 1/2 in.)\n创作地 Origin: Saint-Rémy-de-Provence\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.417\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Perhaps the most famous depiction of a bedroom in Western art history, this vibrant painting documents Vincent van Gogh’s sleeping quarters in his beloved “Yellow House” in Arles, France. The composition exists in three versions, the first of which Van Gogh conceived in October 1888, a month after he moved into the home. In a letter to his brother Theo, he described having painted “the walls pale lilac, the floor in a broken and faded red, the chairs and the bed chrome yellow, the pillows and the sheet very pale lemon green, the bedspread blood-red, the dressing table orange, the washbasin blue, the window green.” With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy. But the artist understood it as a calming and restful image. The painting in the Art Institute’s collection is Van Gogh’s second version of the scene, made nearly a year after the first, in September 1889. He produced a third, smaller version at the same time as a gift for his mother and sister.",
+        "source_url": "https://www.artic.edu/artworks/28560",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.834679+00:00",
+        "source_hash": "ed909e866c117cf11048b7fe2818a725e817ea167e5fa1513b709ece3dcb0631",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "retrieved_ids": [
+      "artic-16568",
+      "artic-27992",
+      "artic-6565",
+      "artic-80607",
+      "artic-28560"
+    ],
+    "mode": "brief",
+    "verification": {
+      "passed": false,
+      "kind": "rejected"
+    },
+    "latency_ms": 13745,
+    "usage": [
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 5894,
+        "completion_tokens": 215,
+        "total_tokens": 6109,
+        "prompt_tokens_details": {
+          "cached_tokens": 5760
+        },
+        "prompt_cache_hit_tokens": 5760,
+        "prompt_cache_miss_tokens": 134
+      },
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 354,
+        "completion_tokens": 205,
+        "total_tokens": 559,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 354
+      },
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 6091,
+        "completion_tokens": 445,
+        "total_tokens": 6536,
+        "prompt_tokens_details": {
+          "cached_tokens": 5888
+        },
+        "prompt_cache_hit_tokens": 5888,
+        "prompt_cache_miss_tokens": 203
+      },
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 370,
+        "completion_tokens": 133,
+        "total_tokens": 503,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 370
+      }
+    ]
+  },
+  "traces": [
+    {
+      "_id": "1ae4412aee1d498f9b3f277dd94c6cad",
+      "session_id": "colloquial-debug",
+      "created_at": 1790683586.8614714,
+      "query": "很多睡莲的画",
+      "rewritten_query": "很多睡莲的画",
+      "rewrite_error": null,
+      "object_id": null,
+      "variant": "hybrid",
+      "model": "deepseek-flash",
+      "embedding": "local",
+      "corpus_hash": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+      "prompt_version": "museum-grounded-v2",
+      "attempts": [
+        {
+          "attempt": 0,
+          "draft": {
+            "abstain": false,
+            "claims": [
+              {
+                "text": "莫奈在1890年买下法国吉维尼的房产，三年后创建的水上花园在此后二十五年间成为他的主要灵感来源。",
+                "source_id": "artic-16568",
+                "quote": "Little did Claude Monet know that the water garden he created three years after buying his Giverny, France, property in 1890 would become his primary inspiration over the next two and a half decades."
+              },
+              {
+                "text": "这批睡莲主题画作数量约250幅，记录了莫奈从较直白的池塘描绘走向为巴黎橘园美术馆壁画所作、近乎抽象的大型系列。",
+                "source_id": "artic-16568",
+                "quote": "These paintings, numbering around 250, mark Monet’s artistic journey from more straightforward depictions of the pond spanned by the wooden Japanese bridge to the monumental and near-abstract series on the water lily theme he made in preparation for his murals at the Musée de l’Orangerie in Paris between 1914 and 1926."
+              }
+            ]
+          },
+          "issues": [
+            "第二条 claim 将 quote 中“1914至1926年间为巴黎橘园美术馆壁画所作的水上睡莲主题系列”转述为“为巴黎橘园美术馆壁画所作、近乎抽象的大型系列”，但 quote 并未说明这批约250幅画作整体“记录了莫奈从较直白的池塘描绘走向……大型系列”；quote 的“These paintings, numbering around 250”与“the monumental and near-abstract series ... between 1914 and 1926”之间的关系存在歧义，claim 将其合并为同一批画作的完整发展轨迹，属于对来源的过度推断。",
+            "第二条 claim 中“记录了莫奈从较直白的池塘描绘走向……”暗示约250幅画作构成一条连续发展序列，但 quote 只称这些画作“mark Monet’s artistic journey from ... to ...”，并未明确说明这250幅画作本身完整覆盖该过程，存在歧义。"
+          ],
+          "omitted_claims": 0,
+          "verdict": {
+            "passed": false,
+            "issues": [
+              "第二条 claim 将 quote 中“1914至1926年间为巴黎橘园美术馆壁画所作的水上睡莲主题系列”转述为“为巴黎橘园美术馆壁画所作、近乎抽象的大型系列”，但 quote 并未说明这批约250幅画作整体“记录了莫奈从较直白的池塘描绘走向……大型系列”；quote 的“These paintings, numbering around 250”与“the monumental and near-abstract series ... between 1914 and 1926”之间的关系存在歧义，claim 将其合并为同一批画作的完整发展轨迹，属于对来源的过度推断。",
+              "第二条 claim 中“记录了莫奈从较直白的池塘描绘走向……”暗示约250幅画作构成一条连续发展序列，但 quote 只称这些画作“mark Monet’s artistic journey from ... to ...”，并未明确说明这250幅画作本身完整覆盖该过程，存在歧义。"
+            ]
+          }
+        },
+        {
+          "attempt": 1,
+          "draft": {
+            "abstain": false,
+            "claims": [
+              {
+                "text": "莫奈在1890年买下法国吉维尼的房产，三年后创建了水上花园，此后二十五年间它成为他的主要灵感来源。",
+                "source_id": "artic-16568",
+                "quote": "Little did Claude Monet know that the water garden he created three years after buying his Giverny, France, property in 1890 would become his primary inspiration over the next two and a half decades."
+              },
+              {
+                "text": "这批画作数量约250幅，标志着莫奈的艺术历程，从较直白的池塘描绘（池塘上有木制日本桥）走向为巴黎橘园美术馆壁画所作、纪念性且近乎抽象的水上睡莲主题系列。",
+                "source_id": "artic-16568",
+                "quote": "These paintings, numbering around 250, mark Monet’s artistic journey from more straightforward depictions of the pond spanned by the wooden Japanese bridge to the monumental and near-abstract series on the water lily theme he made in preparation for his murals at the Musée de l’Orangerie in Paris between 1914 and 1926."
+              }
+            ]
+          },
+          "issues": [
+            "第二条 text 声称这批画作“标志着莫奈的艺术历程，从较直白的池塘描绘……走向……水上睡莲主题系列”，但 quote 中“between 1914 and 1926”是修饰“为巴黎橘园美术馆壁画所作系列”的时间范围，text 未保留该关键时间限制，造成时间信息遗漏。",
+            "第一条 text 将 quote 中的“over the next two and a half decades”转述为“此后二十五年间”，属于对约数“two and a half decades”的精确化改写，可能引入原文未有的确定时长。"
+          ],
+          "omitted_claims": 3,
+          "verdict": {
+            "passed": false,
+            "issues": [
+              "第二条 text 声称这批画作“标志着莫奈的艺术历程，从较直白的池塘描绘……走向……水上睡莲主题系列”，但 quote 中“between 1914 and 1926”是修饰“为巴黎橘园美术馆壁画所作系列”的时间范围，text 未保留该关键时间限制，造成时间信息遗漏。",
+              "第一条 text 将 quote 中的“over the next two and a half decades”转述为“此后二十五年间”，属于对约数“two and a half decades”的精确化改写，可能引入原文未有的确定时长。"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "trace_id": "1ae4412aee1d498f9b3f277dd94c6cad",
+        "status": "verification_failed",
+        "answer": "这次回答未能通过依据核对，暂不展示生成内容。你可以查看原始资料或换个问法。",
+        "claims": [],
+        "sources": [
+          {
+            "id": "artic-16568",
+            "title": "Water Lilies",
+            "content": "名称 Title: Water Lilies\n藏品编号 Object ID: 16568\n作者 Artist: Claude Monet (French, 1840–1926)\n年代 Date: 1906\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 89.9 × 94.1 cm (35 3/8 × 37 1/16 in.); Framed: 103.2 × 107 × 5.8 cm (40 5/8 × 42 1/8 × 2 1/4 in.)\n创作地 Origin: France\n入藏信息 Credit line: Mr. and Mrs. Martin A. Ryerson Collection\n馆藏编号 Accession number: 1933.1157\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Little did Claude Monet know that the water garden he created three years after buying his Giverny, France, property in 1890 would become his primary inspiration over the next two and a half decades. These paintings, numbering around 250, mark Monet’s artistic journey from more straightforward depictions of the pond spanned by the wooden Japanese bridge to the monumental and near-abstract series on the water lily theme he made in preparation for his murals at the Musée de l’Orangerie in Paris between 1914 and 1926. Water Lilies , one of a group of paintings on the subject made between 1903 and 1908, comes at the midpoint of Monet’s developing style and spatial experimentations. The nearly square format underscores his move away from painting the conventional zones of land, sky, and water to focus solely on the water’s surface. Clusters of water lilies at bottom left and top right frame a watery path, while the water’s surface reflects trees and clouds. Although the dreamlike quality of floating forms might seem to be a natural development for the artist, he considered these works “an obsession,” a sentiment borne out by technical examinations on the Art Institute’s canvas, revealing many significant changes made to the painting in progress.",
+            "source_url": "https://www.artic.edu/artworks/16568",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.848708+00:00",
+            "source_hash": "eb63ee77750f9d1c30014bebd657018ed6495c473478ec01d69b014e6c30d08f",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "id": "artic-27992",
+            "title": "A Sunday on La Grande Jatte — 1884",
+            "content": "名称 Title: A Sunday on La Grande Jatte — 1884\n藏品编号 Object ID: 27992\n作者 Artist: Georges Seurat (French, 1859–1891)\n年代 Date: 1884–86, border added 1888–89\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 207.5 × 308.1 cm (81 3/4 × 121 1/4 in.)\n创作地 Origin: France\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.224\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: In Ferris Bueller’s Day Off , Ferris’s best friend Cameron Frye intensely studies this nearly ten-foot-wide painting during a scene set at the Art Institute. Featuring people of every age and social class on the banks of the River Seine, A Sunday on La Grande Jatte—1884 has captivated visitors ever since its arrival at the museum in 1924. If we, like Cameron, come closer to the painting, figures and forms dissolve into dots and dashes of complementary colors laid side by side, characteristic of Seurat’s pointillist technique. Many smaller painted and drawn sketches and several larger canvases, in which Seurat laid out the parameters for the landscape and figures, led up to this majestically composed scene. Seurat returned to the work two years after its start date, amplifying the silhouettes of some figures and adding others. Some of these, like the monkey on the leash, seem so integral to the final composition that it is hard to imagine them as add-ons, but others, like the man carrying a rolled newspaper in the furthest distance, are barely noticeable. To the artist, however, every decision was essential to his aim of making a painting of modern life equivalent to a classical Greek frieze.",
+            "source_url": "https://www.artic.edu/artworks/27992",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.849713+00:00",
+            "source_hash": "ff1d40d623f50d5284b18bf2893e32d30f78fac5e4d90a20e41fabcbb1274cab",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "id": "artic-6565",
+            "title": "American Gothic",
+            "content": "名称 Title: American Gothic\n藏品编号 Object ID: 6565\n作者 Artist: Grant Wood (American, 1891–1942)\n年代 Date: 1930\n材质 Medium: Oil on Beaver Board\n尺寸 Dimensions: 78 × 65.3 cm (30 3/4 × 25 3/4 in.)\n创作地 Origin: Cedar Rapids\n入藏信息 Credit line: Friends of American Art Collection\n馆藏编号 Accession number: 1930.934\n分类 Classification: oil paintings (visual works)\n馆藏部门 Department: Arts of the Americas\n馆方介绍 Description: In American Gothic , Grant Wood directly evoked images of an earlier generation by featuring a farmer and his daughter posed stiffly and dressed as if they were, as the artist put it, “tintypes from my old family album.” They stand outside of their home, built in an 1880s style known as Carpenter Gothic. Wood had seen a similar farmhouse during a visit to Eldon, Iowa. When it was exhibited at the Art Institute in 1930, the painting became an instant sensation, its ambiguity prompting viewers to speculate about the figures and their story. Many understood the work to be a satirical comment on midwesterners out of step with a modernizing world. Yet Wood intended it to convey a positive image of rural American values, offering a vision of reassurance at the beginning of the Great Depression.",
+            "source_url": "https://www.artic.edu/artworks/6565",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.832605+00:00",
+            "source_hash": "82cd53669350fd93d9cdfb0c619aac5af1ded2ed61193e2f043db9bc1a2bc9f1",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "id": "artic-80607",
+            "title": "Self-Portrait",
+            "content": "名称 Title: Self-Portrait\n藏品编号 Object ID: 80607\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1887\n材质 Medium: Oil on artist's board, mounted on cradled panel\n尺寸 Dimensions: 41 × 32.5 cm (16 1/8 × 12 13/16 in.); Framed: 61.6 × 53.4 × 8.9 cm (24 1/4 × 21 × 3 1/2 in.)\n创作地 Origin: Netherlands\n入藏信息 Credit line: Joseph Winterbotham Collection\n馆藏编号 Accession number: 1954.326\n分类 Classification: oil on board\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: In 1886 Vincent van Gogh left his native Holland and settled in Paris, where his beloved brother Theo was a dealer in paintings. Van Gogh was apparently inspired by the energy of the city and by his introduction to Impressionism, and he created at least twenty-four self-portraits during his two-year stay in the French capital. This early example is modest in size and was painted on prepared artist’s board rather than canvas. Its densely dabbed brushwork, which became a hallmark of Van Gogh’s style, reﬂects the artist’s response to Georges Seurat’s revolutionary pointillist technique in A Sunday on La Grande Jatte—1884 . What was for Seurat a method based on the cool objectivity of science became in Van Gogh’s hands an intense emotional language. The surface of the painting dances with particles of color—intense greens, blues, reds, and oranges. Dominating this dazzling array of staccato dots and dashes are the artist’s deep green eyes and the intensity of their gaze. “I prefer painting people’s eyes to cathedrals,” Van Gogh once wrote to Theo. “However solemn and imposing the latter may be—a human soul, be it that of a poor streetwalker, is more interesting to me.” From Paris, Van Gogh traveled to the southern town of Arles for fifteen months. At the time of his death, in 1890, he had actively pursued his art for only five years. Van Gogh’s career as a painter was actually very brief. From Paris, he traveled to the southern town of Arles for ﬁ ft een months. At the time of his death, in 1890, he had actively pursued his art for just ﬁve years. This is one of thirty-five works that comprise the Winterbotham Collection. Click here to learn more about the collection.",
+            "source_url": "https://www.artic.edu/artworks/80607",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.849713+00:00",
+            "source_hash": "eebd0765f34f29d5cc52cce738580fb84f6e25a528acadda43d4bfc530457c45",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "id": "artic-28560",
+            "title": "The Bedroom",
+            "content": "名称 Title: The Bedroom\n藏品编号 Object ID: 28560\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1889\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 73.6 × 92.3 cm (29 × 36 5/8 in.); Framed: 88.9 × 108 × 8.9 cm (35 × 42 1/2 × 3 1/2 in.)\n创作地 Origin: Saint-Rémy-de-Provence\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.417\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Perhaps the most famous depiction of a bedroom in Western art history, this vibrant painting documents Vincent van Gogh’s sleeping quarters in his beloved “Yellow House” in Arles, France. The composition exists in three versions, the first of which Van Gogh conceived in October 1888, a month after he moved into the home. In a letter to his brother Theo, he described having painted “the walls pale lilac, the floor in a broken and faded red, the chairs and the bed chrome yellow, the pillows and the sheet very pale lemon green, the bedspread blood-red, the dressing table orange, the washbasin blue, the window green.” With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy. But the artist understood it as a calming and restful image. The painting in the Art Institute’s collection is Van Gogh’s second version of the scene, made nearly a year after the first, in September 1889. He produced a third, smaller version at the same time as a gift for his mother and sister.",
+            "source_url": "https://www.artic.edu/artworks/28560",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.834679+00:00",
+            "source_hash": "ed909e866c117cf11048b7fe2818a725e817ea167e5fa1513b709ece3dcb0631",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          }
+        ],
+        "retrieved_ids": [
+          "artic-16568",
+          "artic-27992",
+          "artic-6565",
+          "artic-80607",
+          "artic-28560"
+        ],
+        "mode": "brief",
+        "verification": {
+          "passed": false,
+          "kind": "rejected"
+        },
+        "latency_ms": 13745,
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 5894,
+            "completion_tokens": 215,
+            "total_tokens": 6109,
+            "prompt_tokens_details": {
+              "cached_tokens": 5760
+            },
+            "prompt_cache_hit_tokens": 5760,
+            "prompt_cache_miss_tokens": 134
+          },
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 354,
+            "completion_tokens": 205,
+            "total_tokens": 559,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 354
+          },
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 6091,
+            "completion_tokens": 445,
+            "total_tokens": 6536,
+            "prompt_tokens_details": {
+              "cached_tokens": 5888
+            },
+            "prompt_cache_hit_tokens": 5888,
+            "prompt_cache_miss_tokens": 203
+          },
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 370,
+            "completion_tokens": 133,
+            "total_tokens": 503,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 370
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "object_id": "artic-28560",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_The_Bedroom_-_1926.417_-_Art_Institute_of_Chicago.jpg",
+    "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Vincent_van_Gogh_-_The_Bedroom_-_1926.417_-_Art_Institute_of_Chicago.jpg/960px-Vincent_van_Gogh_-_The_Bedroom_-_1926.417_-_Art_Institute_of_Chicago.jpg",
+    "license": "CC0 / Public domain",
+    "attribution": "Art Institute of Chicago; reproduction via Wikimedia Commons",
+    "local_path": "web/public/collection/artic-28560.jpg",
+    "sha256": "34c2a15bbc1721cd49d9e51f1522b0ec27fedd504d6e491b00e6ddad1f59f832",
+    "fetched_at": "2026-09-29",
+    "alterations": "None; downloaded published thumbnail"
+  },
+  {
+    "object_id": "artic-16568",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Claude_Monet_-_Water_Lilies_-_1933.1157_-_Art_Institute_of_Chicago.jpg",
+    "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Claude_Monet_-_Water_Lilies_-_1933.1157_-_Art_Institute_of_Chicago.jpg/500px-Claude_Monet_-_Water_Lilies_-_1933.1157_-_Art_Institute_of_Chicago.jpg",
+    "license": "CC0 / Public domain",
+    "attribution": "Art Institute of Chicago; reproduction via Wikimedia Commons",
+    "local_path": "web/public/collection/artic-16568.jpg",
+    "sha256": "a5e1e83bcc19f33c2880755df124406b4ea3136807b95f6eedbfd15f25869df6",
+    "fetched_at": "2026-09-29",
+    "alterations": "None; downloaded published thumbnail"
+  },
+  {
+    "object_id": "artic-27992",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Georges_Seurat_-_Un_dimanche_apr%C3%A8s-midi_%C3%A0_l%27%C3%AEle_de_la_Grande_Jatte.jpg",
+    "download_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Georges_Seurat_-_Un_dimanche_apr%C3%A8s-midi_%C3%A0_l%27%C3%AEle_de_la_Grande_Jatte.jpg/960px-Georges_Seurat_-_Un_dimanche_apr%C3%A8s-midi_%C3%A0_l%27%C3%AEle_de_la_Grande_Jatte.jpg",
+    "license": "Public domain (PD-Art)",
+    "attribution": "Art Institute of Chicago; reproduction via Wikimedia Commons",
+    "local_path": "web/public/collection/artic-27992.jpg",
+    "sha256": "0e680658e81ea276432a4aab8e03e96dbd438d8675ccba9efc2bed516e1b3f32",
+    "fetched_at": "2026-09-29",
+    "alterations": "None; downloaded published thumbnail"
+  }
+]

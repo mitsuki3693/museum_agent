@@ -19,6 +19,8 @@
 
 ## 公开图片下载限制
 
+**2026-09-29后续更新：** 以下描述保留此前受阻的事实。随后读取Wikimedia缩略图403正文，发现其明确要求有效User-Agent；按站点要求标识项目后取得三件公有领域复制图，现已本地提供。三件数字图片的独立真实调用见`eval/artwork-image-smoke.json`及[游客发现流程修正](visitor-discovery.md)。三件均返回正确候选，但仍无手机拍屏或馆内实拍验证。不要将这次三例结果与此前合成控制集拼成一个成功率。
+
 曾尝试三张馆方 IIIF 图片，以及 Wikimedia Commons 的[复制图](https://commons.wikimedia.org/wiki/File:The_Bedroom_1889_Vincent_van_Gogh.jpg)和[馆内照片](https://commons.wikimedia.org/wiki/File:Vincent_van_gogh,_la_camera_da_letto,_1889,_02.jpg)。当前网络均返回 HTTP 403，未下载到可用样本。后者作者 Sailko、CC BY 3.0；本项目并未把未取得的图片计入评测。
 
 因此这里**只有合成展签/控制图的真实模型调用**。它们不能证明作品外观识别、相似作品区分、反光、遮挡、拍摄角度或手机摄像头兼容性。

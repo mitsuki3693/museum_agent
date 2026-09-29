@@ -1,0 +1,109 @@
+{
+  "kind": "Known development query, not blind eval",
+  "human_reviewed": false,
+  "result": {
+    "trace_id": "15735d534a1f4c63b802816070aa0f04",
+    "status": "needs_confirmation",
+    "answer": "你找的是下面哪一件作品？确认后，我先给你一段简短讲解。",
+    "claims": [],
+    "sources": [],
+    "retrieved_ids": [
+      "artic-16568",
+      "artic-27992",
+      "artic-6565",
+      "artic-80607",
+      "artic-28560"
+    ],
+    "mode": "brief",
+    "verification": {
+      "passed": false,
+      "kind": "not_run"
+    },
+    "candidates": [
+      {
+        "id": "artic-16568",
+        "title": "Water Lilies"
+      }
+    ],
+    "latency_ms": 2352,
+    "usage": [
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 2353,
+        "completion_tokens": 20,
+        "total_tokens": 2373,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 2353
+      }
+    ]
+  },
+  "traces": [
+    {
+      "_id": "15735d534a1f4c63b802816070aa0f04",
+      "session_id": "description-after",
+      "created_at": 1790684065.4488513,
+      "query": "很多睡莲的画",
+      "rewritten_query": "很多睡莲的画",
+      "rewrite_error": null,
+      "object_id": null,
+      "variant": "hybrid",
+      "model": "deepseek-flash",
+      "embedding": "local",
+      "corpus_hash": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+      "prompt_version": "museum-grounded-v3-discovery",
+      "attempts": [
+        {
+          "stage": "discovery",
+          "decision": {
+            "intent": "find_artwork",
+            "candidate_ids": [
+              "artic-16568"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "trace_id": "15735d534a1f4c63b802816070aa0f04",
+        "status": "needs_confirmation",
+        "answer": "你找的是下面哪一件作品？确认后，我先给你一段简短讲解。",
+        "claims": [],
+        "sources": [],
+        "retrieved_ids": [
+          "artic-16568",
+          "artic-27992",
+          "artic-6565",
+          "artic-80607",
+          "artic-28560"
+        ],
+        "mode": "brief",
+        "verification": {
+          "passed": false,
+          "kind": "not_run"
+        },
+        "candidates": [
+          {
+            "id": "artic-16568",
+            "title": "Water Lilies"
+          }
+        ],
+        "latency_ms": 2352,
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 2353,
+            "completion_tokens": 20,
+            "total_tokens": 2373,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2353
+          }
+        ]
+      }
+    }
+  ]
+}

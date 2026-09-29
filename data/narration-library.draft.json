@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "version": "museum-narration-draft-v1",
+  "status": "draft_not_connected_to_runtime",
+  "created_at": "2026-09-29",
+  "reviewed": false,
+  "content_origin": "Project-authored Chinese adaptations of AIC collection descriptions; not official museum narration or museum-endorsed translations.",
+  "attribution": "Art Institute of Chicago. Collection descriptions adapted into Chinese narration; observations and visitor questions added by this project. Description license: CC BY 4.0; other metadata: CC0.",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "generation_rules": [
+    "Return only human-approved standard scripts directly; these draft records are not approved.",
+    "Style adaptation may change wording, length and observation questions, not evidence-backed facts.",
+    "Do not invent historical dialogue, motives, events or claims of museum endorsement.",
+    "Follow-up questions may retrieve additional active museum sources; insufficient evidence requires an explicit limitation.",
+    "Record narration version and source hash with any future generation trace."
+  ],
+  "records": [
+    {
+      "object_id": "artic-28560",
+      "title_zh": "卧室",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "source_hash": "ed909e866c117cf11048b7fe2818a725e817ea167e5fa1513b709ece3dcb0631",
+      "reviewed": false,
+      "standard_script": "这是梵高在1889年创作的《卧室》，描绘了他在法国阿尔勒“黄房子”里的卧室。同样的构图一共有三个版本，芝加哥艺术博物馆收藏的是第二版。鲜明的颜色、厚重的笔触和向后延伸的线条，可能让人感到有些紧张；不过，梵高希望这幅画传达的是平静与休息。你看着这个房间，会觉得放松，还是有点不安？",
+      "evidence": [
+        {"fact": "梵高，1889年", "quote": "作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1889"},
+        {"fact": "描绘阿尔勒黄房子中的卧室", "quote": "this vibrant painting documents Vincent van Gogh’s sleeping quarters in his beloved “Yellow House” in Arles, France."},
+        {"fact": "三个版本，本馆第二版", "quote": "The painting in the Art Institute’s collection is Van Gogh’s second version of the scene, made nearly a year after the first, in September 1889. He produced a third, smaller version at the same time as a gift for his mother and sister."},
+        {"fact": "形式可能显得紧张，画家理解为平静休息", "quote": "With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy. But the artist understood it as a calming and restful image."}
+      ],
+      "editorial_note": "Final visitor question is an observation invitation, not a historical assertion. Do not confuse depicted location with production location or first-version date with this version."
+    },
+    {
+      "object_id": "artic-16568",
+      "title_zh": "睡莲",
+      "source_url": "https://www.artic.edu/artworks/16568",
+      "source_hash": "eb63ee77750f9d1c30014bebd657018ed6495c473478ec01d69b014e6c30d08f",
+      "reviewed": false,
+      "standard_script": "这幅1906年的《睡莲》来自莫奈在法国吉维尼营造的水上花园。画家把注意力放在水面上：左下和右上的睡莲之间留出一条水路，树木和云朵倒映其中。他没有按照常见的方式把陆地、天空和水面分开描绘。你可以试着找一找，哪些是浮在水上的植物，哪些是水里的倒影。",
+      "evidence": [
+        {"fact": "莫奈，1906年", "quote": "作者 Artist: Claude Monet (French, 1840–1926)\n年代 Date: 1906"},
+        {"fact": "吉维尼水上花园成为创作灵感", "quote": "Little did Claude Monet know that the water garden he created three years after buying his Giverny, France, property in 1890 would become his primary inspiration over the next two and a half decades."},
+        {"fact": "聚焦水面，打破惯常天地水分区", "quote": "The nearly square format underscores his move away from painting the conventional zones of land, sky, and water to focus solely on the water’s surface."},
+        {"fact": "睡莲位置和树云倒影", "quote": "Clusters of water lilies at bottom left and top right frame a watery path, while the water’s surface reflects trees and clouds."}
+      ],
+      "editorial_note": "Final visitor question invites looking. Do not substitute dates or dimensions from the Orangerie murals for this canvas."
+    },
+    {
+      "object_id": "artic-27992",
+      "title_zh": "大碗岛的星期天下午",
+      "source_url": "https://www.artic.edu/artworks/27992",
+      "source_hash": "ff1d40d623f50d5284b18bf2893e32d30f78fac5e4d90a20e41fabcbb1274cab",
+      "reviewed": false,
+      "standard_script": "修拉在这幅画里描绘了塞纳河畔不同年龄与阶层的人们。仔细看，人物和景物由并排的小色点与短笔触组成，这是他的点彩技法。画名里虽然有1884，作品并不是那一年就全部完成：本馆记录为1884至1886年，边缘后来在1888至1889年补上。你可以放大图片观察色点，再缩小看看它们如何组成完整的画面。",
+      "evidence": [
+        {"fact": "修拉，完整创作日期与后加边缘", "quote": "作者 Artist: Georges Seurat (French, 1859–1891)\n年代 Date: 1884–86, border added 1888–89"},
+        {"fact": "塞纳河畔不同年龄和阶层的人", "quote": "Featuring people of every age and social class on the banks of the River Seine"},
+        {"fact": "并列色点与短笔触，点彩技法", "quote": "figures and forms dissolve into dots and dashes of complementary colors laid side by side, characteristic of Seurat’s pointillist technique."}
+      ],
+      "editorial_note": "Zooming is project-authored viewing guidance for a digital image, not an attributed museum instruction. Title date is not the full creation range."
+    }
+  ]
+}

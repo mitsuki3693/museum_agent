@@ -1,0 +1,110 @@
+{
+  "date": "2026-09-29",
+  "kind": "bounded development regression, not online A/B or general recognition accuracy",
+  "visual_model": "facebook/dinov2-small",
+  "visual_revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+  "prompt": "museum-photo-v3-query-anchored",
+  "reference_images": 6,
+  "reference_works": 4,
+  "fixed_batch": [
+    {
+      "case": "article-0",
+      "split": "held_out",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "article-1",
+      "split": "held_out",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "article-2",
+      "split": "held_out",
+      "status": "service_unavailable",
+      "passed": false,
+      "network_error": "ConnectError"
+    },
+    {
+      "case": "article-3",
+      "split": "held_out",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "negative-apollo",
+      "split": "held_out",
+      "status": "not_matched",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "negative-pluto",
+      "split": "held_out",
+      "status": "not_matched",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "negative-laocoon",
+      "split": "held_out",
+      "status": "not_matched",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "artic-28560",
+      "split": "reference_sanity",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "artic-16568",
+      "split": "reference_sanity",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    },
+    {
+      "case": "artic-27992",
+      "split": "reference_sanity",
+      "status": "needs_confirmation",
+      "passed": true,
+      "network_error": null
+    }
+  ],
+  "live_http": [
+    {
+      "case": "article-1",
+      "status": "needs_confirmation",
+      "passed": true,
+      "elapsed_s": 13.93
+    },
+    {
+      "case": "article-2",
+      "status": "needs_confirmation",
+      "passed": true,
+      "elapsed_s": 13.85
+    },
+    {
+      "case": "negative-pluto",
+      "status": "not_matched",
+      "passed": true,
+      "elapsed_s": 13.34
+    }
+  ],
+  "narration_after_confirmation": "passed",
+  "history": "Initial v2 comparator falsely matched one out-of-gallery sculpture. v3 query-image anchoring corrected this in the controlled repeat, full repeat and actual HTTP check. Original failures retained privately.",
+  "limits": [
+    "Only four works have image references",
+    "Known diagnostic cases, not blind evaluation",
+    "Three same-image controls excluded from generalization",
+    "Intermittent provider connection failures retained separately",
+    "No real gallery or original phone-screen capture verification"
+  ]
+}

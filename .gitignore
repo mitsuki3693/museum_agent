@@ -12,3 +12,7 @@ models/
 logs/
 *.egg-info/
 *.tsbuildinfo
+# Local-only source material and derived experiments; never stage for publication.
+/data/private/
+/eval/private/
+/docs/private/

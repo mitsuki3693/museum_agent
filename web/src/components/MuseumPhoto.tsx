@@ -1,7 +1,8 @@
 "use client";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
+import ArtworkCandidate from "./ArtworkCandidate";
 
-export type MuseumObject={id:string;title:string;source_url:string;image_url?:string};
+export type MuseumObject={id:string;title:string;source_url:string;image_url?:string;display_title?:string;collection?:string;has_narration?:boolean;source_kind?:string};
 const names:Record<string,string>={"artic-28560":"卧室","artic-16568":"睡莲","artic-27992":"大碗岛的星期天下午"};
 type Candidate={id:string;title:string;artist:string};
 
@@ -12,6 +13,7 @@ export default function MuseumPhoto({configured,objects,ensureSession,onChoose,d
  const [file,setFile]=useState<File|null>(null),[preview,setPreview]=useState("");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const [candidates,setCandidates]=useState<Candidate[]>([]);
+ const [failedImages,setFailedImages]=useState<Record<string,boolean>>({});
  useEffect(()=>{if(!file){setPreview("");return;}const url=URL.createObjectURL(file);setPreview(url);return()=>URL.revokeObjectURL(url);},[file]);
  function select(e:ChangeEvent<HTMLInputElement>){const next=e.target.files?.[0];e.target.value="";if(!next)return;
   if(next.size>8*1024*1024){setMessage("照片超过 8 MB，请压缩后重试。");return;}
@@ -36,7 +38,7 @@ export default function MuseumPhoto({configured,objects,ensureSession,onChoose,d
    <p className="photo-note">{file?"点击识别后，照片会发送给 DeepSeek 处理；本项目不保存原图。":"尽量把作品拍完整；展签文字可以帮助识别。"}</p>
    {!configured&&<p className="photo-status">演示尚未连接 AI，照片可预览；识别与讲解待启用。</p>}
   </div>
-  {(message||candidates.length>0)&&<div className="candidate-panel" aria-live="polite"><p>{message}</p>{candidates.map(c=><button className="candidate" key={c.id} disabled={disabled||busy} onClick={()=>onChoose(c.id)}><strong>{c.title}</strong><small>{c.artist}</small><span>是这件，开始讲解 →</span></button>)}{candidates.length>0&&<button className="quiet" onClick={()=>{setCandidates([]);setMessage("可以补拍展签，或从下面的名称搜索中寻找作品。");}}>都不是，重新找</button>}</div>}
-  <div className="sample-section"><div className="sample-heading"><h2>不在馆里？先试一件作品</h2><span>示例来自芝加哥艺术博物馆</span></div><div className="sample-grid">{objects.filter(o=>o.image_url).map(o=><button className="sample-card" key={o.id} disabled={disabled||busy} onClick={()=>onChoose(o.id)}><div className="sample-image"><span>馆藏示例</span><img src={o.image_url} alt={o.title} loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/></div><div><strong>{names[o.id]||o.title}</strong><small>{o.title}</small><span>了解这件作品 ↗</span></div></button>)}</div><p className="photo-note">示例图片：Art Institute of Chicago，公有领域。当前仅覆盖 12 件示范藏品，不能识别所有博物馆展品。</p></div>
+  {(message||candidates.length>0)&&<div className="candidate-panel" aria-live="polite"><p>{message}</p>{candidates.map(c=><ArtworkCandidate key={c.id} work={{...c,...objects.find(o=>o.id===c.id)}} disabled={disabled||busy} onConfirm={onChoose}/>)}{candidates.length>0&&<button className="quiet" onClick={()=>{setCandidates([]);setMessage("可以补拍展签，或从下面的名称搜索中寻找作品。");}}>都不是，重新找</button>}</div>}
+  <div className="sample-section"><div className="sample-heading"><h2>不在馆里？先试一件作品</h2><span>{objects.some(o=>o.collection==="V&A")?"V&A 官方讲解试点 + AIC 馆藏示例":"示例来自芝加哥艺术博物馆"}</span></div><div className="sample-grid">{objects.filter(o=>o.image_url).map(o=><button className="sample-card" key={o.id} disabled={disabled||busy} onClick={()=>onChoose(o.id)}><div className="sample-image"><span>{failedImages[o.id]?"图片暂未加载":"正在加载作品图片"}</span>{!failedImages[o.id]&&<img src={o.image_url} alt={o.title} loading="lazy" onError={()=>setFailedImages(v=>({...v,[o.id]:true}))}/>}</div><div><strong>{o.display_title||names[o.id]||o.title}</strong><small>{o.collection} · {o.title}</small>{o.has_narration&&<small>馆方英文底稿 · 三种中文讲法</small>}<span>了解这件作品 ↗</span></div></button>)}</div><p className="photo-note">{objects.some(o=>o.collection==="V&A")?"V&A 内容仅供本地讲解试验；AIC 示例图片为公有领域复制图。":"AIC 示例图片经 Wikimedia Commons 获取，为公有领域复制图。"} 当前覆盖 {objects.length} 件示范作品，不能识别所有博物馆展品。</p></div>
  </section>;
 }

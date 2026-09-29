@@ -19,3 +19,7 @@ class MuseumSettings(BaseSettings):
     museum_max_inflight: int = 2
     museum_timeout: float = 100
     museum_corpus: Path = ROOT / "data/corpus.json"
+    museum_private_corpus: Path | None = None
+    # Opt-in: unset manifest is the explicit rollback to caption/text retrieval.
+    museum_visual_manifest: Path | None = None
+    museum_visual_model: Path = ROOT / "models/dinov2-small"

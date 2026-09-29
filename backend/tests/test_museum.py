@@ -146,3 +146,34 @@ async def test_chosen_depth_caps_model_overproduction(museum_settings,mode,limit
     assert len(result["claims"])==limit
     trace=await store.get("museum_traces",result["trace_id"])
     assert trace["attempts"][0]["omitted_claims"]==6-limit
+
+@pytest.mark.asyncio
+async def test_visual_description_offers_candidates_without_inventing_a_story(museum_settings):
+    e, store, fake = await engine(museum_settings, [{"intent":"find_artwork","candidate_ids":["test-1"]}])
+    session={"_id":"description"}
+    result=await e.answer("一个bronze花瓶",session,"brief",None)
+    assert result["status"] == "needs_confirmation"
+    assert [c["id"] for c in result["candidates"]] == ["test-1"]
+    assert result["claims"] == [] and fake.calls == 1
+    assert "object_id" not in session  # Finding a candidate is not user confirmation.
+
+@pytest.mark.asyncio
+async def test_description_cannot_offer_an_id_outside_retrieved_sources(museum_settings):
+    e, _, _ = await engine(museum_settings, [{"intent":"find_artwork","candidate_ids":["invented"]}])
+    result=await e.answer("一个bronze花瓶",{"_id":"description"},"brief",None)
+    assert result["status"] == "service_unavailable"
+    assert not result.get("candidates")
+
+@pytest.mark.asyncio
+async def test_factual_question_still_uses_evidence_review(museum_settings):
+    e, _, fake = await engine(museum_settings, [{"intent":"question","candidate_ids":[]},draft(),{"passed":True,"issues":[]}])
+    result=await e.answer("Test Vase是什么材质？",{"_id":"question"},"brief",None)
+    assert result["status"] == "answered" and fake.calls == 3
+
+@pytest.mark.asyncio
+async def test_rejected_candidate_can_be_refined_in_same_conversation(museum_settings):
+    e, _, fake = await engine(museum_settings,[{"query":"bronze vase"},{"intent":"find_artwork","candidate_ids":["test-1"]}])
+    session={"_id":"refine","history":[{"role":"user","content":"a vase"},{"role":"assistant","content":"请确认作品"}]}
+    result=await e.answer("不是，青铜的",session,"brief",None)
+    assert result["status"] == "needs_confirmation" and fake.calls == 2
+    assert "object_id" not in session

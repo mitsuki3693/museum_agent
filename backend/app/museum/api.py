@@ -10,6 +10,7 @@ from typing import Literal
 from uuid import UUID
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from app.config import Settings
 from app.storage.store import MemoryStore, MongoStore
@@ -21,7 +22,8 @@ from .vision import PhotoRecognizer, MAX_UPLOAD_BYTES
 
 class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=600)
-    mode: Literal["brief", "deep"] = "brief"
+    mode: Literal["brief", "deep", "children"] = "brief"
+    action: Literal["question", "narration"] = "question"
     object_id: str | None = Field(default=None, max_length=100)
     request_id: UUID
 
@@ -48,6 +50,11 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         await index.start()
         app.state.store, app.state.index = store, index
         app.state.engine = MuseumEngine(config, store, index, client_factory)
+        if config.museum_visual_manifest:
+            from .visual_index import MuseumVisualIndex
+            visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records)
+            await visual.start()
+            app.state.engine.visual_index = visual
         app.state.slots = asyncio.Semaphore(config.museum_max_inflight)
         app.state.new_sessions = {}
         yield
@@ -76,7 +83,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         return {"status": "ok", "model_configured": bool(config.deepseek_api_key),
                 "storage": config.museum_storage, "retrieval": config.museum_embedding,
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
-                "prompt_version": MuseumEngine.PROMPT_VERSION}
+                "prompt_version": MuseumEngine.PROMPT_VERSION,
+                "photo_retrieval": "image_and_text" if getattr(app.state.engine, "visual_index", None) else "caption_text",
+                "visual_index_hash": getattr(getattr(app.state.engine, "visual_index", None), "index_hash", None)}
 
     @app.get("/api/museum/objects")
     async def objects():
@@ -85,9 +94,24 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         if image_file.exists():
             for image in json.loads(image_file.read_text(encoding="utf-8-sig")).get("data", []):
                 if image.get("is_public_domain") is True and image.get("image_id"):
-                    images[f'artic-{image["id"]}'] = f'https://www.artic.edu/iiif/2/{image["image_id"]}/full/843,/0/default.jpg'
-        return [{"id": r["_id"], "title": r["title"], "source_url": r["source_url"], "image_url": images.get(r["_id"])}
+                    key = f'artic-{image["id"]}'
+                    images[key] = f'/collection/{key}.jpg'
+        return [{"id": r["_id"], "title": r["title"], "source_url": r["source_url"],
+                 "display_title": r.get("display_title"), "collection": r.get("collection", "Art Institute of Chicago"),
+                 "has_narration": bool(r.get("narrations")), "source_kind": r.get("source_kind", "collection_record"),
+                 "image_url": f'/api/museum/objects/{r["_id"]}/image' if r.get("local_image") else images.get(r["_id"])}
                 for r in app.state.index.records.values()]
+
+    @app.get("/api/museum/objects/{object_id}/image")
+    async def object_image(object_id: str):
+        record = app.state.index.records.get(object_id, {})
+        if not config.museum_private_corpus or not record.get("local_image"):
+            raise HTTPException(404, "暂无图片")
+        root = config.museum_private_corpus.parent.resolve()
+        path = (root / record["local_image"]).resolve()
+        if not path.is_relative_to(root) or not path.is_file() or path.suffix.lower() not in {".jpg", ".png", ".webp"}:
+            raise HTTPException(404, "暂无图片")
+        return FileResponse(path, headers={"Cache-Control": "private, max-age=300"})
 
     @app.post("/api/museum/recognize")
     async def recognize(photo: UploadFile = File(...), current=Depends(session)):
@@ -140,6 +164,8 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             raise HTTPException(422, "请输入问题")
         if body.object_id and body.object_id not in app.state.index.records:
             raise HTTPException(422, "藏品不在当前资料范围内")
+        if body.action == "narration" and not body.object_id:
+            raise HTTPException(422, "请先确认要讲解的作品")
         lock = locks.setdefault(current["_id"], asyncio.Lock())
         if lock.locked():
             raise HTTPException(409, "上一个问题仍在处理，请等待完成")
@@ -157,7 +183,8 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             current = await app.state.store.get("museum_sessions", current["_id"])
             async with app.state.slots:
                 try:
-                    result = await asyncio.wait_for(app.state.engine.answer(body.query.strip(), current, body.mode, body.object_id),
+                    handler = app.state.engine.narrate if body.action == "narration" else app.state.engine.answer
+                    result = await asyncio.wait_for(handler(body.query.strip(), current, body.mode, body.object_id),
                                                     timeout=config.museum_timeout)
                 except asyncio.TimeoutError:
                     raise HTTPException(504, "回答超时，请稍后重试") from None

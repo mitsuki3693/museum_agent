@@ -31,6 +31,10 @@ class MuseumIndex:
         raw = self.settings.museum_corpus.read_bytes()
         self.corpus_hash = hashlib.sha256(raw).hexdigest()
         records = json.loads(raw)
+        if self.settings.museum_private_corpus:
+            private_raw = self.settings.museum_private_corpus.read_bytes()
+            records = json.loads(private_raw) + records
+            self.corpus_hash = hashlib.sha256(raw + b'\n' + private_raw).hexdigest()
         if not records:
             raise ValueError("Corpus is empty; run scripts.import_museum first")
         self.records = {r["_id"]: r for r in records if r.get("status") == "active"}
