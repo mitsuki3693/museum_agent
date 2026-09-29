@@ -53,6 +53,8 @@ class LLMClient(ABC):
         self.timeout = timeout
         self.temperature = temperature
         self.max_tokens = max_tokens
+        # Request-scoped clients can expose provider token accounting without estimating cost.
+        self.usage_records: list[dict[str, Any]] = []
 
     def _headers(self) -> dict[str, str]:
         return {
@@ -89,6 +91,8 @@ class LLMClient(ABC):
                 resp = await client.post(self._chat_url(), headers=self._headers(), json=payload)
                 resp.raise_for_status()
                 data = resp.json()
+                if isinstance(data.get("usage"), dict):
+                    self.usage_records.append({"model": data.get("model", self.model), **data["usage"]})
         except httpx.HTTPStatusError as exc:
             body = exc.response.text[:500]
             logger.error("LLM HTTP %s: %s", exc.response.status_code, body)

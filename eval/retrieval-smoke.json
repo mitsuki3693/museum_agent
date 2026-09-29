@@ -1,0 +1,872 @@
+{
+  "kind": "offline paired retrieval comparison",
+  "gold_reviewed": false,
+  "not_online_ab_test": true,
+  "not_answer_accuracy": true,
+  "corpus_sha256": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+  "questions_sha256": "a2b6c177d7da35d99d88242d703c046c6ec1e163f781c6f3df4641b24c093d3b",
+  "embedding": "local",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "prompt_version": "museum-grounded-v1",
+  "python": "3.12.6",
+  "generated_at": 1790606486.41693,
+  "summary": {
+    "bm25": {
+      "cases": 24,
+      "recall_at_5": 0.8333333333333334,
+      "mrr": 0.7743055555555555
+    },
+    "hybrid": {
+      "cases": 24,
+      "recall_at_5": 1.0,
+      "mrr": 0.9409722222222222
+    }
+  },
+  "results": [
+    {
+      "id": "Q01",
+      "variant": "bm25",
+      "query": "American Gothic 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 2
+    },
+    {
+      "id": "Q02",
+      "variant": "bm25",
+      "query": "American Gothic 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q03",
+      "variant": "bm25",
+      "query": "Nighthawks 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q04",
+      "variant": "bm25",
+      "query": "Nighthawks 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q05",
+      "variant": "bm25",
+      "query": "The Bedroom 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-111628",
+        "artic-117266",
+        "artic-81558",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q06",
+      "variant": "bm25",
+      "query": "The Bedroom 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-16487",
+        "artic-111628",
+        "artic-117266",
+        "artic-81558"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q07",
+      "variant": "bm25",
+      "query": "Paris Street; Rainy Day 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q08",
+      "variant": "bm25",
+      "query": "Paris Street; Rainy Day 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q09",
+      "variant": "bm25",
+      "query": "画里有农夫和他的女儿站在哥特式农舍前，这幅作品是哪一年画的？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [],
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q10",
+      "variant": "bm25",
+      "query": "深夜餐馆里有三个顾客和一个服务员的那幅画，用的什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q11",
+      "variant": "bm25",
+      "query": "描绘阿尔勒黄色房子卧室的作品，馆藏的这个版本创作于哪一年？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-16568",
+        "artic-80607",
+        "artic-6565"
+      ],
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q12",
+      "variant": "bm25",
+      "query": "用雨伞和湿鹅卵石反光暗示雨天的巴黎街景，是用什么材料画的？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [],
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q13",
+      "variant": "bm25",
+      "query": "毕加索拿着调色板，头和身体被拆成几何平面的肖像，是谁画的？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [],
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q14",
+      "variant": "bm25",
+      "query": "哪件卧室作品是三个版本中的第二个版本，是什么年代的？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.25,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q15",
+      "variant": "bm25",
+      "query": "艺术家想表现大城市孤独感的通宵餐馆画面，其作者是谁？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-8624",
+        "artic-6565",
+        "artic-16568",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q16",
+      "variant": "bm25",
+      "query": "在大萧条初期表达美国乡村积极价值观、画着父女两人的作品，作者是谁？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-8624",
+        "artic-6565",
+        "artic-16568",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q17",
+      "variant": "bm25",
+      "query": "Self-Portrait 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q18",
+      "variant": "bm25",
+      "query": "Self-Portrait 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q19",
+      "variant": "bm25",
+      "query": "A Sunday on La Grande Jatte — 1884 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q20",
+      "variant": "bm25",
+      "query": "A Sunday on La Grande Jatte — 1884 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q21",
+      "variant": "bm25",
+      "query": "The Bay of Marseille, Seen from L'Estaque 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q22",
+      "variant": "bm25",
+      "query": "The Bay of Marseille, Seen from L'Estaque 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q23",
+      "variant": "bm25",
+      "query": "Nightlife 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q24",
+      "variant": "bm25",
+      "query": "Nightlife 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q01",
+      "variant": "hybrid",
+      "query": "American Gothic 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-28560",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 25
+    },
+    {
+      "id": "Q02",
+      "variant": "hybrid",
+      "query": "American Gothic 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 21
+    },
+    {
+      "id": "Q03",
+      "variant": "hybrid",
+      "query": "Nighthawks 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 21
+    },
+    {
+      "id": "Q04",
+      "variant": "hybrid",
+      "query": "Nighthawks 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q05",
+      "variant": "hybrid",
+      "query": "The Bedroom 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-117266",
+        "artic-6565",
+        "artic-80607",
+        "artic-111628"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 21
+    },
+    {
+      "id": "Q06",
+      "variant": "hybrid",
+      "query": "The Bedroom 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-117266",
+        "artic-6565",
+        "artic-80607",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 26
+    },
+    {
+      "id": "Q07",
+      "variant": "hybrid",
+      "query": "Paris Street; Rainy Day 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 24
+    },
+    {
+      "id": "Q08",
+      "variant": "hybrid",
+      "query": "Paris Street; Rainy Day 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-14620"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 18
+    },
+    {
+      "id": "Q09",
+      "variant": "hybrid",
+      "query": "画里有农夫和他的女儿站在哥特式农舍前，这幅作品是哪一年画的？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-80607",
+        "artic-27992",
+        "artic-8624",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 24
+    },
+    {
+      "id": "Q10",
+      "variant": "hybrid",
+      "query": "深夜餐馆里有三个顾客和一个服务员的那幅画，用的什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-28560",
+        "artic-80607",
+        "artic-111628",
+        "artic-27992"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.25,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q11",
+      "variant": "hybrid",
+      "query": "描绘阿尔勒黄色房子卧室的作品，馆藏的这个版本创作于哪一年？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-6565",
+        "artic-117266",
+        "artic-111628",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 24
+    },
+    {
+      "id": "Q12",
+      "variant": "hybrid",
+      "query": "用雨伞和湿鹅卵石反光暗示雨天的巴黎街景，是用什么材料画的？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-16487",
+        "artic-27992",
+        "artic-16568",
+        "artic-14620"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q13",
+      "variant": "hybrid",
+      "query": "毕加索拿着调色板，头和身体被拆成几何平面的肖像，是谁画的？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [
+        "artic-8624",
+        "artic-80607",
+        "artic-16487",
+        "artic-20684",
+        "artic-27992"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 22
+    },
+    {
+      "id": "Q14",
+      "variant": "hybrid",
+      "query": "哪件卧室作品是三个版本中的第二个版本，是什么年代的？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-117266",
+        "artic-6565",
+        "artic-111628",
+        "artic-80607"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q15",
+      "variant": "hybrid",
+      "query": "艺术家想表现大城市孤独感的通宵餐馆画面，其作者是谁？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-80607"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "latency_ms": 18
+    },
+    {
+      "id": "Q16",
+      "variant": "hybrid",
+      "query": "在大萧条初期表达美国乡村积极价值观、画着父女两人的作品，作者是谁？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-111628",
+        "artic-117266",
+        "artic-20684",
+        "artic-27992"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 19
+    },
+    {
+      "id": "Q17",
+      "variant": "hybrid",
+      "query": "Self-Portrait 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-28560",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 22
+    },
+    {
+      "id": "Q18",
+      "variant": "hybrid",
+      "query": "Self-Portrait 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-28560",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 14
+    },
+    {
+      "id": "Q19",
+      "variant": "hybrid",
+      "query": "A Sunday on La Grande Jatte — 1884 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-6565",
+        "artic-80607",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q20",
+      "variant": "hybrid",
+      "query": "A Sunday on La Grande Jatte — 1884 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-6565",
+        "artic-80607",
+        "artic-28560",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q21",
+      "variant": "hybrid",
+      "query": "The Bay of Marseille, Seen from L'Estaque 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-27992",
+        "artic-8624"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q22",
+      "variant": "hybrid",
+      "query": "The Bay of Marseille, Seen from L'Estaque 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-27992",
+        "artic-20684",
+        "artic-8624"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 25
+    },
+    {
+      "id": "Q23",
+      "variant": "hybrid",
+      "query": "Nightlife 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-6565",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 22
+    },
+    {
+      "id": "Q24",
+      "variant": "hybrid",
+      "query": "Nightlife 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 16
+    }
+  ]
+}

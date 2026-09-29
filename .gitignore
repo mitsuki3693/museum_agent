@@ -10,3 +10,5 @@ __pycache__/
 .runtime/
 models/
 logs/
+*.egg-info/
+*.tsbuildinfo

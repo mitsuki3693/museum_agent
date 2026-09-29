@@ -4,7 +4,7 @@
 # ============================================================
 
 # ---------- LLM：DeepSeek（主力对话模型） ----------
-DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+DEEPSEEK_API_KEY=
 DEEPSEEK_BASE_URL=https://api.deepseek.com
 DEEPSEEK_MODEL=deepseek-v4-flash
 DEEPSEEK_TEMPERATURE=0.1
@@ -12,7 +12,7 @@ DEEPSEEK_MAX_TOKENS=2048
 DEEPSEEK_TIMEOUT=60
 
 # ---------- 中转站：非 DeepSeek 模型（bge 等，OpenAI 兼容） ----------
-RELAY_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+RELAY_API_KEY=
 RELAY_BASE_URL=https://yunwu.ai/v1
 RELAY_MODEL=gpt-5.5
 

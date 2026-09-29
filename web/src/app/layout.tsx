@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "文枢 · 跨部门文档处理与问答助手",
-  description: "面向学校多部门的官方制度文档智能处理与问答系统",
+  title: "馆语 · 博物馆可信问答",
+  description: "基于公开馆藏资料的可溯源问答演示",
 };
 
 export default function RootLayout({

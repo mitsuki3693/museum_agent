@@ -1,0 +1,887 @@
+{
+  "kind": "offline paired retrieval comparison",
+  "gold_reviewed": false,
+  "not_online_ab_test": true,
+  "not_answer_accuracy": true,
+  "corpus_sha256": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+  "questions_sha256": "15dbaac065575d4a4f3b5f30cd3f897a133516155b20c71b6fce54e824180726",
+  "embedding": "local",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "prompt_version": "museum-grounded-v1",
+  "python": "3.12.6",
+  "generated_at": 1790606420.6987407,
+  "summary": {
+    "bm25": {
+      "cases": 24,
+      "recall_at_5": 1.0,
+      "mrr": 1.0
+    },
+    "hybrid": {
+      "cases": 24,
+      "recall_at_5": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "id": "Q01",
+      "variant": "bm25",
+      "query": "American Gothic 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 2
+    },
+    {
+      "id": "Q02",
+      "variant": "bm25",
+      "query": "American Gothic 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q03",
+      "variant": "bm25",
+      "query": "Nighthawks 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q04",
+      "variant": "bm25",
+      "query": "Nighthawks 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q05",
+      "variant": "bm25",
+      "query": "The Bedroom 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-111628",
+        "artic-117266",
+        "artic-81558",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q06",
+      "variant": "bm25",
+      "query": "The Bedroom 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-16487",
+        "artic-111628",
+        "artic-117266",
+        "artic-81558"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q07",
+      "variant": "bm25",
+      "query": "Paris Street; Rainy Day 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q08",
+      "variant": "bm25",
+      "query": "Paris Street; Rainy Day 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q09",
+      "variant": "bm25",
+      "query": "Portrait of Pablo Picasso 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [
+        "artic-8624",
+        "artic-80607",
+        "artic-16487",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q10",
+      "variant": "bm25",
+      "query": "Portrait of Pablo Picasso 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [
+        "artic-8624",
+        "artic-80607",
+        "artic-16487",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q11",
+      "variant": "bm25",
+      "query": "Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg) 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-81558"
+      ],
+      "retrieved_ids": [
+        "artic-81558",
+        "artic-14620",
+        "artic-28560",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q12",
+      "variant": "bm25",
+      "query": "Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg) 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-81558"
+      ],
+      "retrieved_ids": [
+        "artic-81558",
+        "artic-14620",
+        "artic-28560",
+        "artic-16487",
+        "artic-111628"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q13",
+      "variant": "bm25",
+      "query": "Cliff Walk at Pourville 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-14620"
+      ],
+      "retrieved_ids": [
+        "artic-14620",
+        "artic-81558",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q14",
+      "variant": "bm25",
+      "query": "Cliff Walk at Pourville 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-14620"
+      ],
+      "retrieved_ids": [
+        "artic-14620",
+        "artic-81558",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q15",
+      "variant": "bm25",
+      "query": "Water Lilies 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16568"
+      ],
+      "retrieved_ids": [
+        "artic-16568",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q16",
+      "variant": "bm25",
+      "query": "Water Lilies 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16568"
+      ],
+      "retrieved_ids": [
+        "artic-16568",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q17",
+      "variant": "bm25",
+      "query": "Self-Portrait 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q18",
+      "variant": "bm25",
+      "query": "Self-Portrait 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q19",
+      "variant": "bm25",
+      "query": "A Sunday on La Grande Jatte — 1884 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q20",
+      "variant": "bm25",
+      "query": "A Sunday on La Grande Jatte — 1884 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q21",
+      "variant": "bm25",
+      "query": "The Bay of Marseille, Seen from L'Estaque 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q22",
+      "variant": "bm25",
+      "query": "The Bay of Marseille, Seen from L'Estaque 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-8624",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 1
+    },
+    {
+      "id": "Q23",
+      "variant": "bm25",
+      "query": "Nightlife 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q24",
+      "variant": "bm25",
+      "query": "Nightlife 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 0
+    },
+    {
+      "id": "Q01",
+      "variant": "hybrid",
+      "query": "American Gothic 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-28560",
+        "artic-80607",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q02",
+      "variant": "hybrid",
+      "query": "American Gothic 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "retrieved_ids": [
+        "artic-6565",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 21
+    },
+    {
+      "id": "Q03",
+      "variant": "hybrid",
+      "query": "Nighthawks 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-6565",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q04",
+      "variant": "hybrid",
+      "query": "Nighthawks 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "retrieved_ids": [
+        "artic-111628",
+        "artic-117266",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 18
+    },
+    {
+      "id": "Q05",
+      "variant": "hybrid",
+      "query": "The Bedroom 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-117266",
+        "artic-6565",
+        "artic-80607",
+        "artic-111628"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q06",
+      "variant": "hybrid",
+      "query": "The Bedroom 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "retrieved_ids": [
+        "artic-28560",
+        "artic-117266",
+        "artic-6565",
+        "artic-80607",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 19
+    },
+    {
+      "id": "Q07",
+      "variant": "hybrid",
+      "query": "Paris Street; Rainy Day 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 18
+    },
+    {
+      "id": "Q08",
+      "variant": "hybrid",
+      "query": "Paris Street; Rainy Day 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "retrieved_ids": [
+        "artic-20684",
+        "artic-27992",
+        "artic-111628",
+        "artic-117266",
+        "artic-14620"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 22
+    },
+    {
+      "id": "Q09",
+      "variant": "hybrid",
+      "query": "Portrait of Pablo Picasso 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [
+        "artic-8624",
+        "artic-80607",
+        "artic-20684",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 22
+    },
+    {
+      "id": "Q10",
+      "variant": "hybrid",
+      "query": "Portrait of Pablo Picasso 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "retrieved_ids": [
+        "artic-8624",
+        "artic-80607",
+        "artic-16487",
+        "artic-20684",
+        "artic-111628"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q11",
+      "variant": "hybrid",
+      "query": "Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg) 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-81558"
+      ],
+      "retrieved_ids": [
+        "artic-81558",
+        "artic-14620",
+        "artic-27992",
+        "artic-28560"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 24
+    },
+    {
+      "id": "Q12",
+      "variant": "hybrid",
+      "query": "Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg) 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-81558"
+      ],
+      "retrieved_ids": [
+        "artic-81558",
+        "artic-14620",
+        "artic-27992",
+        "artic-28560",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 20
+    },
+    {
+      "id": "Q13",
+      "variant": "hybrid",
+      "query": "Cliff Walk at Pourville 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-14620"
+      ],
+      "retrieved_ids": [
+        "artic-14620",
+        "artic-20684",
+        "artic-6565",
+        "artic-81558",
+        "artic-80607"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q14",
+      "variant": "hybrid",
+      "query": "Cliff Walk at Pourville 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-14620"
+      ],
+      "retrieved_ids": [
+        "artic-14620",
+        "artic-6565",
+        "artic-20684",
+        "artic-81558",
+        "artic-111628"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 24
+    },
+    {
+      "id": "Q15",
+      "variant": "hybrid",
+      "query": "Water Lilies 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16568"
+      ],
+      "retrieved_ids": [
+        "artic-16568",
+        "artic-111628",
+        "artic-117266",
+        "artic-27992",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 16
+    },
+    {
+      "id": "Q16",
+      "variant": "hybrid",
+      "query": "Water Lilies 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16568"
+      ],
+      "retrieved_ids": [
+        "artic-16568",
+        "artic-111628",
+        "artic-28560",
+        "artic-27992",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 16
+    },
+    {
+      "id": "Q17",
+      "variant": "hybrid",
+      "query": "Self-Portrait 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-28560",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 27
+    },
+    {
+      "id": "Q18",
+      "variant": "hybrid",
+      "query": "Self-Portrait 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "retrieved_ids": [
+        "artic-80607",
+        "artic-8624",
+        "artic-28560",
+        "artic-111628",
+        "artic-117266"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 21
+    },
+    {
+      "id": "Q19",
+      "variant": "hybrid",
+      "query": "A Sunday on La Grande Jatte — 1884 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-6565",
+        "artic-80607",
+        "artic-28560",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 19
+    },
+    {
+      "id": "Q20",
+      "variant": "hybrid",
+      "query": "A Sunday on La Grande Jatte — 1884 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "retrieved_ids": [
+        "artic-27992",
+        "artic-6565",
+        "artic-80607",
+        "artic-28560",
+        "artic-16487"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 18
+    },
+    {
+      "id": "Q21",
+      "variant": "hybrid",
+      "query": "The Bay of Marseille, Seen from L'Estaque 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-27992",
+        "artic-8624"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 30
+    },
+    {
+      "id": "Q22",
+      "variant": "hybrid",
+      "query": "The Bay of Marseille, Seen from L'Estaque 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-16487"
+      ],
+      "retrieved_ids": [
+        "artic-16487",
+        "artic-28560",
+        "artic-27992",
+        "artic-20684",
+        "artic-8624"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 28
+    },
+    {
+      "id": "Q23",
+      "variant": "hybrid",
+      "query": "Nightlife 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-6565",
+        "artic-16568"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 23
+    },
+    {
+      "id": "Q24",
+      "variant": "hybrid",
+      "query": "Nightlife 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-117266"
+      ],
+      "retrieved_ids": [
+        "artic-117266",
+        "artic-111628",
+        "artic-28560",
+        "artic-16568",
+        "artic-6565"
+      ],
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0,
+      "latency_ms": 25
+    }
+  ]
+}
