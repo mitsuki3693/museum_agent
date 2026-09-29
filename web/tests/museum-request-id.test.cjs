@@ -62,3 +62,12 @@ test('retry preserves the message idempotency key and original question', async 
   assert.equal(calls[1].body.query, retry.query);
   assert.equal(calls[1].body.action, 'question');
 });
+
+test('route submission preserves time, accessibility and skipped stops', async () => {
+  const {api, calls} = client({getRandomValues: array => webcrypto.getRandomValues(array)});
+  const route = {minutes: 30, start_id: 'entrance', interests: ['sculpture'], step_free: true, skip_ids: ['g2']};
+  await api.askMuseum('route-session', {...request, query: '规划参观路线', action: 'route', route});
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0].body.route)), route);
+  assert.equal(calls[0].body.action, 'route');
+  assert.equal(calls[0].headers.Authorization, 'Bearer route-session');
+});

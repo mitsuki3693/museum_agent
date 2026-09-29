@@ -19,11 +19,13 @@ from .config import MuseumSettings
 from .retrieval import MuseumIndex
 from .engine import MuseumEngine
 from .vision import PhotoRecognizer, MAX_UPLOAD_BYTES
+from .routes import RoutePlanner, RoutePreferences, RouteService, is_route_question
 
 class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=600)
     mode: Literal["brief", "deep", "children"] = "brief"
-    action: Literal["question", "narration"] = "question"
+    action: Literal["question", "narration", "route"] = "question"
+    route: RoutePreferences | None = None
     object_id: str | None = Field(default=None, max_length=100)
     request_id: UUID
 
@@ -50,6 +52,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         await index.start()
         app.state.store, app.state.index = store, index
         app.state.engine = MuseumEngine(config, store, index, client_factory)
+        app.state.routes = RouteService(RoutePlanner(config.museum_route_manifest), app.state.engine)
         if config.museum_visual_manifest:
             from .visual_index import MuseumVisualIndex
             visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records)
@@ -84,8 +87,13 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "storage": config.museum_storage, "retrieval": config.museum_embedding,
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
+                "route_planning": app.state.routes.planner.unavailable() is None,
                 "photo_retrieval": "image_and_text" if getattr(app.state.engine, "visual_index", None) else "caption_text",
                 "visual_index_hash": getattr(getattr(app.state.engine, "visual_index", None), "index_hash", None)}
+
+    @app.get("/api/museum/routes/options")
+    async def route_options():
+        return app.state.routes.planner.options()
 
     @app.get("/api/museum/objects")
     async def objects():
@@ -166,6 +174,14 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             raise HTTPException(422, "藏品不在当前资料范围内")
         if body.action == "narration" and not body.object_id:
             raise HTTPException(422, "请先确认要讲解的作品")
+        if body.route is not None and body.action != "route":
+            raise HTTPException(422, "路线偏好只能用于路线请求")
+        route_request = body.action == "route" or (body.action == "question" and is_route_question(body.query))
+        if body.route and not app.state.routes.planner.unavailable():
+            try:
+                app.state.routes.planner.validate_preferences(body.route)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc)) from None
         lock = locks.setdefault(current["_id"], asyncio.Lock())
         if lock.locked():
             raise HTTPException(409, "上一个问题仍在处理，请等待完成")
@@ -183,9 +199,12 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             current = await app.state.store.get("museum_sessions", current["_id"])
             async with app.state.slots:
                 try:
-                    handler = app.state.engine.narrate if body.action == "narration" else app.state.engine.answer
-                    result = await asyncio.wait_for(handler(body.query.strip(), current, body.mode, body.object_id),
-                                                    timeout=config.museum_timeout)
+                    if route_request:
+                        work = app.state.routes.handle(body.query.strip(), current, body.object_id, body.route)
+                    else:
+                        handler = app.state.engine.narrate if body.action == "narration" else app.state.engine.answer
+                        work = handler(body.query.strip(), current, body.mode, body.object_id)
+                    result = await asyncio.wait_for(work, timeout=config.museum_timeout)
                 except asyncio.TimeoutError:
                     raise HTTPException(504, "回答超时，请稍后重试") from None
             await app.state.store.upsert("museum_sessions", current)

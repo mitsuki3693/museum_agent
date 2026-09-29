@@ -2,9 +2,10 @@
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {VoiceInput} from "./MuseumSpeech";
 
-export default function ChatComposer({busy, configured, selectedName, onSend, onUnselect}: {
+export default function ChatComposer({busy, configured, selectedName, onSend, onUnselect, onRoute}: {
   busy: boolean; configured: boolean; selectedName: string;
   onSend: (text: string, file: File | null) => void; onUnselect: () => void;
+  onRoute: (text: string) => void;
 }) {
   const [text, setText] = useState(""), [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState(""), [error, setError] = useState("");
@@ -50,6 +51,7 @@ export default function ChatComposer({busy, configured, selectedName, onSend, on
           <button type="button" className="tool-button" disabled={busy || !configured} onClick={() => album.current?.click()}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 17l6-6 5 5 3-3 4 4"/><circle cx="16" cy="8" r="1"/></svg>相册</button>
           <VoiceInput disabled={busy} onText={setText}/>
+          {!file && <button type="button" className="tool-button route-tool" disabled={busy} onClick={() => {onRoute(text); setText("");}}>路线</button>}
         </div>
         <button type="submit" className="send-button" disabled={busy || (!text.trim() && !file) || Boolean(file && !configured)}>{busy ? "处理中…" : "发送 ↑"}</button>
       </div>

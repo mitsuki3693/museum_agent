@@ -7,14 +7,16 @@ import {ListenButton} from "@/components/MuseumSpeech";
 import {museumApi, askMuseum, identifyMuseumPhoto, QuestionRequest} from "@/lib/museum-api";
 import {MuseumObject, workName} from "@/lib/museum-types";
 import {createRequestId} from "@/lib/request-id";
+import RoutePanel from "@/components/RoutePanel";
+import type {FacilityResult, RouteOptions, RoutePreferences, VisitRoute} from "@/lib/route-types";
 
 type Source = {id: string; title: string; content: string; source_url: string; fetched_at: string; license: string; attribution?: string; license_url?: string; source_kind?: string; narrator?: string};
 type Candidate = {id: string; title: string; artist?: string};
-type Result = {trace_id: string; status: string; answer: string; mode: string; candidates?: Candidate[]; claims: {text: string; source_id: string; quote: string}[]; sources: Source[]};
+type Result = {trace_id: string; status: string; answer: string; mode: string; candidates?: Candidate[]; claims: {text: string; source_id: string; quote: string}[]; sources: Source[]; route_options?: RouteOptions; route_preferences?: RoutePreferences; route?: VisitRoute; facilities?: FacilityResult};
 type PhotoResult = {trace_id: string; status: string; message: string; candidates: Candidate[]};
 type Turn = {id: string; question: string; image?: string; photoQuestion?: string; pending: boolean; result?: Result; photo?: PhotoResult; error?: string; request?: QuestionRequest};
 type Health = {model_configured: boolean; storage: string; corpus_count: number};
-const labels: Record<string, string> = {needs_confirmation: "先确认作品", answered: "附引用依据", retrieval_only: "原始资料", insufficient_evidence: "资料不足", verification_failed: "讲解尚未通过核对", service_unavailable: "服务暂不可用"};
+const labels: Record<string, string> = {needs_confirmation: "先确认作品", answered: "附引用依据", retrieval_only: "原始资料", insufficient_evidence: "资料不足", verification_failed: "讲解尚未通过核对", service_unavailable: "服务暂不可用", route_setup: "确认参观偏好", route_ready: "参观顺序建议", route_unavailable: "暂不能规划这条路线", facility_found: "馆方设施信息", facility_unavailable: "设施资料不足"};
 const styles = [["brief", "简明版"], ["deep", "深入一点"], ["children", "讲给孩子听"]];
 
 export default function Home() {
@@ -38,11 +40,11 @@ export default function Home() {
   function updateTurn(id: string, patch: Partial<Turn>) {
     setTurns(current => current.map(turn => turn.id === id ? {...turn, ...patch} : turn));
   }
-  async function ask(text: string, objectOverride = selected, mode = "brief", action = "question", retry?: Turn) {
+  async function ask(text: string, objectOverride = selected, mode = "brief", action = "question", retry?: Turn, route?: RoutePreferences) {
     if (!text.trim() || inFlight.current) return;
     inFlight.current = true; setBusy(true); setError("");
     const id = retry?.id || createRequestId();
-    const request = retry?.request || {query: text.trim(), object_id: objectOverride, mode, action, request_id: createRequestId()};
+    const request = retry?.request || {query: text.trim(), object_id: objectOverride, mode, action, request_id: createRequestId(), ...(route ? {route} : {})};
     if (retry) updateTurn(id, {pending: true, error: undefined});
     else setTurns(current => [...current, {id, question: text, pending: true, request}]);
     try {
@@ -103,13 +105,13 @@ export default function Home() {
   const selectedItem = items.find(item => item.id === selected);
   return <main className="chat-shell">
     <header className="chat-header">
-      <a className="brand" href="/">馆语<span>陪你看懂眼前的作品</span></a>
+      <a className="brand" href="/" aria-label="MUSE · 你的博物馆随行助手"><strong className="brand-wordmark">MUSE<span className="brand-dot" aria-hidden="true">.</span></strong><span className="brand-tagline">YOUR MUSEUM COMPANION</span></a>
       <div className="header-actions"><CollectionPicker items={items} busy={busy} onChoose={choose}/><button className="quiet" onClick={clear} disabled={busy}>新对话</button></div>
     </header>
     <section className="chat-log" aria-label="藏品对话">
       <div className="chat-width">
-        <div className="welcome-message"><span className="assistant-avatar" aria-hidden="true">馆</span><div>
-          <div className="welcome-label">你的随身讲解员</div><h1>这一件，有什么故事？</h1>
+        <div className="welcome-message"><span className="assistant-avatar" aria-hidden="true">m</span><div>
+          <div className="welcome-label">LOOK CLOSER. <span>看见更多。</span></div><h1>这一件，有什么故事？</h1>
           <p>拍一张照片，或直接提问。先听一小段，再聊你感兴趣的细节。</p>
           {!turns.length && <div className="starter-works">{items.filter(item => item.image_url).slice(0, 3).map(item => <button key={item.id} disabled={busy} onClick={() => choose(item.id)}>
             <img src={item.image_url} alt=""/><span>{workName(item)}<small>从这件开始 ↗</small></span>
@@ -119,14 +121,18 @@ export default function Home() {
         <div className="turns" aria-live="polite">
           {turns.map(turn => <article className="turn" key={turn.id}>
             <div className="question">{turn.image && <img className="sent-photo" src={turn.image} alt="你发送的作品照片"/>}<p>{turn.question}</p></div>
-            <div className="assistant-message"><span className="assistant-avatar" aria-hidden="true">馆</span><div className="answer">
-              <div className="answer-label">馆语{turn.result && <span>{labels[turn.result.status] || turn.result.status}</span>}</div>
-              {turn.pending && <p className="loading" role="status"><span className="loading-dot"/>{turn.image ? "正在对照馆藏图片，请稍候…" : "正在查找资料与讲解依据…"}</p>}
+            <div className="assistant-message"><span className="assistant-avatar" aria-hidden="true">m</span><div className="answer">
+              <div className="answer-label">MUSE{turn.result && <span>{labels[turn.result.status] || turn.result.status}</span>}</div>
+              {turn.pending && <p className="loading" role="status"><span className="loading-dot"/>{turn.image ? "正在对照馆藏图片，请稍候…" : turn.request?.action === "route" ? "正在查看路线与设施资料…" : "正在查找资料与讲解依据…"}</p>}
               {turn.error && <div className="error" role="alert"><p>{turn.error}</p>{turn.request ? <button className="quiet" disabled={busy} onClick={() => ask(turn.question, "", "brief", "question", turn)}>重试这条消息</button> : <p>可以从下方重新选择照片发送。</p>}</div>}
               {turn.photo && <><p className="answer-text">{turn.photo.message}</p>{Boolean(turn.photo.candidates?.length) && candidateCards(turn.photo.candidates, turn.photoQuestion)}</>}
               {turn.result && <>
                 {turn.result.claims.length ? turn.result.claims.map((claim, index) => <p className="answer-text" key={index}>{claim.text}</p>) : <p className="answer-text">{turn.result.answer}</p>}
                 {Boolean(turn.result.candidates?.length) && candidateCards(turn.result.candidates!)}
+                {turn.result.route_options && <RoutePanel options={turn.result.route_options} initial={turn.result.route_preferences} route={turn.result.route} facilities={turn.result.facilities} busy={busy} onChoose={choose} onFind={query => ask(query, selected, "brief", "route")}
+                  onPlan={preferences => {const options = turn.result!.route_options!; const start = options.starts?.find(item => item.id === preferences.start_id)?.title || preferences.start_id;
+                    const interests = options.interests?.filter(item => preferences.interests.includes(item.id)).map(item => item.label).join("、") || "综合参观";
+                    ask(`请安排 ${preferences.minutes} 分钟的路线，从${start}出发，偏好${interests}${preferences.step_free ? "，需要全程无台阶" : ""}${preferences.skip_ids.length ? "，跳过已看过的展厅" : ""}。`, selected, "brief", "route", undefined, preferences);}}/>}
                 {turn.result.status === "answered" && <div className="answer-actions"><ListenButton text={turn.result.answer}/>
                   {turn.result.sources.length === 1 && styles.filter(([style]) => style !== turn.result!.mode).map(([style, label]) => <button className="style-button" key={style} disabled={busy} onClick={() => narrate(turn.result!.sources[0].id, style)}>{label} ↗</button>)}
                 </div>}
@@ -150,7 +156,7 @@ export default function Home() {
     <footer className="chat-footer"><div className="chat-width">
       {error && <p role="alert" className="error">{error}</p>}
       <ChatComposer key={generation} busy={busy} configured={Boolean(health?.model_configured)} selectedName={selectedItem ? workName(selectedItem) : ""}
-        onSend={(text, file) => {if (file) identify(file, text); else ask(text);}} onUnselect={unselect}/>
+        onSend={(text, file) => {if (file) identify(file, text); else ask(text);}} onUnselect={unselect} onRoute={text => ask(text.trim() || "帮我规划参观路线。", selected, "brief", "route")}/>
       <details className="demo-info"><summary>关于这个演示</summary><p>资料为固定快照，不提供实时展位、开放时间或票价。本演示与馆方无隶属关系。语音由浏览器识别，确认文字后才发送；请勿输入个人敏感信息。{health?.storage === "memory" && "演示会话保留 30 分钟，服务重启后聊天和反馈会清空。"} <a href="/review">回答评审记录</a></p></details>
     </div></footer>
   </main>;

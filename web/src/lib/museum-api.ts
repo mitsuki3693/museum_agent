@@ -1,4 +1,5 @@
 import {createRequestId} from "./request-id";
+import type {RoutePreferences} from "./route-types";
 
 export async function museumApi(path: string, options: RequestInit = {}) {
   const response = await fetch(`/api/museum/${path}`, options);
@@ -10,7 +11,7 @@ export async function museumApi(path: string, options: RequestInit = {}) {
   return data;
 }
 
-export type QuestionRequest = {query: string; object_id: string; mode: string; action: string; request_id?: string};
+export type QuestionRequest = {query: string; object_id: string; mode: string; action: string; request_id?: string; route?: RoutePreferences};
 
 export function askMuseum(token: string, request: QuestionRequest) {
   return museumApi("chat", {

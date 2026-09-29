@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "馆语 · 博物馆可信问答",
-  description: "基于公开馆藏资料的可溯源问答演示",
+  title: "MUSE · 你的博物馆随行助手",
+  description: "拍照、听讲解、找路线。基于馆藏与馆方资料的博物馆随行助手演示。",
 };
 
 export default function RootLayout({

@@ -23,3 +23,5 @@ class MuseumSettings(BaseSettings):
     # Opt-in: unset manifest is the explicit rollback to caption/text retrieval.
     museum_visual_manifest: Path | None = None
     museum_visual_model: Path = ROOT / "models/dinov2-small"
+    # A separately sourced, optional route snapshot; never inferred from artwork descriptions.
+    museum_route_manifest: Path | None = None
