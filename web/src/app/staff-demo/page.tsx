@@ -32,7 +32,7 @@ export default function StaffDemo() {
   const xs = data?.area?.map(p => p[0]) || [0], ys = data?.area?.map(p => p[1]) || [0];
   const focus = [Math.min(...xs) - 150, Math.min(...ys) - 100, Math.max(...xs) - Math.min(...xs) + 300, Math.max(...ys) - Math.min(...ys) + 200];
   return <main className="ops-shell">
-    <header className="ops-header"><a href="/" className="brand"><strong>MUSE.</strong></a><span>馆方工作台 · 案例演示</span><a href="/">返回游客端 ↗</a></header>
+    <header className="ops-header"><a href="/" className="brand"><strong>MUSE.</strong></a><span>馆方工作台 · 案例演示</span><a href="/conservation-demo">文保工作台 ↗</a><a href="/">返回游客端 ↗</a></header>
     <div className="ops-intro"><span className="ops-eyebrow">ONE SCENARIO / 两端协作</span><h1>从发现异常，到调整参观。</h1>
       <p>模拟游客聚集与环境异常，演示工作人员复核后，游客路线如何变化。</p>
       <div className="ops-demo-notice"><strong>演示数据</strong> 人数、环境读数与限制均为模拟。此页不读取内部文保资料，也不会发布真实通行限制。</div>
