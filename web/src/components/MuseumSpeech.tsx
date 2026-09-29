@@ -12,7 +12,7 @@ export function VoiceInput({onText,disabled}:{onText:(text:string)=>void;disable
   recognition.onerror=()=>{setNotice("无法识别语音，请检查麦克风权限，或改用打字。");setListening(false);};recognition.onend=()=>setListening(false);
   try{recognition.start();setListening(true);setNotice("");}catch{setNotice("语音服务暂不可用，可以先打字。");}
  }
- return <div className="voice-input"><button type="button" className="quiet" disabled={disabled||!supported} onClick={toggle}>{listening?"停止录音":"说出你的问题"}</button><small>{notice||(supported?"语音由浏览器的识别服务处理；确认文字后才发送。":"当前浏览器不支持语音输入，可直接打字。")}</small></div>;
+ return <div className="voice-input"><button type="button" className="tool-button" aria-label={listening?"停止录音":"语音输入"} title={supported?"语音由浏览器的识别服务处理；确认文字后才发送。":"当前浏览器不支持语音输入，可直接打字。"} disabled={disabled||!supported} onClick={toggle}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0014 0v-2M12 19v3M8 22h8"/></svg>{listening?"停止":"语音"}</button>{notice&&<small className="voice-notice" role="status">{notice}</small>}</div>;
 }
 
 export function ListenButton({text}:{text:string}){

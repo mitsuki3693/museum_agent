@@ -6,50 +6,59 @@ const vm = require('node:vm');
 const {webcrypto} = require('node:crypto');
 const ts = require('typescript');
 
-// Execute the actual page's submit handler, with browser APIs matching LAN HTTP.
-// The React setters and network are isolated; the request-building path is real.
-async function submit(browserCrypto) {
-  const page = fs.readFileSync(path.join(__dirname, '../src/app/page.tsx'), 'utf8');
-  const handler = page.slice(page.indexOf(' async function ask('), page.indexOf(' async function clear('));
-  assert.ok(handler.includes('request_id'), 'submit handler was not located');
-  const calls = [], errors = [], turns = [];
-  const context = vm.createContext({
-    crypto: browserCrypto, Uint8Array, busy: false, mode: 'brief',
-    ensureSession: async () => 'test-session',
-    api: async (route, options) => {calls.push({route, body: JSON.parse(options.body)}); return {status: 'answered'};},
-    setBusy() {}, setError: error => {if(error) errors.push(error);}, setQuery() {},
-    setTurns: update => turns.push(...update([])), exports: {},
+// Run the production network module in a browser-like context, including LAN HTTP.
+function client(browserCrypto, responses = [{ok: true, data: {status: 'answered'}}]) {
+  const calls = [];
+  const context = vm.createContext({crypto: browserCrypto, Uint8Array, exports: {},
+    fetch: async (url, options) => {
+      calls.push({url, ...options, body: JSON.parse(options.body)});
+      const response = responses.shift();
+      return {ok: response.ok, headers: {get: () => 'application/json'}, json: async () => response.data};
+    },
   });
-  const helper = path.join(__dirname, '../src/lib/request-id.ts');
-  if (fs.existsSync(helper)) {
-    vm.runInContext(ts.transpileModule(fs.readFileSync(helper, 'utf8'), {
+  function load(file) {
+    context.exports = {};
+    vm.runInContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../src/lib/', file), 'utf8'), {
       compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2017},
     }).outputText, context);
-    context.createRequestId = context.exports.createRequestId;
+    return context.exports;
   }
-  await vm.runInContext(ts.transpileModule(handler + '\nask("介绍睡莲", "artic-16568");', {
-    compilerOptions: {target: ts.ScriptTarget.ES2017},
-  }).outputText, context);
-  return {calls, errors, turns};
+  const ids = load('request-id.ts');
+  context.require = name => {assert.equal(name, './request-id'); return ids;};
+  return {api: load('museum-api.ts'), calls};
 }
+const request = {query: '  介绍睡莲  ', object_id: 'artic-16568', mode: 'brief', action: 'narration'};
 
-test('LAN HTTP: selecting an artwork sends chat even without crypto.randomUUID', async () => {
-  const browserCrypto = {getRandomValues: array => webcrypto.getRandomValues(array)};
-  const ids = [];
-  for (let i=0; i<2; i++) {
-    const result = await submit(browserCrypto);
-    assert.deepEqual(result.errors, [], 'selecting an artwork must not show a crypto error');
-    assert.equal(result.calls.length, 1);
-    assert.equal(result.calls[0].body.object_id, 'artic-16568');
-    assert.equal(result.turns.length, 1);
-    ids.push(result.calls[0].body.request_id);
-    assert.match(ids[i], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+test('LAN HTTP sends authenticated artwork requests without crypto.randomUUID', async () => {
+  const {api, calls} = client({getRandomValues: array => webcrypto.getRandomValues(array)}, [
+    {ok: true, data: {status: 'answered'}}, {ok: true, data: {status: 'answered'}},
+  ]);
+  await api.askMuseum('demo-session', request);
+  await api.askMuseum('demo-session', request);
+  for (const call of calls) {
+    assert.equal(call.url, '/api/museum/chat');
+    assert.equal(call.headers.Authorization, 'Bearer demo-session');
+    assert.equal(call.body.object_id, request.object_id);
+    assert.equal(call.body.query, '介绍睡莲');
+    assert.equal(call.body.action, 'narration');
+    assert.match(call.body.request_id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   }
-  assert.notEqual(ids[0], ids[1], 'separate questions must not share an idempotency key');
+  assert.notEqual(calls[0].body.request_id, calls[1].body.request_id);
 });
-
-test('secure context: native UUID still sends the selected artwork', async () => {
-  const result = await submit(webcrypto);
-  assert.deepEqual(result.errors, []);
-  assert.equal(result.calls.length, 1);
+test('secure context sends a native UUID', async () => {
+  const {api, calls} = client(webcrypto);
+  assert.equal((await api.askMuseum('demo-session', request)).status, 'answered');
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].body.request_id, /^[0-9a-f-]{36}$/);
+});
+test('retry preserves the message idempotency key and original question', async () => {
+  const {api, calls} = client(webcrypto, [
+    {ok: false, data: {detail: 'temporarily unavailable'}}, {ok: true, data: {status: 'answered'}},
+  ]);
+  const retry = {...request, query: '这件作品是谁创作的？', action: 'question', request_id: webcrypto.randomUUID()};
+  await assert.rejects(api.askMuseum('demo-session', retry), /temporarily unavailable/);
+  await api.askMuseum('demo-session', retry);
+  assert.deepEqual(calls[0].body, calls[1].body);
+  assert.equal(calls[1].body.query, retry.query);
+  assert.equal(calls[1].body.action, 'question');
 });

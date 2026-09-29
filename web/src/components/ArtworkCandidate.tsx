@@ -8,7 +8,7 @@ export default function ArtworkCandidate({work,onConfirm,disabled}:{work:Candida
  return <div className="artwork-candidate">
   {work.image_url&&!failed?<img src={work.image_url} alt={work.display_title||names[work.id]||work.title} onError={()=>setFailed(true)}/>:<p className="image-unavailable">这件作品暂缺可显示的图片，请核对名称或查看馆方页面。</p>}
   <div><strong>{work.display_title||names[work.id]||work.title}</strong><small>{work.title}{work.artist?` · ${work.artist}`:""}</small>
-   <button className="primary" disabled={disabled} onClick={()=>onConfirm(work.id)}>就是这幅，听简短讲解</button>
+   <button className="primary" disabled={disabled} onClick={()=>onConfirm(work.id)}>就是这件，继续聊</button>
    {work.source_url&&<a href={work.source_url} target="_blank" rel="noreferrer">查看馆方原始页面 ↗</a>}
   </div>
  </div>;
