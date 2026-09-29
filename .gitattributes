@@ -1,0 +1,8 @@
+* text=auto eol=lf
+# Preserve frozen data and evidence bytes used by SHA-256 reports.
+data/** -text
+eval/*.json -text
+*.xml -text
+*.png -text
+*.jpg -text
+*.webp -text
