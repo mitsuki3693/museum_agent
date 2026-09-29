@@ -21,6 +21,7 @@ from .engine import MuseumEngine
 from .vision import PhotoRecognizer, MAX_UPLOAD_BYTES
 from .routes import RoutePlanner, RoutePreferences, RouteService, is_route_question
 from .floor_demo import FloorDemo
+from .operations_demo import OperationsDemo
 
 class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=600)
@@ -55,6 +56,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         app.state.engine = MuseumEngine(config, store, index, client_factory)
         app.state.routes = RouteService(RoutePlanner(config.museum_route_manifest), app.state.engine)
         app.state.floor_demo = FloorDemo(config.museum_floor_demo_manifest)
+        app.state.operations_demo = OperationsDemo(config.museum_operations_demo_manifest, app.state.routes.planner)
         if config.museum_visual_manifest:
             from .visual_index import MuseumVisualIndex
             visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records)
@@ -100,6 +102,11 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
     @app.get("/api/museum/routes/floor-demo")
     async def floor_demo():
         return app.state.floor_demo.describe()
+
+    @app.get("/api/museum/demo/operations")
+    async def operations_demo():
+        # Public demo data only. It does not accept role flags or publish changes.
+        return app.state.operations_demo.describe()
 
     @app.get("/api/museum/routes/floor-demo/tiles/{tile_id}")
     async def floor_demo_tile(tile_id: str):

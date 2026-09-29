@@ -26,3 +26,4 @@ class MuseumSettings(BaseSettings):
     # A separately sourced, optional route snapshot; never inferred from artwork descriptions.
     museum_route_manifest: Path | None = None
     museum_floor_demo_manifest: Path | None = None
+    museum_operations_demo_manifest: Path | None = None

@@ -157,7 +157,7 @@ export default function Home() {
       {error && <p role="alert" className="error">{error}</p>}
       <ChatComposer key={generation} busy={busy} configured={Boolean(health?.model_configured)} selectedName={selectedItem ? workName(selectedItem) : ""}
         onSend={(text, file) => {if (file) identify(file, text); else ask(text);}} onUnselect={unselect} onRoute={text => ask(text.trim() || "帮我规划参观路线。", selected, "brief", "route")}/>
-      <details className="demo-info"><summary>关于这个演示</summary><p>资料为固定快照，不提供实时展位、开放时间或票价。本演示与馆方无隶属关系。语音由浏览器识别，确认文字后才发送；请勿输入个人敏感信息。{health?.storage === "memory" && "演示会话保留 30 分钟，服务重启后聊天和反馈会清空。"} <a href="/review">回答评审记录</a></p></details>
+      <details className="demo-info"><summary>关于这个演示</summary><p>资料为固定快照，不提供实时展位、开放时间或票价。本演示与馆方无隶属关系。语音由浏览器识别，确认文字后才发送；请勿输入个人敏感信息。{health?.storage === "memory" && "演示会话保留 30 分钟，服务重启后聊天和反馈会清空。"} <a href="/review">回答评审记录</a> · <a href="/staff-demo">馆方协作演示</a></p></details>
     </div></footer>
   </main>;
 }
