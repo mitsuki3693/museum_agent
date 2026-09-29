@@ -4,6 +4,8 @@
 
 ## 当前状态（2026-09-29）
 
+代码已发布到 [GitHub](https://github.com/mitsuki3693/museum_agent)；应用代码提交 `7ac23d6` 的 [Actions 检查已通过](https://github.com/mitsuki3693/museum_agent/actions/runs/36545829709)。
+
 - 原版 59 项离线测试通过；当前共 81 项测试通过，见 `docs/combined-tests.xml`。
 - 网页生产构建通过，真实本地多语言向量模型已运行。
 - 已导入 12 件公开藏品，准备 40 道待人工复核问题。
