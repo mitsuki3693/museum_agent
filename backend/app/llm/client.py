@@ -65,6 +65,9 @@ class LLMClient(ABC):
     def _chat_url(self) -> str:
         return f"{self.base_url}/chat/completions"
 
+    def _extra_payload(self) -> dict[str, Any]:
+        return {}
+
     async def complete(
         self,
         messages: list[dict[str, str]],
@@ -85,6 +88,7 @@ class LLMClient(ABC):
         }
         if response_format is not None:
             payload["response_format"] = response_format
+        payload.update(self._extra_payload())
 
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -127,6 +131,7 @@ class LLMClient(ABC):
             "max_tokens": self.max_tokens,
             "stream": True,
         }
+        payload.update(self._extra_payload())
         payload.update(kwargs)
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:

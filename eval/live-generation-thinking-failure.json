@@ -1,0 +1,114 @@
+{
+  "kind": "single live generation smoke; not accuracy evaluation",
+  "generated_at": 1790652995.0093365,
+  "result": {
+    "trace_id": "7aaf6daf63464f6e8248a8ae9d83403c",
+    "status": "service_unavailable",
+    "answer": "AI 服务暂时不可用，已保留原始资料供你查阅。请稍后重试。",
+    "claims": [],
+    "sources": [
+      {
+        "id": "artic-28560",
+        "title": "The Bedroom",
+        "content": "名称 Title: The Bedroom\n藏品编号 Object ID: 28560\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1889\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 73.6 × 92.3 cm (29 × 36 5/8 in.); Framed: 88.9 × 108 × 8.9 cm (35 × 42 1/2 × 3 1/2 in.)\n创作地 Origin: Saint-Rémy-de-Provence\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.417\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Perhaps the most famous depiction of a bedroom in Western art history, this vibrant painting documents Vincent van Gogh’s sleeping quarters in his beloved “Yellow House” in Arles, France. The composition exists in three versions, the first of which Van Gogh conceived in October 1888, a month after he moved into the home. In a letter to his brother Theo, he described having painted “the walls pale lilac, the floor in a broken and faded red, the chairs and the bed chrome yellow, the pillows and the sheet very pale lemon green, the bedspread blood-red, the dressing table orange, the washbasin blue, the window green.” With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy. But the artist understood it as a calming and restful image. The painting in the Art Institute’s collection is Van Gogh’s second version of the scene, made nearly a year after the first, in September 1889. He produced a third, smaller version at the same time as a gift for his mother and sister.",
+        "source_url": "https://www.artic.edu/artworks/28560",
+        "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+        "fetched_at": "2026-09-28T14:25:14.834679+00:00",
+        "source_hash": "ed909e866c117cf11048b7fe2818a725e817ea167e5fa1513b709ece3dcb0631",
+        "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "retrieved_ids": [
+      "artic-28560"
+    ],
+    "mode": "brief",
+    "verification": {
+      "passed": false,
+      "kind": "not_run"
+    },
+    "latency_ms": 10697,
+    "usage": [
+      {
+        "model": "deepseek-flash",
+        "prompt_tokens": 1282,
+        "completion_tokens": 1799,
+        "total_tokens": 3081,
+        "prompt_tokens_details": {
+          "cached_tokens": 1148
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1799
+        },
+        "prompt_cache_hit_tokens": 1148,
+        "prompt_cache_miss_tokens": 134
+      }
+    ]
+  },
+  "traces": [
+    {
+      "_id": "7aaf6daf63464f6e8248a8ae9d83403c",
+      "session_id": "local-live-smoke",
+      "created_at": 1790652995.0085013,
+      "query": "请介绍这件作品，让我先知道值得留意的地方。",
+      "rewritten_query": "请介绍这件作品，让我先知道值得留意的地方。",
+      "rewrite_error": null,
+      "object_id": "artic-28560",
+      "variant": "hybrid",
+      "model": "deepseek-flash",
+      "embedding": "local",
+      "corpus_hash": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+      "prompt_version": "museum-grounded-v1",
+      "attempts": [
+        {
+          "attempt": 0,
+          "error": "LLMError"
+        }
+      ],
+      "result": {
+        "trace_id": "7aaf6daf63464f6e8248a8ae9d83403c",
+        "status": "service_unavailable",
+        "answer": "AI 服务暂时不可用，已保留原始资料供你查阅。请稍后重试。",
+        "claims": [],
+        "sources": [
+          {
+            "id": "artic-28560",
+            "title": "The Bedroom",
+            "content": "名称 Title: The Bedroom\n藏品编号 Object ID: 28560\n作者 Artist: Vincent van Gogh (Dutch, 1853–1890)\n年代 Date: 1889\n材质 Medium: Oil on canvas\n尺寸 Dimensions: 73.6 × 92.3 cm (29 × 36 5/8 in.); Framed: 88.9 × 108 × 8.9 cm (35 × 42 1/2 × 3 1/2 in.)\n创作地 Origin: Saint-Rémy-de-Provence\n入藏信息 Credit line: Helen Birch Bartlett Memorial Collection\n馆藏编号 Accession number: 1926.417\n分类 Classification: oil on canvas\n馆藏部门 Department: Painting and Sculpture of Europe\n馆方介绍 Description: Perhaps the most famous depiction of a bedroom in Western art history, this vibrant painting documents Vincent van Gogh’s sleeping quarters in his beloved “Yellow House” in Arles, France. The composition exists in three versions, the first of which Van Gogh conceived in October 1888, a month after he moved into the home. In a letter to his brother Theo, he described having painted “the walls pale lilac, the floor in a broken and faded red, the chairs and the bed chrome yellow, the pillows and the sheet very pale lemon green, the bedspread blood-red, the dressing table orange, the washbasin blue, the window green.” With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy. But the artist understood it as a calming and restful image. The painting in the Art Institute’s collection is Van Gogh’s second version of the scene, made nearly a year after the first, in September 1889. He produced a third, smaller version at the same time as a gift for his mother and sister.",
+            "source_url": "https://www.artic.edu/artworks/28560",
+            "license": "Metadata: CC0-1.0; description: CC-BY-4.0",
+            "fetched_at": "2026-09-28T14:25:14.834679+00:00",
+            "source_hash": "ed909e866c117cf11048b7fe2818a725e817ea167e5fa1513b709ece3dcb0631",
+            "attribution": "Art Institute of Chicago. Description converted from HTML to plain text; metadata labels added in Chinese.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          }
+        ],
+        "retrieved_ids": [
+          "artic-28560"
+        ],
+        "mode": "brief",
+        "verification": {
+          "passed": false,
+          "kind": "not_run"
+        },
+        "latency_ms": 10697,
+        "usage": [
+          {
+            "model": "deepseek-flash",
+            "prompt_tokens": 1282,
+            "completion_tokens": 1799,
+            "total_tokens": 3081,
+            "prompt_tokens_details": {
+              "cached_tokens": 1148
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1799
+            },
+            "prompt_cache_hit_tokens": 1148,
+            "prompt_cache_miss_tokens": 134
+          }
+        ]
+      }
+    }
+  ]
+}

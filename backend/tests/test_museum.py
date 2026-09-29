@@ -135,3 +135,14 @@ async def test_confirmed_object_excludes_other_retrieval_hits(museum_settings):
     e.index.search=mixed
     result=await e.answer("介绍这件作品",{"_id":"s"},"brief","test-1")
     assert result['retrieved_ids']==['test-1']
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mode,limit", [("brief",2),("deep",5)])
+async def test_chosen_depth_caps_model_overproduction(museum_settings,mode,limit):
+    excessive={"abstain":False,"claims":[draft()["claims"][0] for _ in range(6)]}
+    e,store,_=await engine(museum_settings,[excessive,{"passed":True,"issues":[]}])
+    result=await e.answer("介绍一下",{"_id":"s"},mode,"test-1")
+    assert result["status"]=="answered"
+    assert len(result["claims"])==limit
+    trace=await store.get("museum_traces",result["trace_id"])
+    assert trace["attempts"][0]["omitted_claims"]==6-limit
