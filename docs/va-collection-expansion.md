@@ -2,6 +2,8 @@
 
 2026-09-30。为增加游客问答与拍照测试的难度，将本地 V&A 样本从 1 件扩充到 8 件。此次修改数据与运行配置，没有新增模型或训练算法。
 
+后续状态（2026-10-01）：已补入一件相似花器和一件相似雕塑，当前 V&A 10 件、总文字记录 22 件，详见[相似藏品对照检查](lookalike-evaluation.md)。以下内容保留为 9 月 30 日历史记录；运行存储已改为 MongoDB，重启不再清空 Trace 和反馈。
+
 ## 数据范围
 
 资料来自 V&A 官方欧洲展厅音频导览的 [Tour 1](https://www.vam.ac.uk/audioguide/europeaudio/tour/1/) 与 [Tour 3](https://www.vam.ac.uk/audioguide/europeaudio/tour/3/)，包括馆方英文讲解稿和页面配图。它们不是完整的藏品登记档案，不能据此补造登记编号、完整年代材质或当前展位。
