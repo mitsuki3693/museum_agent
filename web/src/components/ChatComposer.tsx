@@ -2,8 +2,8 @@
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {VoiceInput} from "./MuseumSpeech";
 
-export default function ChatComposer({busy, configured, selectedName, onSend, onUnselect, onRoute}: {
-  busy: boolean; configured: boolean; selectedName: string;
+export default function ChatComposer({busy, configured, selectedName, similar = false, retrying = false, onSend, onUnselect, onRoute}: {
+  busy: boolean; configured: boolean; selectedName: string; similar?: boolean; retrying?: boolean;
   onSend: (text: string, file: File | null) => void; onUnselect: () => void;
   onRoute: (text: string) => void;
 }) {
@@ -30,7 +30,8 @@ export default function ChatComposer({busy, configured, selectedName, onSend, on
     onSend(text.trim(), file); setText(""); setFile(null); setError("");
   }
   return <div className="composer-area">
-    {selectedName && !file && <div className="context-chip"><span>正在聊 · {selectedName}</span><button type="button" disabled={busy} onClick={onUnselect}>换一件 ×</button></div>}
+    {retrying && <p className="photo-action-note">补拍同一件作品：用下方“拍照”或“相册”选择新照片。</p>}
+    {selectedName && !file && <div className="context-chip"><span>{similar ? "正在看相似馆藏" : "正在聊"} · {selectedName}</span><button type="button" disabled={busy} onClick={onUnselect}>换一件 ×</button></div>}
     <form className="composer" onSubmit={event => {event.preventDefault(); send();}}>
       {file && <div className="attachment-preview">
         {preview && <img src={preview} alt="待发送的照片"/>}

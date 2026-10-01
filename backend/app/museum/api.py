@@ -8,7 +8,7 @@ import time
 from contextlib import asynccontextmanager
 from typing import Literal
 from uuid import UUID, uuid4
-from fastapi import Depends, FastAPI, Header, HTTPException, Request, UploadFile, File
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -36,6 +36,11 @@ class FeedbackRequest(BaseModel):
     trace_id: str = Field(min_length=1, max_length=64)
     kind: Literal["helpful", "wrong_fact", "not_answered"]
     comment: str = Field(default="", max_length=500)
+
+class PhotoActionRequest(BaseModel):
+    trace_id: str = Field(min_length=1, max_length=64)
+    action: Literal["confirm", "view_similar", "retry"]
+    object_id: str | None = Field(default=None, max_length=100)
 
 class ReviewRequest(BaseModel):
     status: Literal["pending", "confirmed", "fixed", "not_a_bug"]
@@ -161,6 +166,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         else:
             row["photo_hash"] = current.get("_photo_hash")
             row["photo_hash_kind"] = "upload_bytes"
+            row["parent_photo_trace_id"] = current.get("_parent_photo_trace_id")
         await app.state.store.upsert("museum_photo_traces" if action == "photo" else "museum_traces", row)
         return result
 
@@ -170,6 +176,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "storage": config.museum_storage, "retrieval": config.museum_embedding,
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
+                "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
                 "route_planning": app.state.routes.planner.unavailable() is None,
                 "photo_retrieval": "image_and_text" if getattr(app.state.engine, "visual_index", None) else "caption_text",
                 "visual_index_hash": getattr(getattr(app.state.engine, "visual_index", None), "index_hash", None)}
@@ -221,7 +228,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         return FileResponse(path, headers={"Cache-Control": "private, max-age=300"})
 
     @app.post("/api/museum/recognize", dependencies=[Depends(writing)])
-    async def recognize(photo: UploadFile = File(...), current=Depends(session)):
+    async def recognize(photo: UploadFile = File(...), parent_trace_id: str | None = Form(default=None, max_length=64), current=Depends(session)):
         if not config.deepseek_api_key:
             raise HTTPException(503, "照片识别尚未启用，请先选择示例作品")
         raw = await photo.read(MAX_UPLOAD_BYTES + 1)
@@ -230,14 +237,27 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         if lock.locked():
             raise HTTPException(409, "上一个问题仍在处理，请稍后")
         async with lock:
+            if parent_trace_id:
+                parent = await app.state.store.get("museum_photo_traces", parent_trace_id)
+                if not parent or parent["session_id"] != current["_id"]:
+                    raise HTTPException(404, "未找到本会话的照片记录")
             if app.state.slots.locked():
                 raise HTTPException(429, "服务繁忙，请稍后重试")
             async with app.state.slots:
                 started = time.perf_counter()
-                current = {**current, "_trace_id": uuid4().hex, "_photo_hash": hashlib.sha256(raw).hexdigest()}
+                current = await app.state.store.get("museum_sessions", current["_id"])
+                if not current or current["expires_at"] <= time.time():
+                    raise HTTPException(401, "会话已过期，请重新开始")
+                # A new photo is an unresolved entity, not the previously discussed artwork.
+                current.update(history=[], object_id=None)
+                current.pop("photo_selection", None)
+                await app.state.store.upsert("museum_sessions", current)
+                current = {**current, "_trace_id": uuid4().hex, "_photo_hash": hashlib.sha256(raw).hexdigest(),
+                           "_parent_photo_trace_id": parent_trace_id}
                 await app.state.store.upsert("museum_photo_traces", {
                     "_id": current["_trace_id"], "session_id": current["_id"], "created_at": time.time(),
-                    "status": "running", "photo_hash": current["_photo_hash"], "photo_hash_kind": "upload_bytes"})
+                    "status": "running", "photo_hash": current["_photo_hash"], "photo_hash_kind": "upload_bytes",
+                    "parent_photo_trace_id": parent_trace_id})
                 try:
                     return await asyncio.wait_for(PhotoRecognizer(app.state.engine).recognize(raw, current), 65)
                 except ValueError as exc:
@@ -249,6 +269,40 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 except Exception as exc:
                     await failure_trace(current, "", "service_unavailable", "photo", started, type(exc).__name__)
                     raise HTTPException(503, "照片识别未完成，失败记录已保留") from None
+
+    @app.post("/api/museum/photo-actions", dependencies=[Depends(writing)])
+    async def photo_action(body: PhotoActionRequest, current=Depends(session)):
+        lock = locks.setdefault(current["_id"], asyncio.Lock())
+        if lock.locked():
+            raise HTTPException(409, "请等待当前请求结束")
+        async with lock:
+            trace = await app.state.store.get("museum_photo_traces", body.trace_id)
+            if not trace or trace["session_id"] != current["_id"]:
+                raise HTTPException(404, "未找到本会话的照片记录")
+            current = await app.state.store.get("museum_sessions", current["_id"])
+            if not current or current["expires_at"] <= time.time():
+                raise HTTPException(401, "会话已过期，请重新开始")
+            if body.action == "retry":
+                if body.object_id:
+                    raise HTTPException(422, "补拍无需选择作品")
+                current.update(history=[], object_id=None)
+                current.pop("photo_selection", None)
+            else:
+                allowed = trace.get("candidate_ids" if body.action == "confirm" else "similar_candidate_ids", [])
+                if body.object_id not in allowed or body.object_id not in app.state.index.records:
+                    raise HTTPException(422, "这件作品不属于该操作允许的候选")
+                if body.action == "confirm":
+                    # User assertion, not machine certainty or evaluation ground truth.
+                    trace["user_confirmed_object_id"] = body.object_id
+                current.update(history=[], object_id=body.object_id,
+                    photo_selection={"action": body.action, "trace_id": body.trace_id, "object_id": body.object_id})
+            event = {"action": body.action, "object_id": body.object_id, "created_at": time.time()}
+            events = trace.get("interactions", [])
+            if not events or any(events[-1].get(k) != event[k] for k in ("action", "object_id")):
+                trace["interactions"] = (events + [event])[-20:]
+            await app.state.store.upsert("museum_photo_traces", trace)
+            await app.state.store.upsert("museum_sessions", current)
+            return {"saved": True, "action": body.action, "object_id": body.object_id}
 
     @app.post("/api/museum/sessions", dependencies=[Depends(writing)])
     async def new_session(request: Request):
@@ -319,6 +373,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             current = await app.state.store.get("museum_sessions", current["_id"])
             if not current or current["expires_at"] <= time.time():
                 raise HTTPException(401, "会话已过期，请重新开始")
+            context = current.get("photo_selection")
+            if context and body.object_id is not None and body.object_id != context["object_id"]:
+                current.pop("photo_selection", None)
             claimed = {"_id": cache_id, "session_id": current["_id"], "request_id": str(body.request_id),
                        "query": body.query,
                        "fingerprint": fingerprint, "trace_id": uuid4().hex, "state": "pending",
@@ -348,6 +405,13 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                     http_status = 503
                     result = await failure_trace(current, body.query, "service_unavailable", body.action, started, type(exc).__name__)
             current.pop("_trace_id", None)
+            if current.get("photo_selection"):
+                result["photo_selection"] = current["photo_selection"]
+                if current["photo_selection"]["action"] == "view_similar":
+                    result["context_notice"] = "以下介绍的是你选择查看的相似馆藏，不代表已确认上传照片中的作品。"
+                trace = await app.state.store.get("museum_traces", claimed["trace_id"])
+                trace.update(result=result, photo_selection=current["photo_selection"])
+                await app.state.store.upsert("museum_traces", trace)
             await app.state.store.upsert("museum_sessions", current)
             await app.state.store.upsert("museum_request_cache", {**claimed, "state": "completed", "result": result, "http_status": http_status})
             if http_status != 200:

@@ -40,7 +40,9 @@ async def test_visual_candidate_survives_incorrect_caption():
                 return {"usable": True, "visible_text": "", "visual_description": "Folded fabric"}
             # Not a canned ID: only return the work if it actually reached comparison.
             supplied = str(messages)
-            return {"candidate_ids": ["sculpture"] if '"id": "sculpture"' in supplied else []}
+            return {"comparisons": [{"candidate_id":"sculpture", "identity":"same_work", "features":[
+                {"part":part,"query_detail":"visible shell position","reference_detail":"same shell position","relation":"match","distinctive":True}
+                for part in ["pose","parts"]],"shared_features":["figures"],"needs":[]}] if '"id": "sculpture"' in supplied else []}
     engine = SimpleNamespace(store=store, index=TextIndex(), visual_index=VisualIndex(), client_factory=Client)
     result = await PhotoRecognizer(engine).recognize(image_bytes(), {"_id": "s"})
     assert [c["id"] for c in result["candidates"]] == ["sculpture"]
@@ -81,6 +83,21 @@ async def test_visual_groups_views_and_returns_one_hit_per_work(tmp_path):
     assert [r['source_id'] for r in hits] == ['red', 'blue']
     assert hits[0]['score'] > hits[1]['score']
     assert index.reference_image(hits[0]).startswith(b'\xff\xd8')
+
+
+@pytest.mark.asyncio
+async def test_identity_policy_applies_to_work_across_reference_views(tmp_path):
+    manifest, records = gallery(tmp_path)
+    data = json.loads(manifest.read_text(encoding='utf-8'))
+    data['references'][0]['identity_requires_label'] = True
+    manifest.write_text(json.dumps(data), encoding='utf-8')
+    index = MuseumVisualIndex(manifest, tmp_path, records, encoder=ColorEncoder())
+    await index.start()
+    assert index.label_required_ids == {'red'}
+    data['references'][0]['identity_requires_label'] = 'false'
+    manifest.write_text(json.dumps(data), encoding='utf-8')
+    with pytest.raises(ValueError, match='must be a boolean'):
+        await MuseumVisualIndex(manifest, tmp_path, records, encoder=ColorEncoder()).start()
 
 
 @pytest.mark.asyncio
@@ -132,7 +149,7 @@ async def test_visual_is_candidate_only_and_rechecks_source(state):
             if '观察这张照片' in str(messages):
                 return {'usable': True, 'visible_text': '', 'visual_description': ''}
             # Nearest neighbour, including score .99, must not override rejection.
-            return {'candidate_ids': []}
+            return {'comparisons': []}
     engine = SimpleNamespace(index=Index(), visual_index=Visual(), store=store, client_factory=Client)
     result = await PhotoRecognizer(engine).recognize(image_bytes(), {'_id': 'session'})
     trace = await store.get('museum_photo_traces', result['trace_id'])

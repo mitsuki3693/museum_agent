@@ -76,6 +76,7 @@ class MuseumVisualIndex:
         self.images: dict[str, bytes] = {}
         self.vectors = None
         self.index_hash = ""
+        self.label_required_ids: set[str] = set()
 
     async def start(self):
         await asyncio.to_thread(self._start)
@@ -96,6 +97,10 @@ class MuseumVisualIndex:
                 raise ValueError("Duplicate reference or unknown/inactive source")
             if not item.get("source_url") or not item.get("license"):
                 raise ValueError("Reference provenance required")
+            if not isinstance(item.get("identity_requires_label", False), bool):
+                raise ValueError("identity_requires_label must be a boolean")
+            if item.get("identity_requires_label"):
+                self.label_required_ids.add(item["source_id"])
             path = (root / item["path"]).resolve()
             if not path.is_relative_to(root):
                 raise ValueError("Reference path outside manifest directory")

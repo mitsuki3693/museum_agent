@@ -21,8 +21,9 @@ export function askMuseum(token: string, request: QuestionRequest) {
   });
 }
 
-export function identifyMuseumPhoto(token: string, file: File) {
+export function identifyMuseumPhoto(token: string, file: File, parentTraceId?: string) {
   const body = new FormData();
   body.append("photo", file);
+  if (parentTraceId) body.append("parent_trace_id", parentTraceId);
   return museumApi("recognize", {method: "POST", headers: {Authorization: `Bearer ${token}`}, body});
 }

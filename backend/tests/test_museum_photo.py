@@ -30,13 +30,14 @@ def test_invalid_and_oversize_images_rejected(raw):
 
 class FakeClient:
     def __init__(self, ids):
-        self.results=iter([{"usable":True,"visible_text":"Test Vase","visual_description":"Blue vase"}, {"candidate_ids":ids}])
+        self.results=iter([{"usable":True,"visible_text":"C.615-1925","visual_description":"Blue vase"},
+            {"comparisons":[{"candidate_id":i,"identity":"same_work","features":[],"shared_features":["blue_white"],"needs":["label"]} for i in ids]}])
     async def complete_json(self, messages):
         return next(self.results)
 
 class Index:
     async def search(self, query):
-        return [{"_id":"test-1","title":"Test Vase","source_url":"https://example.org/1","content":"Blue vase"}]
+        return [{"_id":"test-1","title":"Test Vase","source_url":"https://example.org/1","content":"Blue vase","fields":{"accession_number":"C.615-1925"}}]
 
 @pytest.mark.asyncio
 async def test_match_needs_confirmation_and_no_photo_saved():
