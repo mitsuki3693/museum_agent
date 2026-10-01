@@ -1,5 +1,33 @@
 # 评测协议与当前限制
 
+## 2026-10-01：可冻结题集与运行留档
+
+新增 `eval/text-v1.draft.json`：20道事实/口语检索、8道追问、4道错误前提、4道资料不足、4道风格任务。旧40题报告保留为历史工程检查。新题集全部 `reviewed=false`，需逐题补充 reviewer、reviewed_at、预期藏品、应否拒答、馆方证据原文、允许事实和禁止内容；不能由脚本自动确认人工复核。
+
+新增 `eval/photo-v1.draft.json` 的30个任务位置：8完整、6局部、4不同角度、4拍屏/反光、4展签、4库外相似作品。**这是清单模板，不是已经收齐并测完的30张照片**。实际图片只放 `eval/private/`；逐张填写来源URL、SHA256和人工确认的藏品ID。冻结会拒绝与参考图库文件哈希相同的照片；重新编码/裁剪同一底图仍需人工排除，不能靠哈希证明图片独立。
+
+```powershell
+$env:PYTHONPATH='backend'
+# 修改草稿并由人复核后冻结；未复核会报错
+.venv/Scripts/python.exe -m scripts.museum_eval freeze --dataset eval/private/text-reviewed.json --output eval/private/text-v1.frozen.json
+# 不调用模型的检索检查，可先做5题
+.venv/Scripts/python.exe -m scripts.museum_eval run --dataset eval/text-v1.draft.json --output eval/private/smoke-new.json --draft-smoke --max-cases 5 --persist
+# 冻结后才执行真实模型，少量试跑后再扩展
+.venv/Scripts/python.exe -m scripts.museum_eval run --dataset eval/private/text-v1.frozen.json --output eval/private/text-live-new.json --answers --max-cases 5 --persist
+```
+
+输出路径必须未存在，防止覆盖证据。冻结绑定题集、语料和图片参考清单的哈希；版本变化须重新复核冻结。API模型名只是供应商版本标识，不能保证供应商内部权重永远不变。
+
+文字执行同题BM25与混合检索的离线对照，记录Recall@1/5、MRR、逐题耗时与P50/P95；实际生成时保存Token、引用、回答和拒答状态。追问的检索指标取真实改写后的召回，未调用模型时留空，避免用原始追问误记负分。无真实用户随机分流，`online_ab=false`。
+
+图片记录视觉Top1/3、候选正确/错误、拒识、服务错误、文字候选及OCR文字是否存在；照片仍需游客确认，不把候选推荐写成自动确定身份。OCR是否真正改善召回需要后续消融实验，用户补拍次数需实测，当前留空。
+
+`--persist` 通过管理API把精简批次存到Mongo `eval_runs`，本地完整回答保存在忽略目录。管理页展示批次与人工评分进度。人工评分接口 `POST /api/museum/admin/eval-runs/{run_id}/grades` 接收 case_id、variant、reviewer、facts_correct/total、citations_supported/total、refusal_correct、style_passed；每次更正覆盖该题当前评分。未打分就是空值，不当作正确或错误。最终事实和引用仍须人工抽查，同一DeepSeek模型的Verifier不能充当独立金标准。
+
+成本可用 `--pricing <本地JSON>` 计算，需包含 source_url、as_of、currency、input_cached_per_million、input_per_million、output_per_million；按供应商当前费率填写。未提供价格时成本为null而不是0，最终以账单为准。本次只验证管线，未自动花完预算运行正式40/30题测评。
+
+失败闭环为：管理员筛选Trace → 人工归因 → 记录修复 → 关联回归Trace → 用同一冻结题集和模型做对照。持久化可靠性单独按 [Mongo验收协议](persistence.md) 检查，不混入模型准确率。
+
 ## 固定条件
 
 相同的 12 件馆藏快照、相同问题、相同原文及版本，对比 A=BM25 和 B=BM25+本地多语言向量+RRF。检索评测不传 selected object，避免直接指定目标而人为抬高命中率。

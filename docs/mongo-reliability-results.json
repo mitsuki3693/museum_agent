@@ -1,0 +1,105 @@
+{
+  "kind": "real MongoDB reliability; deterministic fake LLM",
+  "run_id": "45379edd16",
+  "checks": {
+    "full_process_restart": {
+      "museum_sessions": {
+        "count": 2,
+        "sha256": "0783830ecfd2b2a886a957ad62d143b4553ed7aa0e02cb8aad193316c12d282b"
+      },
+      "museum_traces": {
+        "count": 10,
+        "sha256": "97f00e760d20c654f4d32f160e0b5e5c18afdb8153899a47b3c1b735aca5ea0f"
+      },
+      "museum_photo_traces": {
+        "count": 3,
+        "sha256": "5a5e275cbb8f833651aa9713105a2b10fd2bdb6c48082c3af6d0940a7fa22712"
+      },
+      "museum_feedback": {
+        "count": 3,
+        "sha256": "4f2e9ded4f53d56ffb163238975e72689d51cf7191d70b662fbefd5c20ea6c16"
+      },
+      "museum_request_cache": {
+        "count": 10,
+        "sha256": "d20bd3555d65c4019cd7b3d8669337fc763bb90e17e6c96eca2002003c0ba814"
+      },
+      "eval_runs": {
+        "count": 1,
+        "sha256": "27578c3067353429d77c84395c2a4afe6ff867264ed2ed7f38b3ab39d6cfd0b0"
+      }
+    },
+    "idempotency": {
+      "same_result": true,
+      "trace_count": 10
+    },
+    "fingerprint_conflict": {
+      "http_status": 409
+    },
+    "session_isolation": {
+      "cross_session_read": 404,
+      "cross_session_feedback": 404,
+      "visitor_admin": 403
+    },
+    "ttl": {
+      "request_rejected_immediately": true,
+      "mongo_removed_document": true,
+      "test_monitor_seconds": 1,
+      "production_monitor_default": true
+    },
+    "concurrency": {
+      "sessions": 20,
+      "unique_requests": 200,
+      "duplicate_replays": 200,
+      "persisted_unique_traces": 200,
+      "lost": 0,
+      "cross_session": 0
+    },
+    "interrupted_request": {
+      "visible_after_restart": true,
+      "reexecution_blocked": true
+    },
+    "backup_restore": {
+      "archive_sha256": "d330e98b82ce9e8d750f1a76b877e417b3da1688a9236ff97f491f126cdd498e",
+      "same_counts_ids_content_hashes": true,
+      "collections": {
+        "museum_sessions": {
+          "count": 21,
+          "sha256": "ff73c3124720a53c9dd7c47d8b3c56d4270aad81326a8252aab8f77f98da259f"
+        },
+        "museum_traces": {
+          "count": 211,
+          "sha256": "1ee4d40c201a77bed52e29db8f39e038f09fb2c4a2b1ee5455650760773fa19b"
+        },
+        "museum_photo_traces": {
+          "count": 3,
+          "sha256": "5a5e275cbb8f833651aa9713105a2b10fd2bdb6c48082c3af6d0940a7fa22712"
+        },
+        "museum_feedback": {
+          "count": 3,
+          "sha256": "4f2e9ded4f53d56ffb163238975e72689d51cf7191d70b662fbefd5c20ea6c16"
+        },
+        "museum_request_cache": {
+          "count": 211,
+          "sha256": "06dfe3ad17be23758de194fa3e98a0bc1ee570552b3ab3a852565ebade1f125e"
+        },
+        "eval_runs": {
+          "count": 1,
+          "sha256": "27578c3067353429d77c84395c2a4afe6ff867264ed2ed7f38b3ab39d6cfd0b0"
+        }
+      }
+    },
+    "indexes": {
+      "all_six_collection_indexes_restored": true,
+      "session_ttl": true,
+      "request_unique_and_ttl": true
+    },
+    "runtime_only": {
+      "source_documents_in_mongo": 0
+    }
+  },
+  "real_model_calls": 0,
+  "mongodb_version": "8.0.32",
+  "passed": true,
+  "finished_at": 1790834515.1876934,
+  "scope_note": "Real local MongoDB with deterministic fake model, not model quality or production scalability."
+}

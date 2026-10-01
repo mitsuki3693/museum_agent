@@ -48,6 +48,8 @@ class PhotoRecognizer:
         self.engine = engine
 
     async def recognize(self, raw: bytes, session: dict):
+        started = time.perf_counter()
+        observation = None
         clean = await asyncio.to_thread(prepare_image, raw)
         client = self.engine.client_factory()
         image = {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(clean).decode()}}
@@ -120,9 +122,15 @@ class PhotoRecognizer:
             error = None
             error_cause = None
         # No image, base64, OCR text, user filename or location is retained in the trace.
-        trace_id = uuid.uuid4().hex
+        trace_id = session.get("_trace_id") or uuid.uuid4().hex
         await self.engine.store.upsert("museum_photo_traces", {"_id": trace_id, "session_id": session["_id"],
             "created_at": time.time(), "photo_hash": hashlib.sha256(clean).hexdigest(),
+            "photo_hash_kind": "normalized_jpeg",
+            "latency_ms": round((time.perf_counter() - started) * 1000),
+            "model": getattr(getattr(self.engine, "settings", None), "deepseek_model", "test"),
+            "corpus_hash": getattr(self.engine.index, "corpus_hash", None),
+            "visible_text_present": bool(observation and observation.visible_text),
+            "observation_usable": observation.usable if observation else None,
             "status": result["status"], "candidate_ids": [s["id"] for s in result["candidates"]],
             "prompt_version": self.PROMPT_VERSION, "last_stage": stage,
             "visual_index_hash": getattr(visual, "index_hash", None), "visual_error": visual_error,

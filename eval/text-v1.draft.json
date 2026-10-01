@@ -1,0 +1,1092 @@
+{
+  "kind": "text",
+  "version": "text-v1-draft",
+  "frozen": false,
+  "note": "待人工核对证据、允许事实和拒答边界；未冻结，不能当正式评测集。",
+  "cases": [
+    {
+      "id": "Q01",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "American Gothic 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "expected_evidence": "1930",
+      "source_url": "https://www.artic.edu/artworks/6565",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "1930"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q02",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "American Gothic 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "expected_evidence": "Oil on Beaver Board",
+      "source_url": "https://www.artic.edu/artworks/6565",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "Oil on Beaver Board"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q03",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "Nighthawks 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "expected_evidence": "1942",
+      "source_url": "https://www.artic.edu/artworks/111628",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "1942"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q04",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "Nighthawks 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/111628",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q05",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "The Bedroom 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "expected_evidence": "1889",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "1889"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q06",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "The Bedroom 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q07",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "Paris Street; Rainy Day 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "expected_evidence": "1877",
+      "source_url": "https://www.artic.edu/artworks/20684",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-20684",
+          "quote": "1877"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q08",
+      "category": "retrieval",
+      "split": "dev",
+      "question": "Paris Street; Rainy Day 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/20684",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-20684",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q09",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "画里有农夫和他的女儿站在哥特式农舍前，这幅作品是哪一年画的？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "expected_evidence": "1930",
+      "source_url": "https://www.artic.edu/artworks/6565",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "1930"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q10",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "深夜餐馆里有三个顾客和一个服务员的那幅画，用的什么材质？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/111628",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q11",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "描绘阿尔勒黄色房子卧室的作品，馆藏的这个版本创作于哪一年？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "expected_evidence": "1889",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "1889"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q12",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "用雨伞和湿鹅卵石反光暗示雨天的巴黎街景，是用什么材料画的？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/20684",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-20684",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q13",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "毕加索拿着调色板，头和身体被拆成几何平面的肖像，是谁画的？",
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "expected_evidence": "Juan Gris\nSpanish, 1887–1927",
+      "source_url": "https://www.artic.edu/artworks/8624",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-8624",
+          "quote": "Juan Gris\nSpanish, 1887–1927"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q14",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "哪件卧室作品是三个版本中的第二个版本，是什么年代的？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "expected_evidence": "1889",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "1889"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q15",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "艺术家想表现大城市孤独感的通宵餐馆画面，其作者是谁？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "expected_evidence": "Edward Hopper (American, 1882–1967)",
+      "source_url": "https://www.artic.edu/artworks/111628",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "Edward Hopper (American, 1882–1967)"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q16",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "在大萧条初期表达美国乡村积极价值观、画着父女两人的作品，作者是谁？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "expected_evidence": "Grant Wood (American, 1891–1942)",
+      "source_url": "https://www.artic.edu/artworks/6565",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "Grant Wood (American, 1891–1942)"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q17",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "Self-Portrait 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "expected_evidence": "1887",
+      "source_url": "https://www.artic.edu/artworks/80607",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-80607",
+          "quote": "1887"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q18",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "Self-Portrait 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-80607"
+      ],
+      "expected_evidence": "Oil on artist's board, mounted on cradled panel",
+      "source_url": "https://www.artic.edu/artworks/80607",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-80607",
+          "quote": "Oil on artist's board, mounted on cradled panel"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q19",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "A Sunday on La Grande Jatte — 1884 创作年代是什么？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "expected_evidence": "1884–86, border added 1888–89",
+      "source_url": "https://www.artic.edu/artworks/27992",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-27992",
+          "quote": "1884–86, border added 1888–89"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q20",
+      "category": "retrieval",
+      "split": "holdout",
+      "question": "A Sunday on La Grande Jatte — 1884 采用了什么材质？",
+      "gold_source_ids": [
+        "artic-27992"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/27992",
+      "expected_behavior": "answer_with_source",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-27992",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q25",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "American Gothic 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 American Gothic"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "expected_evidence": "Oil on Beaver Board",
+      "source_url": "https://www.artic.edu/artworks/6565",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "Oil on Beaver Board"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q26",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Nighthawks 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Nighthawks"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/111628",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q27",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "The Bedroom 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 The Bedroom"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/28560",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q28",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Paris Street; Rainy Day 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Paris Street; Rainy Day"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/20684",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-20684",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q29",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Portrait of Pablo Picasso 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Portrait of Pablo Picasso"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-8624"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/8624",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-8624",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q30",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg) 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Acrobats at the Cirque Fernando (Francisca and Angelina Wartenberg)"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-81558"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/81558",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-81558",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q31",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Cliff Walk at Pourville 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Cliff Walk at Pourville"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-14620"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/14620",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-14620",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q32",
+      "category": "followup",
+      "split": "holdout",
+      "question": "那它采用了什么材质？",
+      "history": [
+        {
+          "role": "user",
+          "content": "Water Lilies 是什么作品？"
+        },
+        {
+          "role": "assistant",
+          "content": "我们正在讨论 Water Lilies"
+        }
+      ],
+      "gold_source_ids": [
+        "artic-16568"
+      ],
+      "expected_evidence": "Oil on canvas",
+      "source_url": "https://www.artic.edu/artworks/16568",
+      "expected_behavior": "resolve_reference_then_answer",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": false,
+      "evidence": [
+        {
+          "source_id": "artic-16568",
+          "quote": "Oil on canvas"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q33",
+      "category": "unanswerable",
+      "split": "holdout",
+      "question": "这幅作品今天具体在哪个展厅？",
+      "gold_source_ids": [],
+      "expected_evidence": "当前语料没有实时状态、票价、估值或传感器数据",
+      "source_url": "",
+      "expected_behavior": "abstain",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": true,
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q34",
+      "category": "unanswerable",
+      "split": "holdout",
+      "question": "明天博物馆几点关门？",
+      "gold_source_ids": [],
+      "expected_evidence": "当前语料没有实时状态、票价、估值或传感器数据",
+      "source_url": "",
+      "expected_behavior": "abstain",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": true,
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q35",
+      "category": "unanswerable",
+      "split": "holdout",
+      "question": "现在这幅画值多少人民币？",
+      "gold_source_ids": [],
+      "expected_evidence": "当前语料没有实时状态、票价、估值或传感器数据",
+      "source_url": "",
+      "expected_behavior": "abstain",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": true,
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "Q36",
+      "category": "unanswerable",
+      "split": "holdout",
+      "question": "这件作品的实时温湿度是多少？",
+      "gold_source_ids": [],
+      "expected_evidence": "当前语料没有实时状态、票价、估值或传感器数据",
+      "source_url": "",
+      "expected_behavior": "abstain",
+      "reviewed": false,
+      "review_notes": "",
+      "should_refuse": true,
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "资料未记载的历史、实时展位、估价与修复操作"
+      ],
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "P01",
+      "category": "false_premise",
+      "question": "American 是2020年创作的吗？",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "纠正2020年的错误前提，引用记载年代",
+      "evidence": [
+        {
+          "source_id": "artic-6565",
+          "quote": "1930"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "认同2020年的错误前提"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "P02",
+      "category": "false_premise",
+      "question": "Nighthawks 是2020年创作的吗？",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "纠正2020年的错误前提，引用记载年代",
+      "evidence": [
+        {
+          "source_id": "artic-111628",
+          "quote": "1942"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "认同2020年的错误前提"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "P03",
+      "category": "false_premise",
+      "question": "The 是2020年创作的吗？",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "纠正2020年的错误前提，引用记载年代",
+      "evidence": [
+        {
+          "source_id": "artic-28560",
+          "quote": "1889"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "认同2020年的错误前提"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "P04",
+      "category": "false_premise",
+      "question": "Paris 是2020年创作的吗？",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "纠正2020年的错误前提，引用记载年代",
+      "evidence": [
+        {
+          "source_id": "artic-20684",
+          "quote": "1877"
+        }
+      ],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "认同2020年的错误前提"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "S01",
+      "category": "style",
+      "question": "请用简明风格讲解这件作品。",
+      "mode": "brief",
+      "gold_source_ids": [
+        "artic-6565"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "按选择的风格讲解，保留原文依据",
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "编造角色对话或资料之外的故事"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "S02",
+      "category": "style",
+      "question": "请用深入风格讲解这件作品。",
+      "mode": "deep",
+      "gold_source_ids": [
+        "artic-111628"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "按选择的风格讲解，保留原文依据",
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "编造角色对话或资料之外的故事"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "S03",
+      "category": "style",
+      "question": "请用儿童风格讲解这件作品。",
+      "mode": "children",
+      "gold_source_ids": [
+        "artic-28560"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "按选择的风格讲解，保留原文依据",
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "编造角色对话或资料之外的故事"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    },
+    {
+      "id": "S04",
+      "category": "style",
+      "question": "请用儿童风格讲解这件作品。",
+      "mode": "children",
+      "gold_source_ids": [
+        "artic-20684"
+      ],
+      "should_refuse": false,
+      "expected_behavior": "按选择的风格讲解，保留原文依据",
+      "evidence": [],
+      "allowed_facts": [],
+      "forbidden_facts": [
+        "编造角色对话或资料之外的故事"
+      ],
+      "reviewed": false,
+      "reviewer": "",
+      "reviewed_at": null
+    }
+  ]
+}

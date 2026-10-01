@@ -330,10 +330,11 @@ class RouteService:
                     step["object_id"] = None
             session["route_preferences"] = preferences.model_dump()
             output["route_preferences"] = preferences.model_dump()
-        result = {"trace_id": uuid.uuid4().hex, "mode": "brief", "claims": [], "sources": [], **output,
+        result = {"trace_id": session.get("_trace_id") or uuid.uuid4().hex, "mode": "brief", "claims": [], "sources": [], **output,
                   "route_options": self.planner.options(), "latency_ms": round((time.perf_counter() - started) * 1000)}
         await self.engine.store.upsert("museum_traces", {"_id": result["trace_id"], "session_id": session["_id"],
             "created_at": time.time(), "query": query, "action": "route", "planner_version": self.planner.VERSION,
-            "map_hash": self.planner.hash, "result": result})
+            "map_hash": self.planner.hash, "corpus_hash": self.engine.index.corpus_hash,
+            "model": self.engine.settings.deepseek_model, "prompt_version": self.engine.PROMPT_VERSION, "result": result})
         # Keep route state separate from art-history evidence and selected artwork context.
         return result

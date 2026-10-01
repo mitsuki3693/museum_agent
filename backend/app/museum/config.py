@@ -17,6 +17,9 @@ class MuseumSettings(BaseSettings):
     museum_admin_token: str = ""
     museum_session_ttl: int = 1800
     museum_max_inflight: int = 2
+    museum_mongodump: Path | None = None
+    museum_backup_dir: Path = ROOT / ".runtime/backups"
+    museum_daily_backup: bool = False
     museum_timeout: float = 100
     museum_corpus: Path = ROOT / "data/corpus.json"
     museum_private_corpus: Path | None = None
