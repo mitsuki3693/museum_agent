@@ -77,6 +77,7 @@ class MuseumVisualIndex:
         self.vectors = None
         self.index_hash = ""
         self.label_required_ids: set[str] = set()
+        self.references_by_source: dict[str, list[dict]] = {}
 
     async def start(self):
         await asyncio.to_thread(self._start)
@@ -101,6 +102,8 @@ class MuseumVisualIndex:
                 raise ValueError("identity_requires_label must be a boolean")
             if item.get("identity_requires_label"):
                 self.label_required_ids.add(item["source_id"])
+            if item.get("view", "unspecified") not in {"whole", "detail", "unspecified"}:
+                raise ValueError("Invalid reference view")
             path = (root / item["path"]).resolve()
             if not path.is_relative_to(root):
                 raise ValueError("Reference path outside manifest directory")
@@ -109,6 +112,8 @@ class MuseumVisualIndex:
                 raise ValueError("Reference image hash mismatch")
             clean = prepare_image(raw)
             self.images[reference_id] = clean
+            self.references_by_source.setdefault(item["source_id"], []).append(
+                {"source_id": item["source_id"], "reference_id": reference_id, "view": item.get("view", "unspecified")})
             seen.add(reference_id)
             for view in image_views(clean):
                 self.entries.append({"source_id": item["source_id"], "reference_id": reference_id})
@@ -137,3 +142,17 @@ class MuseumVisualIndex:
 
     def reference_image(self, hit: dict) -> bytes:
         return self.images[hit["reference_id"]]
+
+    def reference_hits(self, source_ids: list[str], limit: int = 2) -> list[dict]:
+        """Resolve a bounded text-recalled set to actual images, without inventing scores."""
+        hits = []
+        if limit <= 0:
+            return hits
+        for source_id in dict.fromkeys(source_ids):
+            rows = self.references_by_source.get(source_id, [])
+            if rows:
+                preferred = next((r for r in rows if r['view'] == 'whole'), rows[0])
+                hits.append({"source_id": source_id, "reference_id": preferred["reference_id"]})
+            if len(hits) >= limit:
+                break
+        return hits

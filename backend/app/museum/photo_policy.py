@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import re
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
+
+POLICY_VERSION = "photo-policy-v3-reference-and-display-boundaries"
 
 SHARED = {
     "blue_white": "蓝白装饰", "tiered": "多层塔形结构", "spouts": "多个插花口",
@@ -34,6 +36,16 @@ class Comparison(BaseModel):
     shared_features: list[Literal["blue_white", "tiered", "spouts", "figures", "pose", "outline", "decoration", "color", "composition"]] = Field(default_factory=list, max_length=3)
     needs: list[Literal["label", "whole", "base", "top", "angle"]] = Field(default_factory=list, max_length=3)
 
+    @field_validator('shared_features', 'needs', mode='before')
+    @classmethod
+    def bounded_display_tags(cls, value, info):
+        # These are optional UI hints, not identity evidence. Unknown hints can be
+        # omitted; required identity and structural comparison fields stay strict.
+        if isinstance(value, list):
+            allowed = SHARED if info.field_name == 'shared_features' else STEPS
+            return list(dict.fromkeys(v for v in value if isinstance(v, str) and v in allowed))[:3]
+        return value
+
 class Comparisons(BaseModel):
     model_config = ConfigDict(extra="forbid")
     comparisons: list[Comparison] = Field(default_factory=list, max_length=8)
@@ -53,7 +65,7 @@ def decide(comparisons: Comparisons, sources: list[dict], visual_hits: list[dict
     ids = [c.candidate_id for c in comparisons.comparisons]
     if len(ids) != len(set(ids)) or any(i not in allowed for i in ids):
         raise ValueError("Unknown or duplicate comparison candidate")
-    scores = {h["source_id"]: h["score"] for h in visual_hits}
+    scores = {h["source_id"]: h.get("score", -1.0) for h in visual_hits}
     decisions, likely, uncertain, similar, needs = [], [], [], [], []
     for item in comparisons.comparisons:
         # Independent anatomical/structural areas, not repeated generic adjectives.
@@ -104,7 +116,8 @@ def decide(comparisons: Comparisons, sources: list[dict], visual_hits: list[dict
         "uncertain": "有些细节相似，但还不足以确认。可以对照候选，或补拍关键部位。",
         "no_reliable_match": "暂时没有在当前馆藏图库中找到足够可靠的匹配。",
     }
-    recommendations = sorted(similar, key=order)[:1] if not selected else []
+    # A generic outline alone must not beat several meaningful shared properties.
+    recommendations = sorted(similar, key=lambda item: (-len(set(item.shared_features)), *order(item)))[:1] if not selected else []
     steps = list(dict.fromkeys(needs + ["whole", "label"]))[:2]
     result = {"status": "needs_confirmation" if selected else "not_matched", "match_state": state,
               "message": messages[state], "candidates": [card(c) for c in selected],

@@ -6,6 +6,8 @@
 
 代码已发布到 [GitHub](https://github.com/mitsuki3693/museum_agent)；应用代码提交 `7ac23d6` 的 [Actions 检查已通过](https://github.com/mitsuki3693/museum_agent/actions/runs/36545829709)。
 
+最新识图修复：本地 V&A 扩至 14 件，补齐原花器全貌参考，修复文字候选没有参考图和过度展签限制。原图、另一视角及人头局部返回正确待确认候选；Cleveland 相似花器不作为库内身份，海神局部图仍有失败。详见 [实际诊断与边界](docs/blue-ceramics-diagnosis.md)。以下较早测试数量是历史记录。
+
 - 原版 59 项离线测试通过；初版交付时共 81 项测试通过，历史记录见 `docs/combined-tests.xml`。
 - 网页生产构建通过，真实本地多语言向量模型已运行。
 - 已导入 12 件公开藏品，准备 40 道待人工复核问题。
