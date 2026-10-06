@@ -110,7 +110,8 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         app.state.operations_demo = OperationsDemo(config.museum_operations_demo_manifest, app.state.routes.planner)
         if config.museum_visual_manifest:
             from .visual_index import MuseumVisualIndex
-            visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records)
+            visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records,
+                                       cache_dir=config.museum_visual_cache)
             await visual.start()
             app.state.engine.visual_index = visual
         app.state.slots = asyncio.Semaphore(config.museum_max_inflight)
@@ -177,6 +178,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
+                "photo_reference_mode": config.museum_photo_reference_mode,
                 "route_planning": app.state.routes.planner.unavailable() is None,
                 "photo_retrieval": "image_and_text" if getattr(app.state.engine, "visual_index", None) else "caption_text",
                 "visual_index_hash": getattr(getattr(app.state.engine, "visual_index", None), "index_hash", None)}

@@ -198,6 +198,8 @@ def export_metrics(data):
                          "model": row.get("model"), "visual_index_hash": row.get("visual_index_hash"),
                          "policy_version": row.get("policy_version"),
                          "comparison_reference_ids": row.get("comparison_reference_ids", []),
+                         "comparison_image_ids": row.get("comparison_image_ids", []),
+                         "reference_mode": row.get("reference_mode", "single"),
                          "reference_rescued_ids": row.get("reference_rescued_ids", []),
                          "retrieved_ids": result.get("retrieved_ids", row.get("visual_retrieved_ids", [])),
                          "candidate_ids": row.get("candidate_ids", []), "latency_ms": result.get("latency_ms"),

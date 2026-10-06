@@ -8,6 +8,9 @@ import asyncio
 import hashlib
 import io
 import json
+import os
+import tempfile
+import zipfile
 import threading
 from pathlib import Path
 import numpy as np
@@ -69,7 +72,8 @@ class DinoEncoder:
 
 
 class MuseumVisualIndex:
-    def __init__(self, manifest: Path, model_dir: Path, records: dict, encoder=None):
+    def __init__(self, manifest: Path, model_dir: Path, records: dict, encoder=None,
+                 cache_dir: Path | None = None, cache_namespace: str | None = None):
         self.manifest, self.model_dir, self.records = manifest, model_dir, records
         self.encoder = encoder
         self.entries: list[dict] = []
@@ -78,6 +82,47 @@ class MuseumVisualIndex:
         self.index_hash = ""
         self.label_required_ids: set[str] = set()
         self.references_by_source: dict[str, list[dict]] = {}
+        # Injected encoders must explicitly opt into their own cache namespace.
+        self.cache_namespace = cache_namespace or (MODEL_REVISION if encoder is None else None)
+        self.cache_dir = cache_dir if self.cache_namespace else None
+        self.cache_stats = {"hits": 0, "misses": 0, "write_errors": 0}
+
+    def _reference_vectors(self, clean: bytes) -> np.ndarray:
+        key = hashlib.sha256(clean + str(self.cache_namespace).encode() + PREPROCESS_VERSION.encode()).hexdigest()
+        path = self.cache_dir / (key + ".npz") if self.cache_dir else None
+        if path and path.exists():
+            try:
+                with np.load(path, allow_pickle=False) as cached:
+                    values = cached["vectors"]
+                    valid = (values.ndim == 2 and values.shape[0] == 5 and values.shape[1] > 0
+                             and (self.cache_namespace != MODEL_REVISION or values.shape[1] == 384)
+                             and values.dtype == np.float32 and np.isfinite(values).all()
+                             and np.allclose(np.linalg.norm(values, axis=1), 1, atol=1e-4)
+                             and str(cached["key"]) == key
+                             and str(cached["digest"]) == hashlib.sha256(values.tobytes()).hexdigest())
+                    if valid:
+                        self.cache_stats["hits"] += 1
+                        return values
+            except (OSError, ValueError, KeyError, EOFError, zipfile.BadZipFile):
+                pass  # Corrupt/incomplete caches are disposable, never authoritative.
+        self.cache_stats["misses"] += 1
+        values = np.asarray(self.encoder.encode(image_views(clean)), dtype=np.float32)
+        if values.ndim != 2 or values.shape[0] != 5 or not np.isfinite(values).all():
+            raise ValueError("Invalid visual embeddings")
+        if path:
+            temporary = None
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                with tempfile.NamedTemporaryFile(dir=path.parent, suffix=".tmp", delete=False) as handle:
+                    temporary = Path(handle.name)
+                    np.savez(handle, vectors=values, key=key, digest=hashlib.sha256(values.tobytes()).hexdigest())
+                os.replace(temporary, path)
+            except OSError:
+                self.cache_stats["write_errors"] += 1  # A read-only cache cannot break recognition.
+            finally:
+                if temporary and temporary.exists():
+                    temporary.unlink(missing_ok=True)
+        return values
 
     async def start(self):
         await asyncio.to_thread(self._start)
@@ -90,7 +135,7 @@ class MuseumVisualIndex:
             raise ValueError("Invalid visual reference manifest")
         root = self.manifest.parent.resolve()
         seen = set()
-        images = []
+        image_ids = []
         for item in spec["references"]:
             reference_id = item["id"]
             record = self.records.get(item["source_id"])
@@ -115,12 +160,13 @@ class MuseumVisualIndex:
             self.references_by_source.setdefault(item["source_id"], []).append(
                 {"source_id": item["source_id"], "reference_id": reference_id, "view": item.get("view", "unspecified")})
             seen.add(reference_id)
-            for view in image_views(clean):
+            for _ in range(5):
                 self.entries.append({"source_id": item["source_id"], "reference_id": reference_id})
-                images.append(view)
+            image_ids.append(reference_id)
         self.index_hash = hashlib.sha256(raw_manifest + MODEL_REVISION.encode() + PREPROCESS_VERSION.encode()).hexdigest()
         self.encoder = self.encoder or DinoEncoder(self.model_dir)
-        self.vectors = self.encoder.encode(images)
+        # Encode one reference at a time, not thousands of full-resolution PIL crops.
+        self.vectors = np.concatenate([self._reference_vectors(self.images[rid]) for rid in image_ids])
         if len(self.vectors) != len(self.entries) or not np.isfinite(self.vectors).all():
             raise ValueError("Invalid visual embeddings")
 
@@ -142,6 +188,31 @@ class MuseumVisualIndex:
 
     def reference_image(self, hit: dict) -> bytes:
         return self.images[hit["reference_id"]]
+
+    def comparison_views(self, hits: list[dict]) -> list[dict]:
+        """Opt-in verification experiment: same candidates, at most two photos each.
+
+        Keep the retrieved reference first and prefer a complementary whole/detail
+        reference. This does not rescore retrieval or synthesize an extra match vote.
+        """
+        expanded, seen = [], set()
+        for hit in hits:
+            sid = hit["source_id"]
+            if sid in seen:
+                continue
+            seen.add(sid)
+            expanded.append(hit)
+            rows = self.references_by_source.get(sid, [])
+            current = next((r for r in rows if r["reference_id"] == hit["reference_id"]), {})
+            alternatives = [r for r in rows if r["reference_id"] != hit["reference_id"]
+                            and self.images[r["reference_id"]] != self.images[hit["reference_id"]]]
+            preferred = next((r for r in alternatives if r["view"] != current.get("view")), None)
+            if preferred or alternatives:
+                extra = preferred or alternatives[0]
+                expanded.append({"source_id": sid, "reference_id": extra["reference_id"]})
+            if len(seen) == 5:
+                break
+        return expanded
 
     def reference_hits(self, source_ids: list[str], limit: int = 2) -> list[dict]:
         """Resolve a bounded text-recalled set to actual images, without inventing scores."""

@@ -56,6 +56,7 @@ class PhotoRecognizer:
         visual_hits, visual_error = [], None
         text_ids, compared_ids = [], []
         comparison_refs, rescued_ids = [], []
+        reference_mode = getattr(getattr(self.engine, "settings", None), "museum_photo_reference_mode", "single")
         validation_issues = []
         try:
             observation = Observation.model_validate(await client.complete_json([
@@ -91,6 +92,9 @@ class PhotoRecognizer:
                     recovered = visual.reference_hits(missing[:2])
                     comparison_refs.extend(recovered)
                     rescued_ids = [h['source_id'] for h in recovered]
+                ranking_refs = list(comparison_refs)
+                if reference_mode == "multiview" and visual:
+                    comparison_refs = visual.comparison_views(comparison_refs)
                 if candidates:
                     stage = "compare_candidates"
                     # Do not let descriptive catalogue prose supply unseen visual details.
@@ -125,7 +129,7 @@ class PhotoRecognizer:
                          '"needs":["label|whole|base|top|angle"]}]}。枚举每项只选一个值，shared_features最多3项，needs最多3项。'},
                         {"role": "user", "content": content}]))
                     result, comparison_summary = decide(comparisons, candidates,
-                        comparison_refs, observation.visible_text,
+                        ranking_refs, observation.visible_text,
                         getattr(visual, "label_required_ids", set()))
         except Exception as exc:
             result.update(status="service_unavailable", message="照片识别暂时不可用，可以先选择示例作品或输入名称。")
@@ -157,6 +161,8 @@ class PhotoRecognizer:
             "visual_scores": [hit["score"] for hit in visual_hits],
             "text_retrieved_ids": text_ids, "compared_ids": compared_ids,
             "comparison_reference_ids": [h['source_id'] for h in comparison_refs],
+            "comparison_image_ids": [h['reference_id'] for h in comparison_refs],
+            "reference_mode": reference_mode,
             "reference_rescued_ids": rescued_ids,
             "usage": getattr(client, "usage_records", []), "error": error, "error_cause": error_cause,
             "validation_issues": validation_issues})
