@@ -1,10 +1,68 @@
 """Offline cross-encoder experiment; not used by the application search path."""
 import math
+from .semantic_chunks import METADATA_LABELS
 
 MODEL_REVISION='953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e'
 PASSAGE_VERSION='metadata-plus-retrieved-evidence-v1'
 ATTRIBUTE_LABELS=frozenset({'Maker','Date','Place','Materials and techniques','materialsAndTechniques',
     '作者 Artist','年代 Date','材质 Medium','创作地 Origin','分类 Classification'})
+
+CONTEXT_PASSAGE_VERSION='metadata-retrieved-neighbours-summary-v2'
+
+
+def contextual_evidence(source, candidate, chunks, *, fits):
+    """Pack source excerpts under a caller's token budget; never consult gold.
+
+    Priority is attributes, lane winners, brief description, two neighbours on
+    either side of each winner, then the first two summary chunks. Whole chunks
+    only; omitted excerpts are recorded rather than silently truncated.
+    """
+    if candidate['source_id'] != source['_id']:
+        raise ValueError('Candidate/source mismatch')
+    if any(c['source_id'] != source['_id'] for c in chunks):
+        raise ValueError('Cross-source context')
+    positions={c['_id']:i for i,c in enumerate(chunks)}
+    if len(positions)!=len(chunks):raise ValueError('Duplicate context chunk')
+    prefix=source['title']+'\n'
+    def body(chunk):
+        if not chunk['content'].startswith(prefix):raise ValueError('Invalid chunk title')
+        return chunk['content'][len(prefix):]
+    bodies=[body(c) for c in chunks]
+    proposals=[dict(text=source['title'],reason='title',chunk_id=None)]
+    def add(i,reason):
+        proposals.append(dict(text=bodies[i],reason=reason,chunk_id=chunks[i]['_id']))
+    for i,text in enumerate(bodies):
+        label,sep,value=text.partition(':')
+        if sep and label.strip() in ATTRIBUTE_LABELS and value.strip():add(i,'attribute')
+    winners=[]
+    for lane in ['lexical','dense']:
+        evidence=candidate.get('lanes',{}).get(lane)
+        if not evidence:continue
+        i=positions[evidence['best_chunk_id']]
+        if chunks[i]['content']!=evidence['best_content']:raise ValueError('Changed retrieval evidence')
+        winners.append(i);add(i,'retrieved_'+lane)
+    for i,text in enumerate(bodies):
+        if text.startswith('briefDescription:'):add(i,'brief')
+    # Earlier context first, in source order (sentences can span two chunks).
+    for offset in [-2,-1,1,2]:
+        for i in winners:
+            j=i+offset
+            if 0<=j<len(chunks):
+                label=bodies[j].partition(':')[0].strip()
+                if label not in METADATA_LABELS:add(j,'neighbour')
+    for i,text in enumerate(bodies):
+        if text.startswith('summaryDescription:') or text.startswith('馆方介绍 Description:'):
+            add(i,'summary')
+            if i+1<len(chunks) and ':' not in bodies[i+1]:add(i+1,'summary_continuation')
+    included=[];omitted=[];seen=set();parts=[]
+    for item in proposals:
+        if item['text'] in seen:continue
+        seen.add(item['text'])
+        if fits('\n'.join(parts+[item['text']])):
+            parts.append(item['text']);included.append(item)
+        else:omitted.append(item)
+    if not parts or included[0]['reason']!='title':raise ValueError('Budget cannot fit title')
+    return dict(passage='\n'.join(parts),included=included,omitted=omitted)
 
 
 def evidence_passage(source, candidate):
