@@ -1,13 +1,18 @@
 """Asymmetric verification: lack of visibility is not evidence of a conflict."""
 import base64
 import json
-from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from typing import Literal, get_args
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from .photo_policy import Comparison, Comparisons, Feature, decide
 
-VERSION = "partial-region-verification-v1"
+VERSION = "partial-region-verification-v2-part-contract"
+KNOWN_PARTS = frozenset(get_args(Feature.model_fields["part"].annotation))
 
 class VisibleFeature(Feature):
+    # A provider's bounded, unknown region label must not crash the whole request.
+    # It is NOT an additional trusted anatomical category; normalize_visible drops
+    # its positive identity weight, retains valid conflicts and stores codes only.
+    part: StrictStr = Field(min_length=1, max_length=40)
     relation: Literal["visible_match", "visible_conflict", "not_visible", "cannot_compare"]
     query_visible: StrictBool
     reference_visible: StrictBool
@@ -25,14 +30,18 @@ def normalize_visible(rows: VisibleComparisons) -> tuple[Comparisons, list[dict]
         features = []
         states = []
         for f in row.features:
+            known_part = f.part in KNOWN_PARTS
+            part = f.part if known_part else "parts"
             state = f.relation
             # No match or veto without both sides being explicitly visible and described.
             comparable = f.query_visible and f.reference_visible and f.query_detail.strip() and f.reference_detail.strip()
             if state in {"visible_match", "visible_conflict"} and not comparable:
                 state = "not_visible" if not f.query_visible else "cannot_compare"
             relation = {"visible_match": "match", "visible_conflict": "different"}.get(state, "not_visible")
-            features.append(Feature(**f.model_dump(exclude={"relation", "query_visible", "reference_visible"}), relation=relation))
-            states.append(dict(part=f.part, state=state, query_visible=f.query_visible, reference_visible=f.reference_visible))
+            features.append(Feature(**f.model_dump(exclude={"part", "distinctive", "relation", "query_visible", "reference_visible"}),
+                                    part=part, distinctive=f.distinctive and known_part, relation=relation))
+            states.append(dict(part=part, part_status="known" if known_part else "unsupported",
+                               state=state, query_visible=f.query_visible, reference_visible=f.reference_visible))
         converted.append(Comparison(**row.model_dump(exclude={"features"}), features=features))
         audit.append(dict(candidate_id=row.candidate_id, regions=states))
     return Comparisons(comparisons=converted), audit

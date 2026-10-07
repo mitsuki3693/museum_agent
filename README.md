@@ -4,7 +4,7 @@
 
 ## 当前状态（2026-10-07）
 
-局部识图实验：已实现可见性规则、逐候选核对和 DINOv2 patch 对应分支，198 项后端测试通过。已完成六张开发图片、四组、各三次的真实模型对照：可见性规则改善了花器顶部候选展示，但 patch 未显示额外收益，且存在格式与连接失败；默认仍保持旧核对方式。结果已存入本地评测记录，不是正式准确率或线上 A/B。见 [实现范围与失败记录](docs/partial-region-verification.md)。
+局部识图实验：可见性规则改善了花器顶部候选展示，DINOv2 patch 暂未显示额外收益。后续已修复新分支的部位字段容错：18 份真实回复配对校验中，4 份格式失败恢复正常，其余 14 份游客结果保持一致；208 项后端测试通过。海神背面仍未解决，默认保持旧核对方式。结果已存入本地评测记录，不是正式准确率或线上 A/B。见 [实现范围与失败记录](docs/partial-region-verification.md)。
 
 代码已发布到 [GitHub](https://github.com/mitsuki3693/museum_agent)；应用代码提交 `7ac23d6` 的 [Actions 检查已通过](https://github.com/mitsuki3693/museum_agent/actions/runs/36545829709)。
 
