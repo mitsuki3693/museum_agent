@@ -14,6 +14,8 @@ class MuseumSettings(BaseSettings):
     mongodb_db: str = "museum_agent"
     museum_embedding: Literal["lexical", "local"] = "lexical"
     museum_embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    # Opt-in after corpus-specific acceptance. Original is the rollback/default.
+    museum_dense_view: Literal['original', 'filtered'] = 'original'
     museum_admin_token: str = ""
     museum_session_ttl: int = 1800
     museum_max_inflight: int = 2

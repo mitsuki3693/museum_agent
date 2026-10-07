@@ -13,6 +13,7 @@ from app.retrieval.hybrid import HybridRetriever
 from app.retrieval.reranker import Reranker
 from app.retrieval.vector_store import MemoryVectorStore
 from .config import MuseumSettings, ROOT
+from .semantic_chunks import dense_views
 
 def canonical_accession(value: str) -> str | None:
     """Normalize a complete bare identifier, never extract one from prose.
@@ -80,8 +81,11 @@ class MuseumIndex:
             self.embedding._local_model = await asyncio.to_thread(
                 SentenceTransformer, self.settings.museum_embedding_model,
                 cache_folder=str(ROOT / "models"), local_files_only=True)
-            vectors = await asyncio.to_thread(self.embedding._local_embed, [r["content"] for r in chunks])
-            for r, vector in zip(chunks, vectors, strict=True):
+            dense_chunks = chunks
+            if self.settings.museum_dense_view == 'filtered':
+                dense_chunks = dense_views(records)['filtered']
+            vectors = await asyncio.to_thread(self.embedding._local_embed, [r["content"] for r in dense_chunks]) if dense_chunks else []
+            for r, vector in zip(dense_chunks, vectors, strict=True):
                 await self.vectors.add(r["_id"], vector, r)
 
     def exact_accession_ids(self, query: str) -> list[str]:
