@@ -14,8 +14,6 @@ import statistics
 import sys
 import time
 
-import torch
-
 from app.museum.config import MuseumSettings
 from app.museum.retrieval import MuseumIndex
 from app.museum.search_fields import FIELD_WEIGHTS, field_documents, flattened_documents, load_search_fields
@@ -54,6 +52,8 @@ def sha(path):
 
 def stats(rows):
     targeted=[r for r in rows if r['gold']]
+    if not targeted:
+        return {}
     scores={}
     for name in rows[0]['arms']:
         values=[r['arms'][name] for r in targeted]
@@ -67,10 +67,30 @@ def stats(rows):
     return scores
 
 
+def stage_ranks(hits, gold, limit=25):
+    """Differentiate a chunk cutoff from deduplicated work recall."""
+    works=list(dict.fromkeys(h['source_id'] for h in hits))
+    return dict(best_chunk_rank=next((i for i,h in enumerate(hits,1) if h['source_id'] in gold),None),
+                work_rank=next((i for i,sid in enumerate(works,1) if sid in gold),None),
+                coarse_contains_gold=any(h['source_id'] in gold for h in hits[:limit]),
+                coarse_unique_works=len({h['source_id'] for h in hits[:limit]}))
+
+
+def expectation_coverage(ids, expected):
+    """Known relevant examples, NOT an exhaustive relevance label or accuracy."""
+    expected=list(dict.fromkeys(expected))
+    present=[sid for sid in expected if sid in ids[:5]]
+    return dict(known_examples=expected,present_top5=present,
+                count=len(present),total=len(expected))
+
+
 async def main():
+    import torch  # Optional local-model dependency; metric helpers need no torch.
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,default=ROOT/'eval/private/bm25f-v1.json')
     parser.add_argument('--manifest',type=Path,default=ROOT/'data/private/va-search-fields-v1.json')
+    parser.add_argument('--queries',type=Path,action='append',help='Repeat to override default frozen query sets')
+    parser.add_argument('--diagnose',action='store_true',help='Record full original BM25/dense ranks, without changing ranking')
     args=parser.parse_args()
     if args.output.exists():raise FileExistsError('Preserve completed evaluation evidence')
     torch.set_num_threads(4)
@@ -79,12 +99,24 @@ async def main():
     baseline_path=ROOT/'eval/private/scale-300-v1.json'
     baseline=json.loads(baseline_path.read_bytes())
     assert baseline['complete'] and sha(corpus)==baseline['versions']['300']['corpus_sha256']
-    sets=[ROOT/'eval/private'/n for n in ['scale-300-text-v1.json','scale-300-new-text-v1.json','bm25f-new-queries-v1.json']]
+    sets=args.queries or [ROOT/'eval/private'/n for n in ['scale-300-text-v1.json','scale-300-new-text-v1.json','bm25f-new-queries-v1.json']]
+    seen=set()
+    for path in sets:
+        qset=json.loads(path.read_bytes())
+        assert qset['frozen']
+        frozen=qset.get('frozen_versions',{})
+        if frozen:
+            assert frozen['corpus_sha256']==sha(corpus)
+            assert frozen['fields_sha256']==sha(manifest)
+        for c in qset['cases']:
+            if c['id'] in seen:raise ValueError('Duplicate query ID')
+            seen.add(c['id'])
     cfg=MuseumSettings(_env_file=None,museum_private_corpus=corpus,museum_embedding='local',deepseek_api_key='')
+    assert cfg.museum_embedding_model==baseline['embedding_model'], 'Baseline encoder changed'
     index=MuseumIndex(cfg,MemoryStore())
     rss=working_set();t=time.perf_counter();await index.start()
     report=dict(complete=False,human_reviewed=False,
-        scope='Offline candidate retrieval, not generated answers or user accuracy. Same author wrote new questions and auxiliary fields.',
+        scope='Offline candidate retrieval, not generated answers or user accuracy. Agent-authored queries; no human review.',
         versions=dict(corpus=sha(corpus),public_corpus=sha(cfg.museum_corpus),baseline=sha(baseline_path),
                       queries={p.name:sha(p) for p in sets},model=cfg.museum_embedding_model,
                       code={p:sha(ROOT/p) for p in ['scripts/evaluate_bm25f.py','backend/app/museum/search_fields.py','backend/app/retrieval/bm25f.py']}),
@@ -118,7 +150,15 @@ async def main():
             for name,ids,elapsed,evidence in variants:
                 rank=next((i+1 for i,sid in enumerate(ids) if sid in case['gold']),None)
                 row['arms'][name]=dict(ids=ids,rank=rank,ms=elapsed)
+                if case.get('known_relevant_examples'):
+                    row['arms'][name]['example_coverage']=expectation_coverage(ids,case['known_relevant_examples'])
                 if evidence is not None:row['arms'][name]['matched_fields']=[dict(id=h['id'],fields=h['matched_fields']) for h in evidence]
+            if args.diagnose and case['gold']:
+                vector=(await asyncio.to_thread(index.embedding._local_embed,[case['query']]))[0]
+                count=await index.vectors.count()
+                bm=index.bm25.search(case['query'],top_k=count)
+                dense=await index.vectors.search(vector,top_k=count)
+                row['stages']={name:stage_ranks(hits,case['gold']) for name,hits in [('original_bm25',bm),('original_dense',dense)]}
             report['rows'].append(row)
     report['summary']=stats(report['rows'])
     report['by_category']={c:stats([r for r in report['rows'] if r['category']==c]) for c in sorted({r['category'] for r in report['rows'] if r['gold']})}
