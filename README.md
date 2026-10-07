@@ -4,7 +4,7 @@
 
 ## 当前状态（2026-10-07）
 
-局部识图实验：已实现可见性规则、逐候选核对和 DINOv2 patch 对应分支，198 项后端测试通过。真实图片离线对应仍受背景、重复纹样和视角影响，故默认保持旧核对方式；三次重复的真实模型对照待执行。见 [实现范围与失败记录](docs/partial-region-verification.md)。
+局部识图实验：已实现可见性规则、逐候选核对和 DINOv2 patch 对应分支，198 项后端测试通过。已完成六张开发图片、四组、各三次的真实模型对照：可见性规则改善了花器顶部候选展示，但 patch 未显示额外收益，且存在格式与连接失败；默认仍保持旧核对方式。结果已存入本地评测记录，不是正式准确率或线上 A/B。见 [实现范围与失败记录](docs/partial-region-verification.md)。
 
 代码已发布到 [GitHub](https://github.com/mitsuki3693/museum_agent)；应用代码提交 `7ac23d6` 的 [Actions 检查已通过](https://github.com/mitsuki3693/museum_agent/actions/runs/36545829709)。
 
