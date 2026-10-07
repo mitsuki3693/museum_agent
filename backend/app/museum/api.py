@@ -124,8 +124,10 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         app.state.backup = BackupManager(config, mongo, app.state.write_gate)
         backup_task = asyncio.create_task(app.state.backup.daily()) if config.museum_daily_backup else None
         try:
+            await index.start_reranker()
             yield
         finally:
+            await index.close()
             if backup_task:
                 backup_task.cancel()
                 try:
@@ -181,6 +183,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         return {"status": "ok", "model_configured": bool(config.deepseek_api_key),
                 "storage": config.museum_storage, "retrieval": config.museum_embedding,
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
+                "text_rerank": {"enabled": config.museum_text_rerank,
+                    "state": app.state.index.reranker.state if app.state.index.reranker else 'disabled',
+                    "budget_ms": round(config.museum_rerank_timeout*1000)},
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
                 "photo_policy_version": POLICY_VERSION,

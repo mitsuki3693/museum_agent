@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -16,6 +17,10 @@ class MuseumSettings(BaseSettings):
     museum_embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     # Opt-in after corpus-specific acceptance. Original is the rollback/default.
     museum_dense_view: Literal['original', 'filtered', 'administrative'] = 'original'
+    museum_text_rerank: bool = False
+    museum_rerank_model: Path = ROOT / 'models/bge-reranker-v2-m3'
+    museum_rerank_timeout: float = Field(default=8,gt=0,le=20)
+    museum_rerank_startup_timeout: float = Field(default=60,gt=0,le=120)
     museum_admin_token: str = ""
     museum_session_ttl: int = 1800
     museum_max_inflight: int = 2

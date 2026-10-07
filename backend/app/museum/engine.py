@@ -127,7 +127,11 @@ class MuseumEngine:
                     rewritten = rewrite["query"]
             except Exception as exc:
                 rewrite_error = type(exc).__name__
-        sources = await self.index.search(rewritten, effective_object, variant)
+        rerank_trace={'status':'disabled'}
+        if self.settings.museum_text_rerank:
+            sources,rerank_trace=await self.index.search_for_answer(rewritten,effective_object,variant)
+        else:
+            sources = await self.index.search(rewritten, effective_object, variant)
         retrieved_candidates = [{"id": r["_id"], "source_hash": r["source_hash"]} for r in sources]
         if effective_object:
             # A confirmed photo/explicit selection is a hard entity boundary.
@@ -244,6 +248,7 @@ class MuseumEngine:
                  "query": query, "rewritten_query": rewritten, "rewrite_error": rewrite_error,
                  "retrieval_route": 'exact_accession' if exact_accession else 'natural_language',
                  "retrieved_candidates": retrieved_candidates,
+                 "rerank": rerank_trace,
                  "object_id": effective_object, "variant": variant, "model": self.settings.deepseek_model,
                  "embedding": self.settings.museum_embedding, "corpus_hash": self.index.corpus_hash,
                  "embedding_model": self.settings.museum_embedding_model,

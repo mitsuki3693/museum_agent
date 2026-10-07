@@ -14,6 +14,7 @@ from app.retrieval.reranker import Reranker
 from app.retrieval.vector_store import MemoryVectorStore
 from .config import MuseumSettings, ROOT
 from .semantic_chunks import dense_views, administrative_view
+from .work_fusion import fuse_works
 
 def canonical_accession(value: str) -> str | None:
     """Normalize a complete bare identifier, never extract one from prose.
@@ -41,6 +42,8 @@ class MuseumIndex:
         self.bm25 = BM25Index()
         self.vectors = MemoryVectorStore()
         self.embedding = None
+        self.reranker = None
+        self.rerank_vectors = None
         self.records: dict[str, dict[str, Any]] = {}
         self.corpus_hash = ""
         self.accessions: dict[str, list[str]] = {}
@@ -89,6 +92,57 @@ class MuseumIndex:
             vectors = await asyncio.to_thread(self.embedding._local_embed, [r["content"] for r in dense_chunks]) if dense_chunks else []
             for r, vector in zip(dense_chunks, vectors, strict=True):
                 await self.vectors.add(r["_id"], vector, r)
+            if self.settings.museum_text_rerank:
+                # Separate experimental lane: fallback and photo paths retain
+                # their configured dense view, even when it is original.
+                self.rerank_vectors=MemoryVectorStore()
+                admin_chunks=administrative_view(records)['chunks']
+                # Batch-dependent encoder rounding can reorder tied chunks.
+                # Reproduce the frozen administrative sequence, not a subset
+                # of vectors encoded in another batch (original/filtered).
+                admin_vectors=vectors if self.settings.museum_dense_view=='administrative' else (
+                    await asyncio.to_thread(self.embedding._local_embed,[c['content'] for c in admin_chunks]) if admin_chunks else [])
+                for chunk,vector in zip(admin_chunks,admin_vectors,strict=True):
+                    await self.rerank_vectors.add(chunk['_id'],vector,chunk)
+
+    async def start_reranker(self):
+        if self.settings.museum_text_rerank and self.rerank_vectors is not None:
+            from .rerank_service import RerankService
+            self.reranker=RerankService(self.settings.museum_rerank_model,
+                timeout=self.settings.museum_rerank_timeout,startup_timeout=self.settings.museum_rerank_startup_timeout)
+            await self.reranker.start()
+
+    async def close(self):
+        if self.reranker:await self.reranker.stop()
+
+    async def search_for_answer(self, query, object_id=None, variant='hybrid'):
+        baseline=await self.search(query,object_id,variant)
+        trace=dict(status='disabled',fallback_ids=[s['_id'] for s in baseline])
+        if not self.settings.museum_text_rerank:return baseline,trace
+        if object_id or self.exact_accession_ids(query) or variant!='hybrid':
+            trace['status']='bypassed';return baseline,trace
+        if not self.reranker or self.rerank_vectors is None:
+            trace['status']='unavailable';return baseline,trace
+        # Avoid re-encoding or extra retrieval while the worker is disabled/busy.
+        if self.reranker.state!='ready' or self.reranker.busy:
+            trace['status']='busy' if self.reranker.busy else self.reranker.state
+            return baseline,trace
+        try:
+            vector=(await asyncio.to_thread(self.embedding._local_embed,[query]))[0]
+            candidates=fuse_works(self.bm25.search(query,top_k=25),await self.rerank_vectors.search(vector,top_k=25))
+            sources=await self._current_sources([c['source_id'] for c in candidates])
+            active={s['_id'] for s in sources};candidates=[c for c in candidates if c['source_id'] in active]
+            if not candidates:
+                trace['status']='no_candidates';return baseline,trace
+            ids,details=await self.reranker.rank(query,candidates,sources)
+            trace.update(details)
+            if ids is not None:
+                return (await self._current_sources(ids))[:5],trace
+        except Exception as exc:
+            trace.update(status='error',error_type=type(exc).__name__)
+        # Revalidate sources after a potentially long wait; never resurrect an
+        # archived or replaced source via the fallback snapshot.
+        return await self._current_sources([s['_id'] for s in baseline]),trace
 
     def exact_accession_ids(self, query: str) -> list[str]:
         return list(self.accessions.get(canonical_accession(query), []))
