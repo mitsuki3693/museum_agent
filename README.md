@@ -4,6 +4,8 @@
 
 ## 当前状态（2026-10-07）
 
+局部识图实验：已实现可见性规则、逐候选核对和 DINOv2 patch 对应分支，198 项后端测试通过。真实图片离线对应仍受背景、重复纹样和视角影响，故默认保持旧核对方式；三次重复的真实模型对照待执行。见 [实现范围与失败记录](docs/partial-region-verification.md)。
+
 代码已发布到 [GitHub](https://github.com/mitsuki3693/museum_agent)；应用代码提交 `7ac23d6` 的 [Actions 检查已通过](https://github.com/mitsuki3693/museum_agent/actions/runs/36545829709)。
 
 最新进展：本地 V&A 试验库扩至 **100 件**（连同 AIC 共 112 条），增加可续传导入和版本化图像特征缓存。固定开发图的正确作品检索排名没有因扩库退化；真实单图/多图核对对照未见明确收益，故多图模式仍关闭。局部图仍有拒识、相似花器仍保留展签保护；没有正式准确率或线上 A/B 结论。详见 [100 件试验库与实际对照结果](docs/pilot-100-evaluation.md)。此前 [花器修复记录](docs/blue-ceramics-diagnosis.md) 及以下测试数量均为历史版本证据。

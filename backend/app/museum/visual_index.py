@@ -44,6 +44,15 @@ class DinoEncoder:
                                               trust_remote_code=False, use_safetensors=True).eval()
         self.lock = threading.Lock()
 
+    def encode_patches(self, image: Image.Image) -> np.ndarray:
+        """224-square image prepared by the local correspondence branch, no centre crop."""
+        array = np.asarray(image, dtype=np.float32) / 255
+        array = (array - np.array([.485, .456, .406], dtype=np.float32)) / np.array([.229, .224, .225], dtype=np.float32)
+        with self.lock, self.torch.inference_mode():
+            batch = self.torch.from_numpy(array.transpose(2, 0, 1)[None])
+            values = self.model(pixel_values=batch).last_hidden_state[:, 1:].cpu().numpy()[0]
+        return values / np.maximum(np.linalg.norm(values, axis=1, keepdims=True), 1e-12)
+
     def encode(self, images: list[Image.Image]) -> np.ndarray:
         pixels = []
         for image in images:

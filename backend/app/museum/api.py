@@ -113,6 +113,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             visual = MuseumVisualIndex(config.museum_visual_manifest, config.museum_visual_model, index.records,
                                        cache_dir=config.museum_visual_cache)
             await visual.start()
+            if config.museum_photo_verification == "partial":
+                from .local_correspondence import LocalCorrespondence
+                visual.local_correspondence = LocalCorrespondence(visual, config.museum_visual_cache)
             app.state.engine.visual_index = visual
         app.state.slots = asyncio.Semaphore(config.museum_max_inflight)
         app.state.new_sessions = {}
@@ -179,6 +182,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
                 "photo_reference_mode": config.museum_photo_reference_mode,
+                "photo_verification": config.museum_photo_verification,
                 "route_planning": app.state.routes.planner.unavailable() is None,
                 "photo_retrieval": "image_and_text" if getattr(app.state.engine, "visual_index", None) else "caption_text",
                 "visual_index_hash": getattr(getattr(app.state.engine, "visual_index", None), "index_hash", None)}

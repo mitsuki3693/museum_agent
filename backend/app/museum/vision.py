@@ -57,6 +57,9 @@ class PhotoRecognizer:
         text_ids, compared_ids = [], []
         comparison_refs, rescued_ids = [], []
         reference_mode = getattr(getattr(self.engine, "settings", None), "museum_photo_reference_mode", "single")
+        verification_mode = getattr(getattr(self.engine, "settings", None), "museum_photo_verification", "legacy")
+        visibility_summary, region_summary = [], []
+        prompt_version, policy_version = self.PROMPT_VERSION, POLICY_VERSION
         validation_issues = []
         try:
             observation = Observation.model_validate(await client.complete_json([
@@ -93,9 +96,17 @@ class PhotoRecognizer:
                     comparison_refs.extend(recovered)
                     rescued_ids = [h['source_id'] for h in recovered]
                 ranking_refs = list(comparison_refs)
-                if reference_mode == "multiview" and visual:
+                if reference_mode == "multiview" and visual and verification_mode == "legacy":
                     comparison_refs = visual.comparison_views(comparison_refs)
-                if candidates:
+                if candidates and verification_mode != "legacy" and visual:
+                    from .partial_verification import verify, decide_visible, VERSION
+                    stage = "compare_candidates"
+                    prompt_version, policy_version = VERSION + ":" + verification_mode, VERSION
+                    comparisons, visibility_summary, comparison_refs, region_summary = await verify(
+                        client, clean, candidates, ranking_refs, visual, verification_mode)
+                    result, comparison_summary = decide_visible(comparisons, candidates, ranking_refs,
+                        observation.visible_text, getattr(visual, "label_required_ids", set()))
+                elif candidates:
                     stage = "compare_candidates"
                     # Do not let descriptive catalogue prose supply unseen visual details.
                     # Text remains available for retrieval, but identity comparison uses images.
@@ -155,7 +166,7 @@ class PhotoRecognizer:
             "match_state": result["match_state"], "similar_candidate_ids": [s["id"] for s in result["similar_candidates"]],
             "identity_confirmed": False, "comparison_summary": comparison_summary,
             "parent_photo_trace_id": session.get("_parent_photo_trace_id"), "interactions": [],
-            "prompt_version": self.PROMPT_VERSION, "policy_version": POLICY_VERSION, "last_stage": stage,
+            "prompt_version": prompt_version, "policy_version": policy_version, "last_stage": stage,
             "visual_index_hash": getattr(visual, "index_hash", None), "visual_error": visual_error,
             "visual_retrieved_ids": [hit["source_id"] for hit in visual_hits],
             "visual_scores": [hit["score"] for hit in visual_hits],
@@ -163,6 +174,9 @@ class PhotoRecognizer:
             "comparison_reference_ids": [h['source_id'] for h in comparison_refs],
             "comparison_image_ids": [h['reference_id'] for h in comparison_refs],
             "reference_mode": reference_mode,
+            "verification_mode": verification_mode, "visibility_summary": visibility_summary,
+            "region_summary": [{k: r[k] for k in ("source_id", "reference_id", "version", "coverage", "coverage_scope",
+                "foreground_verified", "match_count", "reference_box")} for r in region_summary],
             "reference_rescued_ids": rescued_ids,
             "usage": getattr(client, "usage_records", []), "error": error, "error_cause": error_cause,
             "validation_issues": validation_issues})
