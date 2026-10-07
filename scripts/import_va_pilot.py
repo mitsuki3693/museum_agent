@@ -94,7 +94,6 @@ def main():
     records = json.loads(base.read_bytes())
     if args.target <= len(records):
         parser.error("Target must exceed the number of records in the base corpus")
-    quota = (args.target - len(records) + 3) // 4
     references = json.loads(base_refs.read_bytes())
     seen = {r.get("fields", {}).get("system_number", "") for r in records}
     seen.update(re.findall(r"/item/(O\d+)", " ".join(r["source_url"] for r in records)))
@@ -105,7 +104,12 @@ def main():
     seen.add("O70700")
     failures = []
     with httpx.Client(timeout=45, follow_redirects=True) as client:
-        for category in ("vase", "jug", "plate", "sculpture", "bust"):
+        categories = ("vase", "jug", "plate", "sculpture", "bust")
+        for category_index, category in enumerate(categories):
+            # Redistribute unfilled categories. A fixed quota can stop short even
+            # when the final category has enough usable public records.
+            remaining_categories = len(categories) - category_index
+            quota = (args.target - len(records) + remaining_categories - 1) // remaining_categories
             category_start = len(records)
             for page in range(1, 5):
                 params = dict(q_object_type=category, images_exist=1, page_size=100, page=page)
