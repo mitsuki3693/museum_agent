@@ -5,7 +5,7 @@ import re
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 
-POLICY_VERSION = "photo-policy-v3-reference-and-display-boundaries"
+POLICY_VERSION = "photo-policy-v4-two-candidate-display"
 
 SHARED = {
     "blue_white": "蓝白装饰", "tiered": "多层塔形结构", "spouts": "多个插花口",
@@ -104,11 +104,11 @@ def decide(comparisons: Comparisons, sources: list[dict], visual_hits: list[dict
                 "artist": source.get("fields", {}).get("artist_display", ""),
                 "shared_features": [SHARED[k] for k in dict.fromkeys(item.shared_features)]}
     if likely:
-        selected = sorted(likely + uncertain, key=order)[:3]
+        selected = sorted(likely + uncertain, key=order)[:2]
         # Never hide a competing plausible identity under a single confident label.
         state = "likely_match" if len(selected) == 1 else "uncertain"
     elif uncertain:
-        selected, state = sorted(uncertain, key=order)[:3], "uncertain"
+        selected, state = sorted(uncertain, key=order)[:2], "uncertain"
     else:
         selected, state = [], "no_reliable_match"
     messages = {

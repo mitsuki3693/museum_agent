@@ -143,3 +143,55 @@ def test_confirm_only_records_user_assertion_and_retry_preserves_trace(api):
     current=api.portal.call(store.get,'museum_sessions',sid)
     assert not current.get('photo_selection') and not current.get('object_id')
     assert api.portal.call(store.get,'museum_photo_traces',tid) is not None
+
+
+def test_two_candidate_display_keeps_all_comparisons_for_review():
+    sources = [{**SOURCE, '_id': name} for name in ('a', 'b', 'c')]
+    rows = [{**comparison(), 'candidate_id': name} for name in ('a', 'b', 'c')]
+    hits = [{'source_id': name, 'score': score} for name, score in [('a', .7), ('b', .9), ('c', .8)]]
+    result, audit = decide(Comparisons.model_validate({'comparisons': rows}), sources, hits, '')
+    assert [c['id'] for c in result['candidates']] == ['b', 'c']
+    assert result['match_state'] == 'uncertain'
+    assert len(audit) == 3 and result['identity_confirmed'] is False
+
+
+def test_retake_once_then_alternatives_are_session_scoped_and_persisted(api):
+    headers, sid = session(api)
+    other, _ = session(api)
+    first = photo(api, headers).json()
+    assert first['retake_count'] == 0
+    child = photo(api, headers, first['trace_id']).json()
+    assert child['retake_count'] == 1
+    body = {'trace_id': child['trace_id'], 'action': 'retry'}
+    assert api.post('/api/museum/photo-actions', headers=headers, json=body).status_code == 409
+    assert photo(api, headers, child['trace_id']).status_code == 409
+    for action in ('reject', 'search', 'browse'):
+        body['action'] = action
+        assert api.post('/api/museum/photo-actions', headers=other, json=body).status_code == 404
+        assert api.post('/api/museum/photo-actions', headers=headers, json={**body, 'object_id': 'vase'}).status_code == 422
+        assert api.post('/api/museum/photo-actions', headers=headers, json=body).status_code == 200
+    trace = api.portal.call(api.app.state.store.get, 'museum_photo_traces', child['trace_id'])
+    assert trace['retake_count'] == 1
+    assert [e['action'] for e in trace['interactions']] == ['reject', 'search', 'browse']
+    assert not trace.get('user_confirmed_object_id') and not trace['identity_confirmed']
+    current = api.portal.call(api.app.state.store.get, 'museum_sessions', sid)
+    assert not current.get('object_id') and not current.get('photo_selection')
+    # A different artwork is a new task, not permanently blocked by an earlier retake.
+    assert photo(api, headers).json()['retake_count'] == 0
+
+
+def test_service_failure_does_not_consume_another_retake(api):
+    headers, _ = session(api)
+    original = api.app.state.engine.client_factory
+    first = photo(api, headers).json()
+    class Unavailable:
+        async def complete_json(self, messages):
+            raise ConnectionError('offline test')
+    api.app.state.engine.client_factory = Unavailable
+    failed = photo(api, headers, first['trace_id']).json()
+    assert failed['status'] == 'service_unavailable' and failed['retake_count'] == 1
+    assert api.post('/api/museum/photo-actions', headers=headers, json={
+        'trace_id': failed['trace_id'], 'action': 'retry'}).status_code == 200
+    api.app.state.engine.client_factory = original
+    completed = photo(api, headers, failed['trace_id']).json()
+    assert completed['retake_count'] == 1 and completed['status'] != 'service_unavailable'

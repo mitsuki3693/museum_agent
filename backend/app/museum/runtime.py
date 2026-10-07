@@ -209,6 +209,7 @@ def export_metrics(data):
                          "match_state": row.get("match_state"), "similar_candidate_ids": row.get("similar_candidate_ids", []),
                          "user_confirmed_object_id": row.get("user_confirmed_object_id"),
                          "parent_photo": anon(row["parent_photo_trace_id"]) if row.get("parent_photo_trace_id") else None,
+                         "retake_count": row.get("retake_count", 0),
                          "interaction_actions": [e["action"] for e in row.get("interactions", [])],
                          "tokens": tokens})
     return {"schema_version": 1, "kind": "anonymized_metrics", "generated_at": time.time(), "rows": rows,

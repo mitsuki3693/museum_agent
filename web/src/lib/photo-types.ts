@@ -2,5 +2,6 @@ export type PhotoCandidate = {id: string; title: string; artist?: string; source
 export type PhotoResult = {
   trace_id: string; status: string; match_state?: "likely_match" | "uncertain" | "no_reliable_match";
   message: string; candidates: PhotoCandidate[]; similar_candidates?: PhotoCandidate[]; next_steps?: string[];
+  retake_count?: number;
 };
-export type PhotoAction = "confirm" | "view_similar" | "retry";
+export type PhotoAction = "confirm" | "view_similar" | "retry" | "reject" | "search" | "browse";

@@ -20,6 +20,7 @@ from .config import MuseumSettings
 from .retrieval import MuseumIndex
 from .engine import MuseumEngine
 from .vision import PhotoRecognizer, MAX_UPLOAD_BYTES
+from .photo_policy import POLICY_VERSION
 from .routes import RoutePlanner, RoutePreferences, RouteService, is_route_question
 from .floor_demo import FloorDemo
 from .operations_demo import OperationsDemo
@@ -39,7 +40,7 @@ class FeedbackRequest(BaseModel):
 
 class PhotoActionRequest(BaseModel):
     trace_id: str = Field(min_length=1, max_length=64)
-    action: Literal["confirm", "view_similar", "retry"]
+    action: Literal["confirm", "view_similar", "retry", "reject", "search", "browse"]
     object_id: str | None = Field(default=None, max_length=100)
 
 class ReviewRequest(BaseModel):
@@ -171,6 +172,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             row["photo_hash"] = current.get("_photo_hash")
             row["photo_hash_kind"] = "upload_bytes"
             row["parent_photo_trace_id"] = current.get("_parent_photo_trace_id")
+            row["retake_count"] = current.get("_retake_count", 0)
         await app.state.store.upsert("museum_photo_traces" if action == "photo" else "museum_traces", row)
         return result
 
@@ -181,6 +183,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
                 "prompt_version": MuseumEngine.PROMPT_VERSION,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
+                "photo_policy_version": POLICY_VERSION,
                 "photo_reference_mode": config.museum_photo_reference_mode,
                 "photo_verification": config.museum_photo_verification,
                 "route_planning": app.state.routes.planner.unavailable() is None,
@@ -243,10 +246,17 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         if lock.locked():
             raise HTTPException(409, "上一个问题仍在处理，请稍后")
         async with lock:
+            retake_count = 0
             if parent_trace_id:
                 parent = await app.state.store.get("museum_photo_traces", parent_trace_id)
                 if not parent or parent["session_id"] != current["_id"]:
                     raise HTTPException(404, "未找到本会话的照片记录")
+                retake_count = parent.get("retake_count", 0)
+                # A service failure is not evidence that the visitor's photo is bad.
+                if parent.get("status") != "service_unavailable":
+                    if retake_count >= 1:
+                        raise HTTPException(409, "已补拍一次，请输入作品名称或展签文字，或浏览馆藏")
+                    retake_count += 1
             if app.state.slots.locked():
                 raise HTTPException(429, "服务繁忙，请稍后重试")
             async with app.state.slots:
@@ -259,11 +269,11 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 current.pop("photo_selection", None)
                 await app.state.store.upsert("museum_sessions", current)
                 current = {**current, "_trace_id": uuid4().hex, "_photo_hash": hashlib.sha256(raw).hexdigest(),
-                           "_parent_photo_trace_id": parent_trace_id}
+                           "_parent_photo_trace_id": parent_trace_id, "_retake_count": retake_count}
                 await app.state.store.upsert("museum_photo_traces", {
                     "_id": current["_trace_id"], "session_id": current["_id"], "created_at": time.time(),
                     "status": "running", "photo_hash": current["_photo_hash"], "photo_hash_kind": "upload_bytes",
-                    "parent_photo_trace_id": parent_trace_id})
+                    "parent_photo_trace_id": parent_trace_id, "retake_count": retake_count})
                 try:
                     return await asyncio.wait_for(PhotoRecognizer(app.state.engine).recognize(raw, current), 65)
                 except ValueError as exc:
@@ -271,7 +281,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                     raise HTTPException(422, str(exc)) from None
                 except asyncio.TimeoutError:
                     await failure_trace(current, "", "timeout", "photo", started, "TimeoutError")
-                    raise HTTPException(504, "照片识别超时，请换一张照片重试") from None
+                    raise HTTPException(504, "照片识别服务超时，不代表照片有问题。可以稍后重试或输入作品名称") from None
                 except Exception as exc:
                     await failure_trace(current, "", "service_unavailable", "photo", started, type(exc).__name__)
                     raise HTTPException(503, "照片识别未完成，失败记录已保留") from None
@@ -288,9 +298,12 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             current = await app.state.store.get("museum_sessions", current["_id"])
             if not current or current["expires_at"] <= time.time():
                 raise HTTPException(401, "会话已过期，请重新开始")
-            if body.action == "retry":
+            if body.action in {"retry", "reject", "search", "browse"}:
                 if body.object_id:
-                    raise HTTPException(422, "补拍无需选择作品")
+                    raise HTTPException(422, "此操作无需选择作品")
+                if (body.action == "retry" and trace.get("retake_count", 0) >= 1
+                        and trace.get("status") != "service_unavailable"):
+                    raise HTTPException(409, "已补拍一次，请改用文字查找或浏览馆藏")
                 current.update(history=[], object_id=None)
                 current.pop("photo_selection", None)
             else:

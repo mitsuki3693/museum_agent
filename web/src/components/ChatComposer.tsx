@@ -30,7 +30,7 @@ export default function ChatComposer({busy, configured, selectedName, similar = 
     onSend(text.trim(), file); setText(""); setFile(null); setError("");
   }
   return <div className="composer-area">
-    {retrying && <p className="photo-action-note">补拍同一件作品：用下方“拍照”或“相册”选择新照片。</p>}
+    {retrying && <div className="photo-recovery-actions"><p className="photo-action-note">正在继续查找同一件作品。可发送照片，或输入名称、展签文字。</p><button type="button" className="quiet" disabled={busy} onClick={onUnselect}>取消补拍／换件作品</button></div>}
     {selectedName && !file && <div className="context-chip"><span>{similar ? "正在看相似馆藏" : "正在聊"} · {selectedName}</span><button type="button" disabled={busy} onClick={onUnselect}>换一件 ×</button></div>}
     <form className="composer" onSubmit={event => {event.preventDefault(); send();}}>
       {file && <div className="attachment-preview">

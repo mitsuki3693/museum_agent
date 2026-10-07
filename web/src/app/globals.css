@@ -123,6 +123,10 @@ blockquote{border-left:2px solid #8f73a3;margin:12px 0;padding:0 12px;font:12px/
 .photo-context-notice{font-size:14px;line-height:1.8;background:var(--soft);padding:12px 14px;border-radius:8px}
 .photo-retry{min-height:44px;font-size:14px}.photo-feedback{margin-top:18px}.photo-feedback,.photo-feedback button{font-size:14px}
 .photo-feedback button{min-height:44px}.photo-result .artwork-candidate .primary{min-height:44px}
+.photo-recovery-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-block:16px}
+.photo-recovery-actions button{min-height:44px;font-size:14px;white-space:normal;text-align:start}
+.photo-recovery-actions p{flex-basis:100%;margin:0}
+.photo-result .artwork-candidate small,.photo-result .artwork-candidate a{font-size:14px}
 
 /* MUSE: independent wordmark, inspired by the museum map's dark plum palette. */
 .chat-header{background:#40304d;border-bottom-color:#5c456e}

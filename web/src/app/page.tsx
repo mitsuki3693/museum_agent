@@ -24,6 +24,7 @@ export default function Home() {
   const [health, setHealth] = useState<Health | null>(null), [items, setItems] = useState<MuseumObject[]>([]);
   const [selected, setSelected] = useState("");
   const [selectedAsSimilar, setSelectedAsSimilar] = useState(false), [photoParent, setPhotoParent] = useState("");
+  const [photoQuestion, setPhotoQuestion] = useState(""), [collectionRequest, setCollectionRequest] = useState(0);
   const [turns, setTurns] = useState<Turn[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [feedback, setFeedback] = useState<Record<string, string>>({}), [generation, setGeneration] = useState(0);
   const token = useRef(""), inFlight = useRef(false), end = useRef<HTMLDivElement>(null);
@@ -61,12 +62,13 @@ export default function Home() {
     inFlight.current = true; setBusy(true); setError(""); setSelected(""); setSelectedAsSimilar(false);
     const id = createRequestId(), image = URL.createObjectURL(file);
     photos.current.add(image);
-    setTurns(current => [...current, {id, question: text || "帮我看看这件作品", photoQuestion: text, image, pending: true}]);
+    const question = text || (photoParent ? photoQuestion : "");
+    setTurns(current => [...current, {id, question: question || "帮我看看这件作品", photoQuestion: question, image, pending: true}]);
     try {
       const session = await ensureSession();
       const photo = await identifyMuseumPhoto(session, file, photoParent || undefined);
       updateTurn(id, {pending: false, photo});
-      setPhotoParent("");
+      setPhotoParent(""); setPhotoQuestion("");
     } catch (e) {updateTurn(id, {pending: false, error: (e as Error).message});}
     finally {inFlight.current = false; setBusy(false);}
   }
@@ -77,7 +79,7 @@ export default function Home() {
     catch { /* An expired session must not prevent starting a fresh conversation. */ }
     finally {
       token.current = ""; photos.current.forEach(url => URL.revokeObjectURL(url)); photos.current.clear();
-      setTurns([]); setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); setFeedback({}); setGeneration(value => value + 1);
+      setTurns([]); setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); setPhotoQuestion(""); setFeedback({}); setGeneration(value => value + 1);
       window.speechSynthesis?.cancel(); inFlight.current = false; setBusy(false);
     }
   }
@@ -89,7 +91,7 @@ export default function Home() {
   }
   function choose(id: string, question = "") {
     if (inFlight.current) return;
-    setSelected(id); setSelectedAsSimilar(false); setPhotoParent("");
+    setSelected(id); setSelectedAsSimilar(false); setPhotoParent(""); setPhotoQuestion("");
     const item = items.find(work => work.id === id);
     if (question) ask(question, id);
     else ask(`请简明讲解${item ? `《${workName(item)}》` : "这件作品"}。`, id, "brief", "narration");
@@ -99,7 +101,11 @@ export default function Home() {
     const text: Record<string, string> = {brief: "先给我一个简明版。", deep: "想再深入了解一下。", children: "请换成适合孩子听的讲法。"};
     ask(text[style], id, style, "narration");
   }
-  function unselect() {setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); document.getElementById("question")?.focus();}
+  function unselect() {setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); setPhotoQuestion(""); document.getElementById("question")?.focus();}
+  function openPhotoAlternative(action: "search" | "browse") {
+    unselect();
+    if (action === "browse") setCollectionRequest(value => value + 1);
+  }
   async function actOnPhoto(turn: Turn, action: PhotoAction, objectId?: string) {
     if (inFlight.current || !turn.photo) return;
     inFlight.current = true; setBusy(true); setError("");
@@ -109,12 +115,20 @@ export default function Home() {
         body: JSON.stringify({trace_id: turn.photo.trace_id, action, object_id: objectId})});
       updateTurn(turn.id, {photoAction: action}); saved = true;
       if (action === "retry") {
-        setSelected(""); setSelectedAsSimilar(false); setPhotoParent(turn.photo.trace_id);
+        setSelected(""); setSelectedAsSimilar(false); setPhotoParent(turn.photo.trace_id); setPhotoQuestion(turn.photoQuestion || "");
         document.querySelector(".chat-footer")?.scrollIntoView({behavior: "smooth", block: "end"});
-      } else {setSelected(objectId!); setSelectedAsSimilar(action === "view_similar"); setPhotoParent("");}
+      } else if (action === "confirm" || action === "view_similar") {
+        setSelected(objectId!); setSelectedAsSimilar(action === "view_similar"); setPhotoParent(""); setPhotoQuestion("");
+      } else {
+        setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); setPhotoQuestion("");
+      }
     } catch (e) {setError((e as Error).message);}
     finally {inFlight.current = false; setBusy(false);}
-    if (saved && objectId && action !== "retry") {
+    if (saved && (action === "search" || action === "browse")) {
+      // Focus after React has re-enabled the composer input.
+      requestAnimationFrame(() => openPhotoAlternative(action));
+    }
+    if (saved && objectId && (action === "confirm" || action === "view_similar")) {
       const item = items.find(work => work.id === objectId), name = item ? workName(item) : "这件馆藏";
       if (action === "confirm" && turn.photoQuestion) await ask(turn.photoQuestion, objectId);
       else await ask(action === "view_similar" ? `请简明介绍这件相似馆藏《${name}》。这不代表我确认了照片中的作品。` : `请简明讲解《${name}》。`, objectId, "brief", "narration");
@@ -129,7 +143,7 @@ export default function Home() {
   return <main className="chat-shell">
     <header className="chat-header">
       <a className="brand" href="/" aria-label="MUSE · 你的博物馆随行助手"><strong className="brand-wordmark">MUSE<span className="brand-dot" aria-hidden="true">.</span></strong><span className="brand-tagline">YOUR MUSEUM COMPANION</span></a>
-      <div className="header-actions"><CollectionPicker items={items} busy={busy} onChoose={choose}/><button className="quiet" onClick={clear} disabled={busy}>新对话</button></div>
+      <div className="header-actions"><CollectionPicker items={items} busy={busy} onChoose={choose} openRequest={collectionRequest}/><button className="quiet" onClick={clear} disabled={busy}>新对话</button></div>
     </header>
     <section className="chat-log" aria-label="藏品对话">
       <div className="chat-width">
@@ -147,7 +161,7 @@ export default function Home() {
             <div className="assistant-message"><span className="assistant-avatar" aria-hidden="true">m</span><div className="answer">
               <div className="answer-label">MUSE{turn.result && <span>{labels[turn.result.status] || turn.result.status}</span>}</div>
               {turn.pending && <p className="loading" role="status"><span className="loading-dot"/>{turn.image ? "正在对照馆藏图片，请稍候…" : turn.request?.action === "route" ? "正在查看路线与设施资料…" : "正在查找资料与讲解依据…"}</p>}
-              {turn.error && <div className="error" role="alert"><p>{turn.error}</p>{turn.request ? <button className="quiet" disabled={busy} onClick={() => ask(turn.question, "", "brief", "question", turn)}>重试这条消息</button> : <p>可以从下方重新选择照片发送。</p>}</div>}
+              {turn.error && <div className="error" role="alert"><p>{turn.error}</p>{turn.request ? <button className="quiet" disabled={busy} onClick={() => ask(turn.question, "", "brief", "question", turn)}>重试这条消息</button> : <><p>这次请求未完成，不能据此判断照片里是哪件作品。可以稍后重新发送，或换一种方式查找。</p><div className="photo-recovery-actions"><button className="quiet" disabled={busy} onClick={() => openPhotoAlternative("search")}>输入名称或展签文字</button><button className="quiet" disabled={busy} onClick={() => openPhotoAlternative("browse")}>浏览馆藏</button></div></>}</div>}
               {turn.photo && <><PhotoResultView result={turn.photo} items={items} busy={busy} action={turn.photoAction} onAction={(action, id) => actOnPhoto(turn, action, id)}/>
                 <div className="feedback photo-feedback"><span>识别反馈</span>{[["helpful", "候选有帮助"], ["wrong_fact", "候选不对"], ["not_answered", "仍需帮助"]].map(([kind, label]) => <button key={kind} disabled={busy} aria-pressed={feedback[turn.photo!.trace_id] === kind} onClick={() => rate(turn.photo!.trace_id, kind)}>{label}</button>)}{feedback[turn.photo.trace_id] && <small>已记录</small>}</div></>}
               {turn.result && <>
@@ -182,7 +196,7 @@ export default function Home() {
       {error && <p role="alert" className="error">{error}</p>}
       <ChatComposer key={generation} busy={busy} configured={Boolean(health?.model_configured)} selectedName={selectedItem ? workName(selectedItem) : ""}
         similar={selectedAsSimilar} retrying={Boolean(photoParent)}
-        onSend={(text, file) => {if (file) identify(file, text); else ask(text);}} onUnselect={unselect} onRoute={text => ask(text.trim() || "帮我规划参观路线。", selected, "brief", "route")}/>
+        onSend={(text, file) => {if (file) identify(file, text); else {setPhotoParent(""); setPhotoQuestion(""); ask(text);}}} onUnselect={unselect} onRoute={text => {setPhotoParent(""); setPhotoQuestion(""); ask(text.trim() || "帮我规划参观路线。", selected, "brief", "route");}}/>
       <details className="demo-info"><summary>关于这个演示</summary><p>资料为固定快照，不提供实时展位、开放时间或票价。本演示与馆方无隶属关系。语音由浏览器识别，确认文字后才发送；请勿输入个人敏感信息。{health?.storage === "memory" && "演示会话保留 30 分钟，服务重启后聊天和反馈会清空。"}{health?.storage === "mongo" && "会话到期后需重新开始；执行记录与反馈会保留供项目复盘，不保存原始照片。"} <a href="/review">回答评审记录</a> · <a href="/staff-demo">馆方协作演示</a> · <a href="/conservation-demo">文保工作台演示</a></p></details>
     </div></footer>
   </main>;

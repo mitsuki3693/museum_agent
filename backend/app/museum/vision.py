@@ -152,6 +152,7 @@ class PhotoRecognizer:
         else:
             error = None
             error_cause = None
+        result["retake_count"] = session.get("_retake_count", 0)
         # No image, base64, OCR text, user filename or location is retained in the trace.
         trace_id = session.get("_trace_id") or uuid.uuid4().hex
         await self.engine.store.upsert("museum_photo_traces", {"_id": trace_id, "session_id": session["_id"],
@@ -166,6 +167,7 @@ class PhotoRecognizer:
             "match_state": result["match_state"], "similar_candidate_ids": [s["id"] for s in result["similar_candidates"]],
             "identity_confirmed": False, "comparison_summary": comparison_summary,
             "parent_photo_trace_id": session.get("_parent_photo_trace_id"), "interactions": [],
+            "retake_count": result["retake_count"],
             "prompt_version": prompt_version, "policy_version": policy_version, "last_stage": stage,
             "visual_index_hash": getattr(visual, "index_hash", None), "visual_error": visual_error,
             "visual_retrieved_ids": [hit["source_id"] for hit in visual_hits],
