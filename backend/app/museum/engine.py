@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, ValidationError
 from app.config import Settings
 from app.llm.deepseek import DeepSeekClient
 from .config import MuseumSettings
-from .semantic_chunks import VERSION as DENSE_VIEW_VERSION
+from .semantic_chunks import VERSION as DENSE_VIEW_VERSION, ADMIN_VIEW_VERSION
 
 class Claim(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -248,7 +248,7 @@ class MuseumEngine:
                  "embedding": self.settings.museum_embedding, "corpus_hash": self.index.corpus_hash,
                  "embedding_model": self.settings.museum_embedding_model,
                  "dense_view": self.settings.museum_dense_view,
-                 "dense_view_version": DENSE_VIEW_VERSION if self.settings.museum_dense_view == 'filtered' else 'legacy',
+                 "dense_view_version": {'filtered': DENSE_VIEW_VERSION, 'administrative': ADMIN_VIEW_VERSION}.get(self.settings.museum_dense_view, 'legacy'),
                  "prompt_version": self.PROMPT_VERSION, "attempts": attempts, "result": result}
         await self.store.upsert("museum_traces", trace)
         session["history"] = (history + [{"role": "user", "content": query}, {"role": "assistant", "content": result["answer"]}])[-6:]

@@ -13,6 +13,26 @@ METADATA_LABELS = frozenset({
 })
 BODY_LABELS = frozenset({'briefDescription','summaryDescription','physicalDescription','objectHistory','馆方介绍 Description'})
 
+# Opt-in narrower experiment. Descriptive fields remain semantic evidence.
+ADMIN_VIEW_VERSION = 'administrative-filter-v1'
+ADMIN_LABELS = frozenset({'Museum number', '藏品编号 Object ID', '馆藏编号 Accession number',
+                         '尺寸 Dimensions', '入藏信息 Credit line', '馆藏部门 Department'})
+
+
+def administrative_view(records):
+    """Exclude only exact administrative labels, preserving source text and IDs.
+
+    This is an experimental view, not the default application configuration.
+    Dimensions may themselves be useful visitor queries; activation needs wider
+    acceptance than the author/material/date development set alone.
+    """
+    views = dense_views(records)
+    excluded = [a for a in views['audit']
+                if a['action'] == 'metadata_dense_excluded' and a['label'] in ADMIN_LABELS]
+    excluded_ids = {a['chunk_id'] for a in excluded}
+    return dict(version=ADMIN_VIEW_VERSION, excluded=excluded,
+                chunks=[c for c in views['original'] if c['_id'] not in excluded_ids])
+
 
 def dense_views(records):
     """Preserve legacy chunk IDs so RRF overlap is not accidentally changed.

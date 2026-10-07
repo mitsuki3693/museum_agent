@@ -22,7 +22,8 @@ class FakeEmbedding:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('body', [True, False])
-async def test_filtered_index_preserves_sources_lexical_exact_and_rollback(tmp_path, monkeypatch, body):
+@pytest.mark.parametrize('alternative', ['filtered', 'administrative'])
+async def test_filtered_index_preserves_sources_lexical_exact_and_rollback(tmp_path, monkeypatch, body, alternative):
     monkeypatch.setattr('app.museum.retrieval.EmbeddingClient', FakeEmbedding)
     monkeypatch.setitem(sys.modules, 'sentence_transformers', SimpleNamespace(SentenceTransformer=lambda *a, **k: object()))
     content = 'Museum number: C.1-2000\nDate: 1700'
@@ -36,7 +37,7 @@ async def test_filtered_index_preserves_sources_lexical_exact_and_rollback(tmp_p
     path.write_text(json.dumps([row]), encoding='utf-8')
     initial_bytes = path.read_bytes()
     indices = []
-    for view in ['original', 'filtered', 'original']:
+    for view in ['original', alternative, 'original']:
         cfg = MuseumSettings(_env_file=None, museum_corpus=path, museum_private_corpus=None,
                              museum_embedding='local', museum_dense_view=view, deepseek_api_key='')
         store = MemoryStore()
@@ -50,8 +51,9 @@ async def test_filtered_index_preserves_sources_lexical_exact_and_rollback(tmp_p
         result = await engine.answer('C.1-2000', {'_id': 's'}, 'brief', None)
         trace = await store.get('museum_traces', result['trace_id'])
         assert trace['dense_view'] == view
-        assert trace['dense_view_version'] == ('semantic-content-v1' if view == 'filtered' else 'legacy')
+        assert trace['dense_view_version'] == {'filtered':'semantic-content-v1','administrative':'administrative-filter-v1'}.get(view,'legacy')
     assert indices[0].vectors._meta == indices[2].vectors._meta
-    assert set(indices[1].vectors._meta) == ({'fixture::2'} if body else set())
+    expected_ids = ({'fixture::2'} if body else set()) | ({'fixture::1'} if alternative=='administrative' else set())
+    assert set(indices[1].vectors._meta) == expected_ids
     assert indices[0].bm25.search('1700', top_k=25) == indices[1].bm25.search('1700', top_k=25)
     assert path.read_bytes() == initial_bytes
