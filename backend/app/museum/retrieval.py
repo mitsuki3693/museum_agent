@@ -3,6 +3,8 @@ import asyncio
 import hashlib
 import json
 import textwrap
+import re
+import unicodedata
 from typing import Any
 from app.config import Settings
 from app.llm.embeddings import EmbeddingClient
@@ -11,6 +13,21 @@ from app.retrieval.hybrid import HybridRetriever
 from app.retrieval.reranker import Reranker
 from app.retrieval.vector_store import MemoryVectorStore
 from .config import MuseumSettings, ROOT
+
+def canonical_accession(value: str) -> str | None:
+    """Normalize a complete bare identifier, never extract one from prose.
+
+    Separator removal may collide; the index deliberately retains all records.
+    Only the documented punctuation set is removed, not arbitrary characters.
+    """
+    if not isinstance(value, str):
+        return None
+    value = unicodedata.normalize('NFKC', value).strip().upper()
+    value = value.translate(str.maketrans({'–':'-', '—':'-', '−':'-'}))
+    if not value or len(value) > 100 or not re.fullmatch(r'[A-Z0-9\s.\-:/,()&]+', value):
+        return None
+    key = re.sub(r'[\s.\-:/,()&]', '', value)
+    return key if any(c.isdigit() for c in key) else None
 
 class FusionOrder(Reranker):
     """Preserve RRF scores. No neural reranker is claimed in the MVP."""
@@ -25,6 +42,7 @@ class MuseumIndex:
         self.embedding = None
         self.records: dict[str, dict[str, Any]] = {}
         self.corpus_hash = ""
+        self.accessions: dict[str, list[str]] = {}
         self.hybrid = HybridRetriever(self.bm25, self.vectors, FusionOrder(), bm25_top=25, vector_top=25, top_k=25)
 
     async def start(self):
@@ -40,7 +58,11 @@ class MuseumIndex:
         self.records = {r["_id"]: r for r in records if r.get("status") == "active"}
         if len(self.records) != len(records):
             raise ValueError("Corpus contains duplicates or inactive records")
+        self.accessions = {}
         for r in records:
+            key = canonical_accession(r.get('fields', {}).get('accession_number', ''))
+            if key:
+                self.accessions.setdefault(key, []).append(r['_id'])
             await self.store.upsert("museum_sources", r)
         chunks = []
         for r in records:
@@ -62,9 +84,26 @@ class MuseumIndex:
             for r, vector in zip(chunks, vectors, strict=True):
                 await self.vectors.add(r["_id"], vector, r)
 
+    def exact_accession_ids(self, query: str) -> list[str]:
+        return list(self.accessions.get(canonical_accession(query), []))
+
+    async def _current_sources(self, ids):
+        results = []
+        for source_id in dict.fromkeys(ids):
+            source = await self.store.get('museum_sources', source_id)
+            expected = self.records.get(source_id)
+            if source and expected and source.get('status') == 'active' and source['source_hash'] == expected['source_hash']:
+                results.append(source)
+        return results
+
     async def search(self, query: str, object_id: str | None = None, variant: str = "hybrid"):
         if object_id and object_id not in self.records:
             return []
+        exact_ids = self.exact_accession_ids(query) if not object_id else []
+        if exact_ids:
+            # Full field equality outranks neither context nor source validity.
+            # No fuzzy fallback if the exact record has since been withdrawn.
+            return await self._current_sources(exact_ids)
         if self.embedding is not None and variant == "hybrid":
             vector = (await asyncio.to_thread(self.embedding._local_embed, [query]))[0]
             hits = await self.hybrid.retrieve(query, vector)
