@@ -44,6 +44,8 @@ class MuseumIndex:
         self.embedding = None
         self.reranker = None
         self.rerank_vectors = None
+        self.search_fields = {}
+        self.search_fields_meta = None
         self.records: dict[str, dict[str, Any]] = {}
         self.corpus_hash = ""
         self.accessions: dict[str, list[str]] = {}
@@ -62,6 +64,12 @@ class MuseumIndex:
         self.records = {r["_id"]: r for r in records if r.get("status") == "active"}
         if len(self.records) != len(records):
             raise ValueError("Corpus contains duplicates or inactive records")
+        if self.settings.museum_search_fields:
+            from .search_fields import load_search_fields
+            path=self.settings.museum_search_fields
+            if not path.is_absolute():path=ROOT/path
+            self.search_fields,self.search_fields_meta=load_search_fields(
+                path,self.records,allow_drafts=self.settings.museum_search_allow_drafts)
         self.accessions = {}
         for r in records:
             key = canonical_accession(r.get('fields', {}).get('accession_number', ''))
@@ -116,6 +124,18 @@ class MuseumIndex:
         if self.reranker:await self.reranker.stop()
 
     async def search_for_answer(self, query, object_id=None, variant='hybrid'):
+        # A complete annotated title must not be lost to generic dense votes.
+        # Preserve homonyms and provenance checks; this is not photo identity.
+        if self.search_fields and not object_id and variant=='hybrid' and not self.exact_accession_ids(query):
+            from .recall_fields import named_title_ids,order_named_ids
+            named=named_title_ids(query,self.search_fields)
+            if named:
+                if len(named)>1:
+                    prior=await self.search(query,object_id,variant)
+                    named=order_named_ids(named,[r['_id'] for r in prior])
+                rows=await self._current_sources(named)
+                return rows,dict(status='named_title',candidate_ids=[s['_id'] for s in rows],
+                                 search_fields=self.search_fields_meta)
         baseline=await self.search(query,object_id,variant)
         trace=dict(status='disabled',fallback_ids=[s['_id'] for s in baseline])
         if not self.settings.museum_text_rerank:return baseline,trace

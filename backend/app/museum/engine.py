@@ -128,7 +128,7 @@ class MuseumEngine:
             except Exception as exc:
                 rewrite_error = type(exc).__name__
         rerank_trace={'status':'disabled'}
-        if self.settings.museum_text_rerank:
+        if self.settings.museum_text_rerank or self.settings.museum_search_fields:
             sources,rerank_trace=await self.index.search_for_answer(rewritten,effective_object,variant)
         else:
             sources = await self.index.search(rewritten, effective_object, variant)
@@ -246,7 +246,8 @@ class MuseumEngine:
         result["usage"] = getattr(client, "usage_records", [])
         trace = {"_id": result["trace_id"], "session_id": session["_id"], "created_at": time.time(),
                  "query": query, "rewritten_query": rewritten, "rewrite_error": rewrite_error,
-                 "retrieval_route": 'exact_accession' if exact_accession else 'natural_language',
+                 "retrieval_route": ('exact_accession' if exact_accession else
+                                     'named_title' if rerank_trace['status']=='named_title' else 'natural_language'),
                  "retrieved_candidates": retrieved_candidates,
                  "rerank": rerank_trace,
                  "object_id": effective_object, "variant": variant, "model": self.settings.deepseek_model,

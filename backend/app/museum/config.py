@@ -18,6 +18,9 @@ class MuseumSettings(BaseSettings):
     # Opt-in after corpus-specific acceptance. Original is the rollback/default.
     museum_dense_view: Literal['original', 'filtered', 'administrative'] = 'original'
     museum_text_rerank: bool = False
+    # Optional retrieval-only Chinese titles; default excludes draft annotations.
+    museum_search_fields: Path | None = None
+    museum_search_allow_drafts: bool = False
     museum_rerank_model: Path = ROOT / 'models/bge-reranker-v2-m3'
     museum_rerank_timeout: float = Field(default=8,gt=0,le=20)
     museum_rerank_startup_timeout: float = Field(default=60,gt=0,le=120)
