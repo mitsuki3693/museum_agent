@@ -25,6 +25,8 @@ class MuseumSettings(BaseSettings):
     museum_rerank_sort_by_length: bool = False
     museum_chinese_recall: bool = False
     museum_fallback_glossary: bool = False
+    # Retrieval-only catalogue vocabulary; disable to replay the v2 glossary.
+    museum_catalogue_glossary: bool = False
     # Optional retrieval-only Chinese titles; default excludes draft annotations.
     museum_search_fields: Path | None = None
     museum_search_allow_drafts: bool = False

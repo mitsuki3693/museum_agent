@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-08",
+  "scope": "Development retrieval regression, not human-reviewed accuracy or online A/B",
+  "versions": {
+    "museum_corpus": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+    "museum_private_corpus": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+    "museum_search_fields": "c4563fde9dff4b693055db72e0c8a152d3ee7897a7b4353c498070ab688dac13"
+  },
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "algorithm_version": "catalogue-bilingual-glossary-v1",
+  "algorithm_files_sha256": {
+    "backend\\app\\museum\\fallback_glossary.py": "75ccec78e5c073197008805f4d3651b1c2504809080ef5754f27b673507411b2",
+    "backend\\app\\museum\\retrieval.py": "b658490c1c0d83c5bd036087b7faf0505627466685a119791fd0188e53fb01db"
+  },
+  "private_evidence_sha256": {
+    "bilingual-v1-cases.json": "bae6371c0221db05387ffa509105dd664d93438656740d01409adb7933bae88a",
+    "bilingual-v1-frozen.json": "8c5dedd62e69222acee0935aba052b260048e282445b530d6e1f39bfaa6738e3",
+    "bilingual-v1-replay.json": "e81c16e505af90b6b1175e95c14bbe55cff4daab49c2f541471380f627585560",
+    "bilingual-v2-replay.json": "769157be6ae4efd5dc4d45e9e013258dc448cb9c52f09ae652e636c5b1d07c16",
+    "catalogue-glossary-live-v1.json": "f2b749264ce294a6b87e233afbff7a4855b9e39e8abf7de81939e32529432740",
+    "catalogue-glossary-browser-v1.json": "c766647af410b21ff9fe2f40e64935c20c133c89b4a16498e867b4d1503360c7",
+    "catalogue-glossary-eval-runs-v1.json": "5a8399188a57b0c8a5fbda03d4b7c97a04d8324f461ada7c55a50fecc392bd91"
+  },
+  "summary": {
+    "ambiguity": {
+      "n": 0,
+      "before_top1": 0,
+      "after_top1": 0,
+      "before_top5": 0,
+      "after_top5": 0,
+      "lost_top5": [],
+      "worse_rank": []
+    },
+    "known_development": {
+      "n": 3,
+      "before_top1": 1,
+      "after_top1": 2,
+      "before_top5": 1,
+      "after_top5": 3,
+      "lost_top5": [],
+      "worse_rank": [],
+      "before_mrr_at5": 0.3333,
+      "after_mrr_at5": 0.7778
+    },
+    "old114": {
+      "n": 114,
+      "before_top1": 90,
+      "after_top1": 91,
+      "before_top5": 109,
+      "after_top5": 110,
+      "lost_top5": [],
+      "worse_rank": [],
+      "before_mrr_at5": 0.864,
+      "after_mrr_at5": 0.8728
+    },
+    "old_unscored": {
+      "n": 5,
+      "before_top1": 4,
+      "after_top1": 4,
+      "before_top5": 5,
+      "after_top5": 5,
+      "lost_top5": [],
+      "worse_rank": [],
+      "before_mrr_at5": 0.9,
+      "after_mrr_at5": 0.9
+    },
+    "source_checked_holdout": {
+      "n": 8,
+      "before_top1": 3,
+      "after_top1": 4,
+      "before_top5": 5,
+      "after_top5": 8,
+      "lost_top5": [],
+      "worse_rank": [],
+      "before_mrr_at5": 0.5,
+      "after_mrr_at5": 0.7188
+    }
+  },
+  "http": {
+    "tasks": 6,
+    "targeted_tasks": 5,
+    "target_presented": 5,
+    "ambiguous_candidates": 3,
+    "model_calls": 6,
+    "rerank_states": {
+      "applied": 2,
+      "timeout": 1,
+      "disabled_after_timeout": 3
+    },
+    "latency_ms_min": 2366,
+    "latency_ms_max": 11496
+  },
+  "browser": {
+    "chair_candidate_and_image_verified": true,
+    "model_calls": 1
+  },
+  "mongo": {
+    "http_traces": 6,
+    "browser_traces": 1,
+    "offline_eval_runs": 2,
+    "paired_cases": 125,
+    "readback": true
+  },
+  "backend_tests_passed": 419
+}

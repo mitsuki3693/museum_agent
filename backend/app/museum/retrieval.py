@@ -155,7 +155,7 @@ class MuseumIndex:
             expanded=None
             if self.settings.museum_fallback_glossary:
                 from .fallback_glossary import expand_query
-                expanded,glossary=expand_query(query)
+                expanded,glossary=expand_query(query,catalogue=self.settings.museum_catalogue_glossary)
             fallback=self.chinese_recall.pool(query,self.bm25,dense,lexical_override=expanded)
             ids=[c['source_id'] for c in fallback]
             current=await self._current_sources(ids)
@@ -180,7 +180,10 @@ class MuseumIndex:
             vector=(await asyncio.to_thread(self.embedding._local_embed,[query]))[0]
             candidates=fuse_works(self.bm25.search(query,top_k=25),await self.rerank_vectors.search(vector,top_k=25))
             if recall_enabled:
-                candidates=self.chinese_recall.pool(query,self.bm25,await self.rerank_vectors.search(vector,top_k=25))
+                # Use the same query vocabulary before both fallback and neural
+                # ranking; a ready worker must not lose glossary-only candidates.
+                candidates=self.chinese_recall.pool(query,self.bm25,await self.rerank_vectors.search(vector,top_k=25),
+                    lexical_override=expanded if self.settings.museum_catalogue_glossary and glossary else None)
             sources=await self._current_sources([c['source_id'] for c in candidates])
             active={s['_id'] for s in sources};candidates=[c for c in candidates if c['source_id'] in active]
             if not candidates:

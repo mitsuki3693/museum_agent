@@ -22,3 +22,37 @@ def test_single_broad_cue_does_not_replace_precise_chinese_retrieval():
     assert not audit['applied'] and 'blue' not in expanded.split()
     expanded,audit=expand_query('找带镀金装饰的作品')
     assert not audit['applied'] and 'gilt' not in expanded.split()
+
+
+def test_catalogue_expansion_is_opt_in_and_preserves_distinct_concept_gate():
+    query = '找红漆椅子，椅背中央有蝙蝠和云纹'
+    assert not expand_query(query)[1]['applied']
+    expanded, audit = expand_query(query, catalogue=True)
+    assert {'chair', 'lacquer', 'bats', 'cloud'} <= set(expanded.split())
+    assert audit['version'] == 'catalogue-bilingual-glossary-v1'
+    assert MuseumSettings(_env_file=None).museum_catalogue_glossary is False
+    assert not expand_query('椅子座椅', catalogue=True)[1]['applied']
+    assert not expand_query('看看萨福', catalogue=True)[1]['applied']
+
+
+def test_catalogue_negation_does_not_add_positive_excluded_motif():
+    for query in ['找红漆椅子，不要蝙蝠纹', '不是萨福的黑色石膏胸像']:
+        before, _ = expand_query(query)
+        after, audit = expand_query(query, catalogue=True)
+        assert after == before
+        assert audit['catalogue_guard'] == 'negation'
+
+
+def test_catalogue_vocabulary_does_not_map_homophonous_characters():
+    expanded, audit = expand_query('演员红了，戏剧气氛很好', catalogue=True)
+    assert not audit['applied'] and 'red' not in expanded.split()
+
+
+def test_broad_type_alone_does_not_dilute_existing_distinctive_cues():
+    query = '举着驴的下颚骨打人的大理石雕塑'
+    before, _ = expand_query(query)
+    after, audit = expand_query(query, catalogue=True)
+    assert after == before and audit['suppressed_broad_only'] == ['雕塑']
+    # A category can still unlock a formerly untranslated one-cue query.
+    expanded, audit = expand_query('盘子形状的雕塑', catalogue=True)
+    assert audit['applied'] and 'sculpture' in expanded.split()
