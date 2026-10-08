@@ -230,6 +230,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                     key = f'artic-{image["id"]}'
                     images[key] = f'/collection/{key}.jpg'
         return [{"id": r["_id"], "title": r["title"], "source_url": r["source_url"],
+                 "accession_number": r.get("fields", {}).get("accession_number") or r.get("fields", {}).get("main_reference_number"),
                  "display_title": r.get("display_title"), "collection": r.get("collection", "Art Institute of Chicago"),
                  "has_narration": bool(r.get("narrations")), "source_kind": r.get("source_kind", "collection_record"),
                  "image_url": f'/api/museum/objects/{r["_id"]}/image' if r.get("local_image") else images.get(r["_id"])}

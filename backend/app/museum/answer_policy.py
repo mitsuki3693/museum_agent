@@ -5,7 +5,7 @@ VERSIONS = {
     'focus': 'museum-grounded-v6-question-focus',
     'repair': 'museum-grounded-v7-focused-repair',
     'geography': 'museum-grounded-v8-focused-repair',
-    'facts': 'museum-grounded-v12-original-question',
+    'facts': 'museum-grounded-v13-selected-spans',
 }
 
 FOCUS = (

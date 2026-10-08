@@ -80,6 +80,26 @@ def selected_sources(selection, sources):
             if any(f.source_id == s['_id'] for f in selection.facts)]
 
 
+def quote_within_selection(source_id, quote, facts):
+    """Allow adjoining selected spans, without authorizing unselected text.
+
+    This checks selection coverage only. The caller must also require the whole
+    quote to occur continuously in the original source via evidence_issues.
+    """
+    if not quote.strip():
+        return False
+    spans = [f['quote'] for f in facts if f['source_id'] == source_id]
+    if any(quote in span for span in spans):
+        return True
+    covered = [char.isspace() for char in quote]
+    for span in spans:
+        start = quote.find(span)
+        while span and start >= 0:
+            covered[start:start + len(span)] = [True] * len(span)
+            start = quote.find(span, start + 1)
+    return all(covered)
+
+
 GUIDANCE = (
     'fact_selection 是按当前问题提取的候选证据，非权威结论；只用所附 sources 的逐字证据回答。'
     '第一条先回应问题；前提与证据冲突则澄清，不沿用错误前提。'

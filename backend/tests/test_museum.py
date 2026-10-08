@@ -128,7 +128,7 @@ async def test_combined_followup_selects_recomposes_and_reviews(museum_settings)
     assert result['status'] == 'answered' and fake.calls == 5
     assert result['claims'] == draft()['claims']
     trace = await store.get('museum_traces',result['trace_id'])
-    assert trace['prompt_version'] == 'museum-grounded-v12-original-question-bounded-v1-review-entailment_v1'
+    assert trace['prompt_version'] == 'museum-grounded-v13-selected-spans-bounded-v1-review-entailment_v1'
     generations = [a for a in trace['attempts'] if 'draft' in a]
     assert len(generations) == 2
     assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
@@ -268,6 +268,43 @@ async def test_empty_facts_abstains_without_generation(museum_settings):
     assert result['status'] == 'insufficient_evidence'
     assert result['claims'] == [] and fake.calls == 1
 
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('scenario', ['adjacent', 'single', 'unselected_gap', 'cross_source', 'fabricated_join'])
+async def test_selected_spans_can_join_only_with_original_contiguous_coverage(museum_settings, scenario):
+    museum_settings.museum_answer_policy = 'facts'
+    first, second = 'Maker: Example factory', 'Date: 1691-1700'
+    source = first + '\n' + second
+    if scenario in {'unselected_gap', 'fabricated_join'}:
+        source = first + '\nMaterial: bronze\n' + second
+    records = json.loads(museum_settings.museum_corpus.read_text(encoding='utf-8'))
+    records[0]['content'] = source
+    if scenario == 'cross_source':
+        records.append({**records[0], '_id':'test-2', 'content':second})
+    museum_settings.museum_corpus.write_text(json.dumps(records),encoding='utf-8')
+    facts = {'facts':[
+        {'aspect':'maker','scope':'production','source_id':'test-1','value':'Example factory','quote':first},
+        {'aspect':'date','scope':'production','source_id':'test-2' if scenario=='cross_source' else 'test-1',
+         'value':'1691-1700','quote':second},
+    ]}
+    quote = first if scenario=='single' else first + '\n' + second
+    if scenario == 'unselected_gap':
+        quote = source
+    e, store, fake = await engine(museum_settings, [])
+    async def respond(messages):
+        fake.calls += 1
+        if fake.calls == 1:
+            return facts
+        if 'style' in json.loads(messages[1]['content']):
+            return draft(quote=quote, text='Example factory.' if scenario=='single' else 'Example factory, 1691-1700.')
+        return {'passed':True,'issues':[]}
+    fake.complete_json = respond
+    result = await e.answer('maker and date',{'_id':'span-join'},'brief','test-1')
+    assert result['status'] == ('answered' if scenario in {'adjacent','single'} else 'verification_failed')
+    trace = await store.get('museum_traces',result['trace_id'])
+    if scenario == 'unselected_gap':
+        assert 'claim_0:outside_selected_evidence' in trace['attempts'][1]['issues']
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize('response', [TimeoutError('private provider body'), {'facts':'malformed'}])
 async def test_fact_service_failure_is_not_evidence_of_absence(museum_settings, response):
@@ -307,7 +344,7 @@ async def test_generation_cannot_cite_unselected_source_fragment(museum_settings
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
-    ('facts', 'museum-grounded-v12-original-question'),
+    ('facts', 'museum-grounded-v13-selected-spans'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'

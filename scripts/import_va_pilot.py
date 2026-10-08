@@ -5,6 +5,7 @@ API snapshots and output manifests remain under data/private (gitignored).
 """
 from __future__ import annotations
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -12,6 +13,7 @@ import json
 from pathlib import Path
 import re
 import time
+import uuid
 import httpx
 from bs4 import BeautifulSoup
 from PIL import Image
@@ -25,7 +27,7 @@ def sha(raw):
 
 def atomic(path, raw):
     path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_suffix(path.suffix + ".tmp")
+    temp = path.with_suffix(path.suffix + "." + uuid.uuid4().hex + ".tmp")
     temp.write_bytes(raw)
     temp.replace(path)
 
@@ -73,15 +75,43 @@ def make_record(oid, raw, image_id, image, folder):
                                 scope="catalogue record, not official audio; display location not verified"))
     return record, dict(id=sid + "-primary", source_id=sid, view="unspecified", **media)
 
+
+def fetch_candidate(client, oid, category, folder, folder_name, image_ids):
+    """Network work only; the caller commits results in search-result order."""
+    try:
+        raw = download(client, f"https://api.vam.ac.uk/v2/museumobject/{oid}", folder / "records" / (oid + ".json"))
+        r = json.loads(raw)["record"]
+        if category not in r.get("objectType", "").lower():
+            return None, None
+        candidates = [v for v in r.get("images", []) if v not in image_ids]
+        if not candidates:
+            return None, None
+        image_id = candidates[0]
+        image = download(client, f"https://framemark.vam.ac.uk/collections/{image_id}/full/!800,800/0/default.jpg",
+                         folder / "images" / (image_id + ".jpg"))
+        with Image.open(io.BytesIO(image)) as im:
+            im.verify()
+        return make_record(oid, raw, image_id, image, folder_name), None
+    except (httpx.HTTPError, ValueError, KeyError, OSError) as exc:
+        return None, dict(id=oid, error=type(exc).__name__)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", type=int, default=100)
     parser.add_argument("--folder", default="va-pilot-100-v1")
     parser.add_argument("--base-corpus", default="va-collection-v6-blue-release.json")
     parser.add_argument("--base-references", default="visual-references-v7-blue-release.json")
+    parser.add_argument("--max-pages", type=int, default=4)
+    parser.add_argument("--categories", default="vase,jug,plate,sculpture,bust")
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
     if not re.fullmatch(r"[a-zA-Z0-9_-]+", args.folder) or not 1 <= args.target <= 1000:
         parser.error("Use a simple folder name and a target between 1 and 1000")
+    categories = tuple(c.strip() for c in args.categories.split(',') if c.strip())
+    if not 1 <= args.max_pages <= 20 or not categories or any(not re.fullmatch(r'[a-z ]+', c) for c in categories):
+        parser.error("Use 1-20 pages and comma-separated English object types")
+    if not 1 <= args.workers <= 4:
+        parser.error("Use 1-4 download workers")
     folder = PRIVATE / args.folder
     corpus_path = PRIVATE / (args.folder + "-corpus.json")
     refs_path = PRIVATE / (args.folder + "-references.json")
@@ -103,49 +133,44 @@ def main():
     # Ambiguous shared image of paired works; never import the OOD test objects.
     seen.add("O70700")
     failures = []
-    with httpx.Client(timeout=45, follow_redirects=True) as client:
-        categories = ("vase", "jug", "plate", "sculpture", "bust")
+    with httpx.Client(timeout=45, follow_redirects=True) as client, ThreadPoolExecutor(max_workers=args.workers) as pool:
         for category_index, category in enumerate(categories):
             # Redistribute unfilled categories. A fixed quota can stop short even
             # when the final category has enough usable public records.
             remaining_categories = len(categories) - category_index
             quota = (args.target - len(records) + remaining_categories - 1) // remaining_categories
             category_start = len(records)
-            for page in range(1, 5):
+            for page in range(1, args.max_pages + 1):
                 params = dict(q_object_type=category, images_exist=1, page_size=100, page=page)
                 if category in {"vase", "jug", "plate"}:
                     params["id_place"] = "x29383"  # Delft; structured filter, not a broad OR query.
                 request_url = str(httpx.URL("https://api.vam.ac.uk/v2/objects/search", params=params))
                 result = json.loads(download(client, request_url, folder / f"search-{category}-{page}.json"))
-                for item in result.get("records", []):
-                    oid = item["systemNumber"]
-                    if oid in seen or "va-" + oid.lower() in seen_ids:
-                        continue
-                    seen.add(oid)
-                    try:
-                        raw = download(client, f"https://api.vam.ac.uk/v2/museumobject/{oid}", folder / "records" / (oid + ".json"))
-                        r = json.loads(raw)["record"]
-                        # Query API can return broad matches; retain only the requested object category.
-                        if category not in r.get("objectType", "").lower():
+                pending = []
+                for item in result.get('records', []):
+                    oid = item['systemNumber']
+                    if oid not in seen and 'va-' + oid.lower() not in seen_ids:
+                        seen.add(oid)
+                        pending.append(oid)
+                while pending and len(records) < args.target and len(records) - category_start < quota:
+                    take = min(args.workers, args.target - len(records), quota - (len(records) - category_start))
+                    batch, pending = pending[:take], pending[take:]
+                    futures = [pool.submit(fetch_candidate, client, oid, category, folder, args.folder, frozenset(image_ids)) for oid in batch]
+                    for future in futures:
+                        pair, failure = future.result()
+                        if failure:
+                            failures.append(failure)
+                        if pair is None:
                             continue
-                        candidates = [v for v in r.get("images", []) if v not in image_ids]
-                        if not candidates:
+                        record, reference = pair
+                        if reference['image_id'] in image_ids or reference['sha256'] in image_hashes:
                             continue
-                        image_id = candidates[0]
-                        image = download(client, f"https://framemark.vam.ac.uk/collections/{image_id}/full/!800,800/0/default.jpg",
-                                         folder / "images" / (image_id + ".jpg"))
-                        with Image.open(io.BytesIO(image)) as im:
-                            im.verify()
-                        if sha(image) in image_hashes:
-                            continue
-                        record, reference = make_record(oid, raw, image_id, image, args.folder)
                         records.append(record)
-                        references["references"].append(reference)
-                        image_ids.add(image_id)
-                        image_hashes.add(sha(image))
-                        print(json.dumps(dict(count=len(records), added=oid, category=category)), flush=True)
-                    except (httpx.HTTPError, ValueError, KeyError, OSError) as exc:
-                        failures.append(dict(id=oid, error=type(exc).__name__))
+                        references['references'].append(reference)
+                        seen_ids.add(record['_id'])
+                        image_ids.add(reference['image_id'])
+                        image_hashes.add(reference['sha256'])
+                        print(json.dumps(dict(count=len(records), added=record['_id'], category=category)), flush=True)
                     if len(records) >= args.target or len(records) - category_start >= quota:
                         break
                 if len(records) >= args.target or len(records) - category_start >= quota or not result.get("records"):
@@ -153,6 +178,7 @@ def main():
             if len(records) >= args.target:
                 break
     report = dict(target=args.target, actual=len(records), references=len(references["references"]), failures=failures,
+                  categories=categories, max_pages=args.max_pages, workers=args.workers,
                   base_corpus_sha256=sha(base.read_bytes()), base_references_sha256=sha(base_refs.read_bytes()),
                   built_at=datetime.now(timezone.utc).isoformat(), active_configuration_changed=False)
     # Only completed snapshots may become candidate app configuration.

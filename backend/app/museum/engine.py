@@ -188,7 +188,7 @@ class MuseumEngine:
             fact_selection = None
             generation_allowed = True
             if self.settings.museum_answer_policy == 'facts':
-                from .fact_selection import select_facts, selection_issues, selected_sources, usable_facts, bare_place_quote
+                from .fact_selection import select_facts, selection_issues, selected_sources, usable_facts, bare_place_quote, quote_within_selection
                 fact_started = time.perf_counter()
                 try:
                     selection = await select_facts(client, query, rewritten, history, sources, identity_boundary)
@@ -264,8 +264,7 @@ class MuseumEngine:
                         for i, claim in enumerate(draft.claims):
                             if bare_place_quote(claim.quote):
                                 issues.append(f'claim_{i}:bare_place_label; 请引用明确记载对象与制作或装饰关系的原文，不能根据地点列表分配阶段。')
-                            if not any(claim.source_id == fact['source_id'] and claim.quote in fact['quote']
-                                       for fact in fact_selection['facts']):
+                            if not quote_within_selection(claim.source_id, claim.quote, fact_selection['facts']):
                                 issues.append(f'claim_{i}:outside_selected_evidence')
                     if draft.abstain and not issues:
                         attempts.append({"attempt": attempt, "status": "abstained"})

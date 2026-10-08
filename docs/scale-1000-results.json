@@ -1,0 +1,290 @@
+{
+  "version": "scale-1000-closeout-v1",
+  "date": "2026-10-08",
+  "acceptance": "local demonstration with known retrieval failures; user acceptance pending",
+  "deployment": "loopback only; no museum affiliation or production deployment",
+  "question_scope": "reused development regression; not a blind accuracy estimate",
+  "private_source_material_published": false,
+  "offline_paid_api_calls": 0,
+  "corpora": {
+    "300": {
+      "records": 312,
+      "corpus_hash": "d562b4c4ccc2b5473de26ff5b06dc4dc8d2aef4401b55c7bcc7726d5ffb0ca81",
+      "private_corpus_sha256": "f952fb25bbf61d03ef44af7ce5ae8c0072f95d40e4163655db6196cce23acb66",
+      "gallery_sha256": "34bb868e41be10f0d596734c33308b249e38961c3faea591256c53e4f1e610b9",
+      "fields_sha256": "8fabc48433d6aebbfd337cb216019d495ce77f3221703f855d4ffa1b20fa17bd",
+      "visual": {
+        "works": 303,
+        "images": 306,
+        "index_hash": "d37209ec90d13148f07298362499ff253868e9ec1650514226f19da8d1e4365d",
+        "build_ms": 7078,
+        "cache": {
+          "hits": 306,
+          "misses": 0,
+          "write_errors": 0
+        }
+      },
+      "text_build_ms": 64104,
+      "exact": {
+        "missing_or_unsupported": 7,
+        "pass": 293
+      },
+      "fallback": {
+        "n": 114,
+        "top1": 96,
+        "top5": 114,
+        "latency": {
+          "n": 114,
+          "p50_ms": 100.83,
+          "p95_ms": 192.95,
+          "max_ms": 206.09,
+          "method": "nearest-rank"
+        },
+        "missing_old_gold_ids": []
+      },
+      "service_sample": {
+        "n": 12,
+        "statuses": {
+          "timeout": 1,
+          "disabled_after_timeout": 9,
+          "named_title": 2
+        },
+        "latency": {
+          "n": 12,
+          "p50_ms": 93.34,
+          "p95_ms": 8269.19,
+          "max_ms": 8269.19,
+          "method": "nearest-rank"
+        },
+        "bge_applied": 0
+      },
+      "photos": {
+        "legacy_in_corpus": {
+          "n": 10,
+          "top1": 9,
+          "top3": 10,
+          "top5": 10,
+          "top10": 10
+        },
+        "angle_and_detail": {
+          "n": 20,
+          "top1": 13,
+          "top3": 14,
+          "top5": 14,
+          "top10": 17
+        }
+      },
+      "photo_latency": {
+        "n": 42,
+        "p50_ms": 227.19,
+        "p95_ms": 456.32,
+        "max_ms": 476.33,
+        "method": "nearest-rank"
+      },
+      "outside_photos": 12,
+      "identical_reference_test_images": 2,
+      "vlm_identity_tested": false,
+      "new_snippet_checks": {
+        "n": 0,
+        "top5": 0,
+        "scope": "copied snippets, not natural-language quality"
+      }
+    },
+    "1000": {
+      "records": 1012,
+      "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+      "private_corpus_sha256": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+      "gallery_sha256": "c7c5f5c67699533a3a0d48045ba72f57d9a909f6b63d90c0bf499d61920f2ae4",
+      "fields_sha256": "c4563fde9dff4b693055db72e0c8a152d3ee7897a7b4353c498070ab688dac13",
+      "visual": {
+        "works": 1003,
+        "images": 1006,
+        "index_hash": "7d3f4128affbfa1e90f6fb1cf056c3b4abab2acf4fc8f2276c8ed8a5123f5e8c",
+        "build_ms": 225061,
+        "cache": {
+          "hits": 306,
+          "misses": 700,
+          "write_errors": 0
+        }
+      },
+      "text_build_ms": 179262,
+      "exact": {
+        "missing_or_unsupported": 7,
+        "pass": 993
+      },
+      "fallback": {
+        "n": 114,
+        "top1": 90,
+        "top5": 109,
+        "latency": {
+          "n": 114,
+          "p50_ms": 332.75,
+          "p95_ms": 616.52,
+          "max_ms": 638.46,
+          "method": "nearest-rank"
+        },
+        "missing_old_gold_ids": [
+          "M02-en",
+          "M05-en",
+          "M08-zh",
+          "M10-en",
+          "old-G15"
+        ]
+      },
+      "service_sample": {
+        "n": 12,
+        "statuses": {
+          "timeout": 1,
+          "disabled_after_timeout": 9,
+          "named_title": 2
+        },
+        "latency": {
+          "n": 12,
+          "p50_ms": 327.64,
+          "p95_ms": 8936.61,
+          "max_ms": 8936.61,
+          "method": "nearest-rank"
+        },
+        "bge_applied": 0
+      },
+      "photos": {
+        "legacy_in_corpus": {
+          "n": 10,
+          "top1": 9,
+          "top3": 9,
+          "top5": 9,
+          "top10": 10
+        },
+        "angle_and_detail": {
+          "n": 20,
+          "top1": 13,
+          "top3": 14,
+          "top5": 14,
+          "top10": 17
+        }
+      },
+      "photo_latency": {
+        "n": 42,
+        "p50_ms": 373.09,
+        "p95_ms": 424.59,
+        "max_ms": 455.06,
+        "method": "nearest-rank"
+      },
+      "outside_photos": 12,
+      "identical_reference_test_images": 2,
+      "vlm_identity_tested": false,
+      "new_snippet_checks": {
+        "n": 20,
+        "top5": 18,
+        "scope": "copied snippets, not natural-language quality"
+      }
+    }
+  },
+  "evidence_hashes": {
+    "scale-1000-baseline-300-v1.json": "e783db9b499f29d27fc4b9b98d34859e6679ce9870f3afd56d5203c06519c2ea",
+    "scale-1000-candidate-v1.json": "ef7260a55b215994fdf5c41747eb23fdab3c3661110e009730d578aaf9a11b8c",
+    "scale-1000-answer-guard-v1.json": "0dff13db80ac2e1f3c634d92172fe7701dd376b54378b14b9dde36fcb98110b6",
+    "scale-1000-live-v1.json": "c704856c7fb61e71fb90d1cfc65746dbdc95cec06576d8e4e706d6217e35c317",
+    "scale-1000-live-v1-restart.json": "7820a9f42ad7c61ace8295fe9b494def5d689c7d3dca49d7d19870738a9268f6",
+    "scale-1000-backup-v1.json": "d5b58de3dfdda5b39a88dc55bdab4479a0b44df8ec559836b0370f745d308541",
+    "scale-1000-restore-v1.json": "a38aaa5b4cef2a9766a86388af5af7e7ed6bd9727c5204c7394b75fd5f3d933b"
+  },
+  "live": {
+    "transport": "real HTTP through port 3000 proxy to port 8000",
+    "checks": 9,
+    "traces": [
+      {
+        "name": "old_accession",
+        "status": "needs_confirmation",
+        "http_status": 200,
+        "ms": 52,
+        "idempotency_and_conflict": "passed"
+      },
+      {
+        "name": "new_accession",
+        "status": "needs_confirmation",
+        "http_status": 200,
+        "ms": 38,
+        "idempotency_and_conflict": "passed"
+      },
+      {
+        "name": "new_glass_description",
+        "status": "needs_confirmation",
+        "http_status": 200,
+        "ms": 12086,
+        "gold_retrieved": true,
+        "gold_presented": true
+      },
+      {
+        "name": "new_bust_description",
+        "status": "insufficient_evidence",
+        "http_status": 200,
+        "ms": 8961,
+        "gold_retrieved": false,
+        "gold_presented": false
+      },
+      {
+        "name": "new_chair_description",
+        "status": "insufficient_evidence",
+        "http_status": 200,
+        "ms": 11906,
+        "gold_retrieved": false,
+        "gold_presented": false
+      },
+      {
+        "name": "new_brief",
+        "status": "answered",
+        "http_status": 200,
+        "ms": 11670
+      },
+      {
+        "name": "new_unknown",
+        "status": "insufficient_evidence",
+        "http_status": 200,
+        "ms": 3333
+      }
+    ],
+    "mongodb_trace_count": 7,
+    "development_feedback_count": 1,
+    "offline_eval_batches": 2
+  },
+  "restart": {
+    "checks": 10,
+    "all_hashes_equal": true
+  },
+  "backup_restore": {
+    "matched": true,
+    "fresh_target": true,
+    "collections": {
+      "museum_sessions": 7,
+      "museum_traces": 45,
+      "museum_photo_traces": 61,
+      "museum_feedback": 16,
+      "museum_request_cache": 7,
+      "eval_runs": 10
+    }
+  },
+  "fixed_answer_checks": {
+    "requested_provider_calls": 14,
+    "statuses": {
+      "service_unavailable": 1,
+      "answered": 2,
+      "insufficient_evidence": 1
+    },
+    "human_reviewed": false,
+    "api_cost": null
+  },
+  "ui": {
+    "build": "passed",
+    "backend_tests": 413,
+    "detector_findings": 0,
+    "desktop_checked": true,
+    "mobile_viewport_width": 390,
+    "horizontal_overflow": false,
+    "initial_rendered_works": 24,
+    "after_load_more": 48,
+    "filtered_new_record_count": 1,
+    "filtered_image_loaded": true,
+    "real_iphone_tested": false
+  }
+}
