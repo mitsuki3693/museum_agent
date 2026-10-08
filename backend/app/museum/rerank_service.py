@@ -9,6 +9,7 @@ import uuid
 from pathlib import Path
 
 from .config import ROOT
+from .evidence_ties import POLICY
 
 
 class RerankService:
@@ -58,6 +59,8 @@ class RerankService:
             reply=json.loads(await self.process.stdout.readline())
             if reply.get('request_id')!=request_id or reply.get('error'):raise ValueError('Invalid worker reply')
             if reply.get('batching','original')!=self.batching:raise ValueError('Worker batching mismatch')
+            if self.batching=='length' and reply.get('ranking_policy')!=POLICY:
+                raise ValueError('Worker ranking policy mismatch')
             ids=reply['ids'];expected=trace['candidate_ids']
             if len(ids)!=len(expected) or len(set(ids))!=len(ids) or set(ids)!=set(expected):
                 raise ValueError('Changed candidate identity')
@@ -65,7 +68,8 @@ class RerankService:
         try:
             reply=await asyncio.wait_for(exchange(),self.timeout)
             trace.update(status='applied',ordered_ids=reply['ids'],evidence=reply.get('evidence',[]),
-                         model_revision=reply.get('model_revision'),context_token_budget=256)
+                         model_revision=reply.get('model_revision'),context_token_budget=256,
+                         ranking_policy=reply.get('ranking_policy','raw-score-v1'),evidence_ties=reply.get('evidence_ties',[]))
             return reply['ids'],trace
         except asyncio.TimeoutError:
             trace['status']='timeout';await self.stop('disabled_after_timeout')

@@ -5,6 +5,7 @@ Tests the current runtime retrieval path; experimental Chinese recall remains
 offline and must not be conflated with this service-lifecycle acceptance.
 """
 import asyncio
+import argparse
 import json
 import socket
 import time
@@ -15,13 +16,16 @@ import httpx
 import uvicorn
 from app.museum.api import create_app
 from app.museum.config import MuseumSettings
+from app.museum.evidence_ties import POLICY
 from evaluate_chinese_recall import sha
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'eval/private/length-batching-http-v1.json'
 
 
-async def main():
+async def main(output):
+    global OUT
+    OUT=output
     import torch
     torch.set_num_threads(4)
     if OUT.exists() or OUT.with_suffix('.jsonl').exists():raise FileExistsError('Preserve acceptance')
@@ -71,6 +75,7 @@ async def main():
             for ident in ['old-F07','old-G15']:
                 result,trace,ms=await chat(cases[ident]['query'])
                 assert trace['rerank']['status']=='applied' and trace['rerank']['batching']=='length'
+                assert trace['rerank']['ranking_policy']==POLICY
                 assert result['retrieved_ids']==cases[ident]['ids'][:5]
                 record(dict(id=ident,status='applied',http_ms=ms,budget_ms=20000,rerank=trace['rerank'],parity=True))
             query=cases['old-F07']['query']
@@ -119,4 +124,7 @@ async def main():
     print(json.dumps(dict(complete=True,checks=len(report['checks']),sha256=sha(OUT))),flush=True)
 
 
-if __name__=='__main__':asyncio.run(main())
+if __name__=='__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output',type=Path,default=OUT)
+    asyncio.run(main(parser.parse_args().output))

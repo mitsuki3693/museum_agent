@@ -7,6 +7,7 @@ import sys
 
 from .local_reranker import LocalPairReranker,MODEL_REVISION,contextual_evidence,ranked_ids
 from .semantic_chunks import dense_views
+from .evidence_ties import POLICY, stable_evidence_ranking
 
 
 def score_request(model, request, *, sort_by_length=False):
@@ -28,8 +29,11 @@ def score_request(model, request, *, sort_by_length=False):
             **{k:[{a:v for a,v in item.items() if a!='text'} for item in evidence[k]] for k in ['included','omitted']}))
     result=model.score(query,passages,sort_by_length=True) if sort_by_length else model.score(query,passages)
     if result['truncated'] or max(result['token_lengths'])>256:raise ValueError('Evidence budget drift')
-    return dict(ids=ranked_ids(candidates,result['scores']),evidence=audit,model_revision=MODEL_REVISION,
-                batching='length' if sort_by_length else 'original')
+    ids=ranked_ids(candidates,result['scores']);ties=[]
+    if sort_by_length:ids,ties=stable_evidence_ranking(candidates,result['scores'],passages)
+    return dict(ids=ids,evidence=audit,model_revision=MODEL_REVISION,
+                batching='length' if sort_by_length else 'original',
+                ranking_policy=POLICY if sort_by_length else 'raw-score-v1',evidence_ties=ties)
 
 
 def emit(value):

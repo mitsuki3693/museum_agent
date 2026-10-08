@@ -49,6 +49,33 @@ def test_worker_threads_explicit_batching_into_real_score_contract():
             return dict(scores=[1.],truncated=0,token_lengths=[10])
     reply=score_request(Model(),dict(query='blue',sources=[source],candidates=[candidate]),sort_by_length=True)
     assert reply['ids']==['a'] and reply['batching']=='length'
+    assert reply['ranking_policy']=='identical-evidence-stable-v1'
+
+
+@pytest.mark.asyncio
+async def test_length_worker_without_tie_policy_falls_back():
+    svc=RerankService('',sort_by_length=True,command=worker(
+        " print(json.dumps({'request_id':r['request_id'],'ids':['a'],'batching':'length'}),flush=True)"))
+    await svc.start();proc=svc.process
+    ids,trace=await svc.rank('q',[dict(source_id='a')],[])
+    assert ids is None and trace['status']=='error' and proc.returncode is not None
+
+
+def test_worker_stabilizes_same_evidence_only_in_opt_in_path():
+    sources=[dict(_id=i,title='Vase',content='briefDescription: blue vase',source_hash=i,status='active') for i in ['a','b']]
+    candidates=[]
+    for source in sources:
+        chunk=dense_views([source])['original'][0]
+        candidates.append(dict(source_id=source['_id'],lanes={'dense':dict(best_chunk_id=chunk['_id'],best_content=chunk['content'])}))
+    class Model:
+        def tokenizer(self,q,p,**kwargs):return {'input_ids':p.split()}
+        def score(self,q,passages,**kwargs):
+            assert passages[0]==passages[1]
+            return dict(scores=[1.,1.000001],truncated=0,token_lengths=[10,10])
+    request=dict(query='vase',sources=sources,candidates=candidates)
+    assert score_request(Model(),request)['ids']==['b','a']
+    fixed=score_request(Model(),request,sort_by_length=True)
+    assert fixed['ids']==['a','b'] and fixed['evidence_ties'][0]['source_ids']==['a','b']
 
 
 @pytest.mark.asyncio
