@@ -57,3 +57,20 @@ def test_anchor_spanning_wrapped_chunks_retains_span():
     a['fields']['appearance_zh']['evidence_quotes']=[quote]
     _,audit=bridge_candidate('郁金香',c,s,a)
     assert len(audit['chunk_ids'])==2
+
+
+def test_worker_applies_frozen_title_and_material_controls_without_changing_sources():
+    sources=[dict(_id=i,title='Statue',content='Title: Statue\nmaterialsAndTechniques: '+m,
+                  status='active',source_hash=i) for i,m in [('a','Terracotta'),('b','Marble')]]
+    candidates=[]
+    for s in sources:
+        chunk=dense_views([s])['original'][0]
+        candidates.append(dict(source_id=s['_id'],lanes={'dense':dict(best_chunk_id=chunk['_id'],best_content=chunk['content'])}))
+    class Model:
+        def tokenizer(self,q,p,**kwargs):return {'input_ids':p.split()}
+        def score(self,q,passages):
+            assert all('Title: Statue' not in p for p in passages)
+            return dict(scores=[2.,1.],truncated=0,token_lengths=[10,10])
+    reply=score_request(Model(),dict(query='大理石作品',sources=sources,candidates=candidates),evidence_controls=True)
+    assert reply['ids']==['b','a'] and reply['material_status']=='explicit_material'
+    assert all(s['content'].startswith('Title: Statue') for s in sources)

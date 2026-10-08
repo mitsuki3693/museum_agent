@@ -46,6 +46,7 @@ class MuseumIndex:
         self.rerank_vectors = None
         self.search_fields = {}
         self.search_fields_meta = None
+        self.chinese_recall = None
         self.records: dict[str, dict[str, Any]] = {}
         self.corpus_hash = ""
         self.accessions: dict[str, list[str]] = {}
@@ -70,6 +71,11 @@ class MuseumIndex:
             if not path.is_absolute():path=ROOT/path
             self.search_fields,self.search_fields_meta=load_search_fields(
                 path,self.records,allow_drafts=self.settings.museum_search_allow_drafts)
+            if self.settings.museum_chinese_recall:
+                from .chinese_recall import ChineseRecall
+                self.chinese_recall=ChineseRecall(path,self.records,self.search_fields,self.search_fields_meta)
+        elif self.settings.museum_chinese_recall:
+            raise ValueError('Chinese recall requires a validated search-field manifest')
         self.accessions = {}
         for r in records:
             key = canonical_accession(r.get('fields', {}).get('accession_number', ''))
@@ -118,7 +124,8 @@ class MuseumIndex:
             from .rerank_service import RerankService
             self.reranker=RerankService(self.settings.museum_rerank_model,
                 timeout=self.settings.museum_rerank_timeout,startup_timeout=self.settings.museum_rerank_startup_timeout,
-                sort_by_length=self.settings.museum_rerank_sort_by_length)
+                sort_by_length=self.settings.museum_rerank_sort_by_length,
+                evidence_controls=self.settings.museum_chinese_recall)
             await self.reranker.start()
 
     async def close(self):
@@ -138,7 +145,22 @@ class MuseumIndex:
                 return rows,dict(status='named_title',candidate_ids=[s['_id'] for s in rows],
                                  search_fields=self.search_fields_meta)
         baseline=await self.search(query,object_id,variant)
+        recall_enabled=bool(self.chinese_recall and not object_id and variant=='hybrid' and not self.exact_accession_ids(query))
+        fallback_material=None
+        if recall_enabled and self.chinese_recall.applies(query):
+            from .rerank_evidence_controls import prioritize_material
+            vector=(await asyncio.to_thread(self.embedding._local_embed,[query]))[0] if self.embedding else None
+            dense=await self.vectors.search(vector,top_k=25) if vector is not None else []
+            fallback=self.chinese_recall.pool(query,self.bm25,dense)
+            ids=[c['source_id'] for c in fallback]
+            current=await self._current_sources(ids)
+            ids,fallback_material=prioritize_material(query,[r['_id'] for r in current],{r['_id']:r for r in current})
+            baseline=(await self._current_sources(ids))[:5]
         trace=dict(status='disabled',fallback_ids=[s['_id'] for s in baseline])
+        if recall_enabled:
+            from .chinese_recall import VERSION
+            trace.update(recall_version=VERSION,search_fields=self.search_fields_meta,
+                         fallback_material_status=(fallback_material or {}).get('status'))
         if not self.settings.museum_text_rerank:return baseline,trace
         if object_id or self.exact_accession_ids(query) or variant!='hybrid':
             trace['status']='bypassed';return baseline,trace
@@ -151,10 +173,14 @@ class MuseumIndex:
         try:
             vector=(await asyncio.to_thread(self.embedding._local_embed,[query]))[0]
             candidates=fuse_works(self.bm25.search(query,top_k=25),await self.rerank_vectors.search(vector,top_k=25))
+            if recall_enabled:
+                candidates=self.chinese_recall.pool(query,self.bm25,await self.rerank_vectors.search(vector,top_k=25))
             sources=await self._current_sources([c['source_id'] for c in candidates])
             active={s['_id'] for s in sources};candidates=[c for c in candidates if c['source_id'] in active]
             if not candidates:
                 trace['status']='no_candidates';return baseline,trace
+            if recall_enabled:
+                candidates,trace['bridge']=self.chinese_recall.bridge(query,candidates,sources)
             ids,details=await self.reranker.rank(query,candidates,sources)
             trace.update(details)
             if ids is not None:

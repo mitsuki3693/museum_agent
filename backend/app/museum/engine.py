@@ -128,7 +128,7 @@ class MuseumEngine:
             except Exception as exc:
                 rewrite_error = type(exc).__name__
         rerank_trace={'status':'disabled'}
-        if self.settings.museum_text_rerank or self.settings.museum_search_fields:
+        if self.settings.museum_text_rerank or self.settings.museum_search_fields or self.settings.museum_chinese_recall:
             sources,rerank_trace=await self.index.search_for_answer(rewritten,effective_object,variant)
         else:
             sources = await self.index.search(rewritten, effective_object, variant)

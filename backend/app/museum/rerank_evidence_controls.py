@@ -1,4 +1,4 @@
-"""Offline evidence controls; neither experiment is enabled in live retrieval.
+"""Evidence controls used offline and by the opt-in Chinese retrieval worker.
 
 Material preference handles only an explicit, single-material browse query.
 It promotes original-field matches, never declares nonmatches absent, and

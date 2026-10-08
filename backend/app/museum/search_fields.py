@@ -1,6 +1,6 @@
 """Versioned retrieval-only annotations. No mutation of authoritative sources.
 
-Currently consumed by the offline lexical experiment, not the live API.
+Consumed by named-title lookup and the opt-in Chinese retrieval path.
 Provenance validation checks traceability, not semantic translation correctness.
 """
 import hashlib

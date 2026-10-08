@@ -23,7 +23,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'eval/private/length-batching-http-v1.json'
 
 
-async def main(output):
+async def main(output,chinese_recall=False):
     global OUT
     OUT=output
     import torch
@@ -33,18 +33,27 @@ async def main(output):
     baseline=json.loads(baseline_path.read_bytes());assert baseline['complete']
     assert sha(baseline_path)=='a9208a2167a8cbbe490a74d9fafdf28709054ec80badc66c2985e68865b40665'
     cases={r['id']:r for r in baseline['rows'] if r['corpus']=='scale300'}
+    expected_ids={ident:case['ids'] for ident,case in cases.items()}
+    if chinese_recall:
+        replay_path=ROOT/'eval/private/evidence-ties-replay-v1.json'
+        assert sha(replay_path)=='e59d59d51d489935a88a4e9d4503a30722c23c5286ef621c2095e76685357e7f'
+        expected_ids={r['id']:r['arms']['length']['ids'] for r in json.loads(replay_path.read_bytes())['rows'] if r['corpus']=='scale300'}
     spec=json.loads((ROOT/'eval/private/chinese-recall-v3.json').read_bytes())['corpora']['scale300']['source_hashes']
     for p in ['public','private']:assert sha(Path(spec[p+'_path']))==spec[p+'_sha256']
     cfg=MuseumSettings(_env_file=None,museum_storage='memory',deepseek_api_key='',museum_embedding='local',
         museum_corpus=Path(spec['public_path']),museum_private_corpus=Path(spec['private_path']),
         museum_text_rerank=True,museum_rerank_sort_by_length=True,museum_rerank_timeout=20,
         museum_dense_view='original',museum_search_fields=None,museum_visual_manifest=None,museum_daily_backup=False)
+    if chinese_recall:
+        cfg.museum_chinese_recall=True
+        cfg.museum_search_fields=ROOT/'data/private/chinese-recall-v2-scale300.json'
+        cfg.museum_search_allow_drafts=True
     app=create_app(cfg)
     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     server=uvicorn.Server(uvicorn.Config(app,host='127.0.0.1',port=port,log_level='error',access_log=False))
     task=asyncio.create_task(server.serve(sockets=[sock]))
     report=dict(complete=False,transport='loopback_tcp',production_config_changed=False,real_generation=False,
-        production_db_used=False,api_calls=0,baseline_sha256=sha(baseline_path),corpus=spec,checks=[])
+        production_db_used=False,api_calls=0,chinese_recall=chinese_recall,baseline_sha256=sha(baseline_path),corpus=spec,checks=[])
     def record(item):
         report['checks'].append(item)
         with OUT.with_suffix('.jsonl').open('a',encoding='utf-8') as f:f.write(json.dumps(item,ensure_ascii=False)+'\n')
@@ -76,10 +85,14 @@ async def main(output):
                 result,trace,ms=await chat(cases[ident]['query'])
                 assert trace['rerank']['status']=='applied' and trace['rerank']['batching']=='length'
                 assert trace['rerank']['ranking_policy']==POLICY
-                assert result['retrieved_ids']==cases[ident]['ids'][:5]
+                assert result['retrieved_ids']==expected_ids[ident][:5]
+                if chinese_recall:assert trace['rerank']['evidence_controls']=='repeated-title-and-material-v1'
                 record(dict(id=ident,status='applied',http_ms=ms,budget_ms=20000,rerank=trace['rerank'],parity=True))
             query=cases['old-F07']['query']
-            original=[r['_id'] for r in await app.state.index.search(query)]
+            cfg.museum_text_rerank=False
+            fallback,_=await app.state.index.search_for_answer(query)
+            original=[r['_id'] for r in fallback]
+            cfg.museum_text_rerank=True
             pending=asyncio.create_task(chat(query))
             for _ in range(1000):
                 if svc.busy or pending.done():break
@@ -127,4 +140,6 @@ async def main(output):
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,default=OUT)
-    asyncio.run(main(parser.parse_args().output))
+    parser.add_argument('--chinese-recall',action='store_true')
+    args=parser.parse_args()
+    asyncio.run(main(args.output,args.chinese_recall))

@@ -1,4 +1,4 @@
-"""Offline bridge from work-level translated fields back to original chunks."""
+"""Source-validated bridge from translated retrieval fields to original chunks."""
 import copy
 import re
 from .semantic_chunks import dense_views

@@ -61,6 +61,15 @@ async def test_length_worker_without_tie_policy_falls_back():
     assert ids is None and trace['status']=='error' and proc.returncode is not None
 
 
+@pytest.mark.asyncio
+async def test_missing_evidence_controls_policy_falls_back():
+    svc=RerankService('',evidence_controls=True,command=worker(
+        " print(json.dumps({'request_id':r['request_id'],'ids':['a'],'batching':'original','ranking_policy':'identical-evidence-stable-v1'}),flush=True)"))
+    await svc.start();proc=svc.process
+    ids,trace=await svc.rank('q',[dict(source_id='a')],[])
+    assert ids is None and trace['status']=='error' and proc.returncode is not None
+
+
 def test_worker_stabilizes_same_evidence_only_in_opt_in_path():
     sources=[dict(_id=i,title='Vase',content='briefDescription: blue vase',source_hash=i,status='active') for i in ['a','b']]
     candidates=[]
