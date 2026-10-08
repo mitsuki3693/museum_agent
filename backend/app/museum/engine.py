@@ -188,13 +188,16 @@ class MuseumEngine:
             fact_selection = None
             generation_allowed = True
             if self.settings.museum_answer_policy == 'facts':
-                from .fact_selection import select_facts, selection_issues, selected_sources
+                from .fact_selection import select_facts, selection_issues, selected_sources, usable_facts, bare_place_quote
                 fact_started = time.perf_counter()
                 try:
                     selection = await select_facts(client, query, rewritten, history, sources, identity_boundary)
-                    fact_selection = selection.model_dump()
+                    raw_selection = selection.model_dump()
                     selection_errors = selection_issues(selection, sources)
-                    attempts.append({'stage':'fact_selection', 'selection':fact_selection,
+                    selection, excluded = usable_facts(selection)
+                    fact_selection = selection.model_dump()
+                    attempts.append({'stage':'fact_selection', 'selection':raw_selection,
+                        'usable_selection':fact_selection, 'excluded_facts':excluded,
                         'issues':selection_errors, 'ms':round((time.perf_counter()-fact_started)*1000)})
                     generation_allowed = bool(selection.facts) and not selection_errors
                     if selection_errors:
@@ -257,6 +260,8 @@ class MuseumEngine:
                                       '重新组织完整短答，保留直接答复及关键限定，不直接截取前几条。')
                     if fact_selection is not None:
                         for i, claim in enumerate(draft.claims):
+                            if bare_place_quote(claim.quote):
+                                issues.append(f'claim_{i}:bare_place_label; 请引用明确记载对象与制作或装饰关系的原文，不能根据地点列表分配阶段。')
                             if not any(claim.source_id == fact['source_id'] and claim.quote in fact['quote']
                                        for fact in fact_selection['facts']):
                                 issues.append(f'claim_{i}:outside_selected_evidence')

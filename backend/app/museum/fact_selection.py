@@ -53,6 +53,26 @@ def selection_issues(selection, sources):
     return issues
 
 
+def bare_place_quote(quote):
+    """A catalogue place list has no mapping from place to production stage.
+
+    Conservative boundary for the experimental facts path, not a general
+    entailment checker. Other metadata and translated place names are not parsed.
+    """
+    lines = [line.strip() for line in quote.splitlines() if line.strip()]
+    return len(lines) == 1 and lines[0].lower().startswith('place:')
+
+
+def usable_facts(selection):
+    kept, excluded = [], []
+    for fact in selection.facts:
+        if bare_place_quote(fact.quote):
+            excluded.append({'fact':fact.model_dump(),'reason':'bare_place_label'})
+        else:
+            kept.append(fact)
+    return FactSelection(facts=kept), excluded
+
+
 def selected_sources(selection, sources):
     """Reduce generation context only; final quote/semantic checks use originals."""
     return [{**s, 'content':'\n'.join(dict.fromkeys(f.quote for f in selection.facts

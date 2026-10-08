@@ -111,6 +111,73 @@ def test_structured_review_policy_is_opt_in_and_visible(museum_settings):
         assert health['prompt_version'].endswith('-review-entailment_v1')
 
 @pytest.mark.asyncio
+async def test_combined_followup_selects_recomposes_and_reviews(museum_settings):
+    museum_settings.museum_answer_policy = 'facts'
+    museum_settings.museum_rewrite_overlong_answers = True
+    museum_settings.museum_verifier_policy = 'entailment_v1'
+    facts = {'facts':[{'aspect':'material','scope':'production','source_id':'test-1',
+                      'value':'bronze','quote':'Material: bronze.'}]}
+    excessive = {'abstain':False,'claims':[draft()['claims'][0] for _ in range(3)]}
+    review = {'checks':[{'index':0,'supported':True,'reason':'Supported material.'}],
+              'answers_question':True,'relevance_reason':'Answers material question.',
+              'respects_identity':True,'identity_reason':'Confirmed object.'}
+    e, store, fake = await engine(museum_settings,
+        [{'query':'Test Vase material'},facts,excessive,draft(),review])
+    result = await e.answer('它是什么材质？',
+        {'_id':'combined','history':[{'role':'user','content':'我们看这件作品。'}]},'brief','test-1')
+    assert result['status'] == 'answered' and fake.calls == 5
+    assert result['claims'] == draft()['claims']
+    trace = await store.get('museum_traces',result['trace_id'])
+    assert trace['prompt_version'] == 'museum-grounded-v10-relation-evidence-bounded-v1-review-entailment_v1'
+    generations = [a for a in trace['attempts'] if 'draft' in a]
+    assert len(generations) == 2
+    assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
+    assert generations[1]['structured_review'] == review
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('scenario', ['valid_relation','bare_only','borrowed_relation','nested_label'])
+async def test_place_labels_cannot_supply_manufacture_relations(museum_settings, scenario):
+    museum_settings.museum_answer_policy = 'facts'
+    records = json.loads(museum_settings.museum_corpus.read_text(encoding='utf-8'))
+    label, relation = 'Place: Alpha; Beta', 'Body made in Alpha; decoration added in Beta.'
+    records[0]['content'] = label + '\n' + relation
+    museum_settings.museum_corpus.write_text(json.dumps(records),encoding='utf-8')
+    place = {'aspect':'place','scope':'production','source_id':'test-1','value':'Alpha','quote':label}
+    full = {**place,'quote':relation}
+    if scenario == 'nested_label':
+        full['quote'] = records[0]['content']
+    facts = {'facts':[place] if scenario == 'bare_only' else [place,full]}
+    answer = draft(quote=relation if scenario=='valid_relation' else label,
+                   text='The body was made in Alpha and decoration added in Beta.')
+    e, store, fake = await engine(museum_settings,[])
+    messages = []
+    async def capture(payload):
+        messages.append(payload)
+        fake.calls += 1
+        if fake.calls == 1:
+            return facts
+        if 'style' in json.loads(payload[1]['content']):
+            return answer
+        return {'passed':True,'issues':[]}  # Reproduce the real semantic false accept.
+    fake.complete_json = capture
+    result = await e.answer('Where were the body and decoration made?',{'_id':'relation'},'brief','test-1')
+    assert result['status'] == {'valid_relation':'answered','bare_only':'insufficient_evidence'}.get(scenario,'verification_failed')
+    trace = await store.get('museum_traces',result['trace_id'])
+    step = trace['attempts'][0]
+    assert step['selection'] == facts  # Original provider evidence is retained for diagnosis.
+    assert step['excluded_facts'][0]['fact'] == place
+    assert step['excluded_facts'][0]['reason'] == 'bare_place_label'
+    if scenario=='bare_only':
+        assert fake.calls == 1 and result['claims'] == []
+    else:
+        generation = json.loads(messages[1][1]['content'])
+        assert generation['fact_selection']['facts'] == [full]
+        if scenario=='valid_relation':
+            assert label not in generation['sources'][0]['content']
+        else:
+            assert result['claims'] == [] and fake.calls == 3
+
+@pytest.mark.asyncio
 async def test_verifier_outage_is_not_a_pass(museum_settings):
     e, _, _ = await engine(museum_settings,[draft(),TimeoutError()])
     result = await e.answer("material",{"_id":"s"},"brief","test-1")
@@ -208,7 +275,7 @@ async def test_generation_cannot_cite_unselected_source_fragment(museum_settings
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
-    ('facts', 'museum-grounded-v9-fact-selection'),
+    ('facts', 'museum-grounded-v10-relation-evidence'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'
