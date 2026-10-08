@@ -23,7 +23,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'eval/private/length-batching-http-v1.json'
 
 
-async def main(output,chinese_recall=False):
+async def main(output,chinese_recall=False,fallback_glossary=False):
     global OUT
     OUT=output
     import torch
@@ -48,12 +48,13 @@ async def main(output,chinese_recall=False):
         cfg.museum_chinese_recall=True
         cfg.museum_search_fields=ROOT/'data/private/chinese-recall-v2-scale300.json'
         cfg.museum_search_allow_drafts=True
+    cfg.museum_fallback_glossary=fallback_glossary
     app=create_app(cfg)
     sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     server=uvicorn.Server(uvicorn.Config(app,host='127.0.0.1',port=port,log_level='error',access_log=False))
     task=asyncio.create_task(server.serve(sockets=[sock]))
     report=dict(complete=False,transport='loopback_tcp',production_config_changed=False,real_generation=False,
-        production_db_used=False,api_calls=0,chinese_recall=chinese_recall,baseline_sha256=sha(baseline_path),corpus=spec,checks=[])
+        production_db_used=False,api_calls=0,chinese_recall=chinese_recall,fallback_glossary=fallback_glossary,baseline_sha256=sha(baseline_path),corpus=spec,checks=[])
     def record(item):
         report['checks'].append(item)
         with OUT.with_suffix('.jsonl').open('a',encoding='utf-8') as f:f.write(json.dumps(item,ensure_ascii=False)+'\n')
@@ -125,6 +126,13 @@ async def main(output,chinese_recall=False):
             result,trace,ms=await chat(query)
             assert trace['rerank']['status']=='disabled' and result['retrieved_ids']==original
             record(dict(id='switch_off',status='disabled',http_ms=ms,fallback_unchanged=True))
+            if fallback_glossary:
+                for ident in ['old-G03','old-G07','old-G13','old-F09','M08-zh']:
+                    result,trace,ms=await chat(cases[ident]['query'])
+                    assert trace['rerank']['status']=='disabled'
+                    assert set(result['retrieved_ids']) & set(cases[ident]['gold'])
+                    record(dict(id=ident,status='fallback_hit',http_ms=ms,retrieved_ids=result['retrieved_ids'],
+                                glossary=trace['rerank']['fallback_glossary']))
         report['complete']=True
     except Exception as exc:
         report['error_type']=type(exc).__name__
@@ -141,5 +149,6 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--output',type=Path,default=OUT)
     parser.add_argument('--chinese-recall',action='store_true')
+    parser.add_argument('--fallback-glossary',action='store_true')
     args=parser.parse_args()
-    asyncio.run(main(args.output,args.chinese_recall))
+    asyncio.run(main(args.output,args.chinese_recall,args.fallback_glossary))

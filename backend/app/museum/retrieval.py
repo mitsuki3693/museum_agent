@@ -147,11 +147,16 @@ class MuseumIndex:
         baseline=await self.search(query,object_id,variant)
         recall_enabled=bool(self.chinese_recall and not object_id and variant=='hybrid' and not self.exact_accession_ids(query))
         fallback_material=None
+        glossary=None
         if recall_enabled and self.chinese_recall.applies(query):
             from .rerank_evidence_controls import prioritize_material
             vector=(await asyncio.to_thread(self.embedding._local_embed,[query]))[0] if self.embedding else None
             dense=await self.vectors.search(vector,top_k=25) if vector is not None else []
-            fallback=self.chinese_recall.pool(query,self.bm25,dense)
+            expanded=None
+            if self.settings.museum_fallback_glossary:
+                from .fallback_glossary import expand_query
+                expanded,glossary=expand_query(query)
+            fallback=self.chinese_recall.pool(query,self.bm25,dense,lexical_override=expanded)
             ids=[c['source_id'] for c in fallback]
             current=await self._current_sources(ids)
             ids,fallback_material=prioritize_material(query,[r['_id'] for r in current],{r['_id']:r for r in current})
@@ -161,6 +166,7 @@ class MuseumIndex:
             from .chinese_recall import VERSION
             trace.update(recall_version=VERSION,search_fields=self.search_fields_meta,
                          fallback_material_status=(fallback_material or {}).get('status'))
+            if glossary:trace['fallback_glossary']=glossary
         if not self.settings.museum_text_rerank:return baseline,trace
         if object_id or self.exact_accession_ids(query) or variant!='hybrid':
             trace['status']='bypassed';return baseline,trace

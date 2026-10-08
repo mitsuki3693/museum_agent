@@ -20,6 +20,7 @@ class MuseumSettings(BaseSettings):
     museum_text_rerank: bool = False
     museum_rerank_sort_by_length: bool = False
     museum_chinese_recall: bool = False
+    museum_fallback_glossary: bool = False
     # Optional retrieval-only Chinese titles; default excludes draft annotations.
     museum_search_fields: Path | None = None
     museum_search_allow_drafts: bool = False

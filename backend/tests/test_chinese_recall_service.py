@@ -85,3 +85,20 @@ async def test_missing_manifest_is_not_silently_enabled(tmp_path):
     path.write_text(json.dumps([dict(_id='a',title='A',content='x',status='active',source_hash='a')]),encoding='utf-8')
     cfg=MuseumSettings(_env_file=None,museum_corpus=path,museum_chinese_recall=True)
     with pytest.raises(ValueError,match='manifest'):await MuseumIndex(cfg,MemoryStore()).start()
+
+
+@pytest.mark.asyncio
+async def test_glossary_reads_original_english_in_fallback_only(tmp_path):
+    index,store,cfg=await make_index(tmp_path)
+    index.reranker=SimpleNamespace(state='ready',busy=True)
+    rows,_=await index.search_for_answer('红色盘子')
+    assert rows==[]
+    cfg.museum_fallback_glossary=True
+    rows,trace=await index.search_for_answer('红色盘子')
+    assert [r['_id'] for r in rows]==['b'] and trace['status']=='busy'
+    assert trace['fallback_glossary']['matched']['红色']=='red'
+    assert rows[0]['content']=='briefDescription: A red bowl.'
+    assert await index.search('红色盘子')==[]  # Photo path unchanged.
+    cfg.museum_fallback_glossary=False
+    rows,_=await index.search_for_answer('红色盘子')
+    assert rows==[]

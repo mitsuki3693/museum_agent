@@ -26,8 +26,8 @@ class ChineseRecall:
     @staticmethod
     def applies(query):return bool(re.search('[\u4e00-\u9fff]',query))
 
-    def pool(self, query, bm25, dense_hits):
-        lexical=self.index.search(lexical_query(query),top_k=25) if self.applies(query) else bm25.search(query,top_k=25)
+    def pool(self, query, bm25, dense_hits, *, lexical_override=None):
+        lexical=self.index.search(lexical_override if lexical_override is not None else lexical_query(query),top_k=25) if self.applies(query) else bm25.search(query,top_k=25)
         return fuse_works(lexical,dense_hits)
 
     def bridge(self,query,candidates,sources):

@@ -1,5 +1,6 @@
 """Real retrieval and worker packing; frozen score replay, no new BGE/LLM calls."""
 import asyncio
+import argparse
 import json
 from pathlib import Path
 
@@ -13,7 +14,9 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'eval/private/chinese-recall-service-parity-v1.json'
 
 
-async def main():
+async def main(output=OUT,glossary=False):
+    global OUT
+    OUT=output
     import torch
     from transformers import AutoTokenizer
     torch.set_num_threads(4)
@@ -32,7 +35,7 @@ async def main():
     score_rows={(r['corpus'],r['id']):r for r in scores['rows']}
     expected_rows={(r['corpus'],r['id']):r for r in expected['rows']}
     tokenizer=AutoTokenizer.from_pretrained(str(ROOT/'models/bge-reranker-v2-m3'),local_files_only=True)
-    report=dict(complete=False,new_bge_calls=0,api_calls=0,rows=[],summary={})
+    report=dict(complete=False,new_bge_calls=0,api_calls=0,fallback_glossary=glossary,rows=[],summary={})
     for name,specification in baseline['corpora'].items():
         spec=specification['source_hashes']
         for prefix in ['public','private']:assert sha(Path(spec[prefix+'_path']))==spec[prefix+'_sha256']
@@ -40,7 +43,7 @@ async def main():
         assert sha(path)==specification['manifest_sha256']
         cfg=MuseumSettings(_env_file=None,museum_corpus=Path(spec['public_path']),museum_private_corpus=Path(spec['private_path']),
             museum_embedding='local',museum_text_rerank=True,museum_chinese_recall=True,museum_search_fields=path,
-            museum_search_allow_drafts=True,museum_rerank_sort_by_length=True,deepseek_api_key='')
+            museum_search_allow_drafts=True,museum_rerank_sort_by_length=True,museum_fallback_glossary=glossary,deepseek_api_key='')
         index=MuseumIndex(cfg,MemoryStore());await index.start()
         for row in specification['rows']:
             key=(name,row['id']);case=cases[key];saved=score_rows[key];target=expected_rows[key]
@@ -82,4 +85,6 @@ async def main():
     print(json.dumps(dict(worker_checked=sum(r['worker_checked'] for r in report['rows']),bypassed=sum(not r['worker_checked'] for r in report['rows']),sha256=sha(OUT))))
 
 
-if __name__=='__main__':asyncio.run(main())
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,default=OUT);p.add_argument('--fallback-glossary',action='store_true')
+    args=p.parse_args();asyncio.run(main(args.output,args.fallback_glossary))
