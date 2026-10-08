@@ -249,6 +249,41 @@ async def test_chosen_depth_caps_model_overproduction(museum_settings,mode,limit
     assert trace["attempts"][0]["omitted_claims"]==6-limit
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('mode,limit', [('brief',2), ('children',2), ('deep',5)])
+async def test_overlong_reply_is_recomposed_then_verified(museum_settings, mode, limit):
+    museum_settings.museum_rewrite_overlong_answers = True
+    excessive = {'abstain':False, 'claims':[draft()['claims'][0] for _ in range(limit+1)]}
+    e, store, fake = await engine(museum_settings, [excessive,draft(),{'passed':True,'issues':[]}])
+    captured = []
+    original = fake.complete_json
+    async def capture(messages):
+        captured.append(messages)
+        return await original(messages)
+    fake.complete_json = capture
+    result = await e.answer('不是青铜吗？', {'_id':'length'}, mode, 'test-1')
+    assert result['status'] == 'answered' and fake.calls == 3
+    payload = json.loads(captured[1][1]['content'])
+    assert payload['rejected_draft'] == excessive
+    assert payload['max_claims'] == limit
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert trace['attempts'][0]['draft'] == excessive
+    assert trace['attempts'][0]['omitted_claims'] == 0
+    assert trace['attempts'][0]['verdict'] is None
+    assert trace['attempts'][1]['verdict']['passed']
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('second', ['long', 'forged', 'abstain', 'timeout'])
+async def test_recomposition_never_exposes_an_unverified_prefix(museum_settings, second):
+    museum_settings.museum_rewrite_overlong_answers = True
+    excessive = {'abstain':False,'claims':[draft()['claims'][0] for _ in range(3)]}
+    reply = {'long':excessive, 'forged':draft(quote='Material: gold.'),
+             'abstain':{'abstain':True,'claims':[]}, 'timeout':TimeoutError()}[second]
+    e, store, fake = await engine(museum_settings, [excessive,reply])
+    result = await e.answer('材质是什么？', {'_id':'length-fail'}, 'brief', 'test-1')
+    assert fake.calls == 2 and result['claims'] == []
+    assert result['status'] == {'abstain':'insufficient_evidence', 'timeout':'service_unavailable'}.get(second,'verification_failed')
+
+@pytest.mark.asyncio
 async def test_visual_description_offers_candidates_without_inventing_a_story(museum_settings):
     e, store, fake = await engine(museum_settings, [{"intent":"find_artwork","candidate_ids":["test-1"]}])
     session={"_id":"description"}

@@ -57,6 +57,7 @@ async def run(config, output, policy_filter=None, case_filter=None):
     report = {'scope':'two-objects-development-paired-not-production-or-accuracy',
         'input_sha256':hashlib.sha256(INPUT.read_bytes()).hexdigest(), 'model':config.deepseek_model,
         'selected_cases':[c['name'] for c in cases], 'policy_filter':policy_filter,
+        'rewrite_overlong_answers':config.museum_rewrite_overlong_answers,
         'rows':rows}
     # Reserve before incurring any API cost. Checkpoint after every completed task.
     with output.open('x', encoding='utf-8') as stream:
@@ -104,8 +105,10 @@ if __name__ == '__main__':
     parser.add_argument('--output',type=Path)
     parser.add_argument('--policy', choices=['legacy','facts'])
     parser.add_argument('--cases', help='Comma-separated frozen case names; no new questions')
+    parser.add_argument('--rewrite-overlong', action='store_true')
     args = parser.parse_args()
     config = MuseumSettings()
+    config.museum_rewrite_overlong_answers = args.rewrite_overlong
     if args.freeze:
         freeze(config)
     elif args.output:
