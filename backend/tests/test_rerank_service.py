@@ -22,6 +22,35 @@ def test_relative_model_path_is_anchored_before_worker_changes_directory():
     assert svc.command[-1]==str(ROOT/'models/example')
 
 
+def test_length_batching_is_explicit_and_default_off():
+    assert MuseumSettings(_env_file=None).museum_rerank_sort_by_length is False
+    assert RerankService('models/example').batching=='original'
+    service=RerankService('models/example',sort_by_length=True)
+    assert service.command[-1]=='--sort-by-length' and service.batching=='length'
+
+
+@pytest.mark.asyncio
+async def test_worker_batching_mismatch_is_not_reported_as_applied():
+    service=RerankService('',sort_by_length=True,command=worker(
+        " print(json.dumps({'request_id':r['request_id'],'ids':['a'],'batching':'original'}),flush=True)"))
+    await service.start();process=service.process
+    ids,trace=await service.rank('q',[dict(source_id='a')],[])
+    assert ids is None and trace['status']=='error' and process.returncode is not None
+
+
+def test_worker_threads_explicit_batching_into_real_score_contract():
+    source=dict(_id='a',title='Vase',content='briefDescription: blue vase',source_hash='h',status='active')
+    chunk=dense_views([source])['original'][0]
+    candidate=dict(source_id='a',lanes={'dense':dict(best_chunk_id=chunk['_id'],best_content=chunk['content'])})
+    class Model:
+        def tokenizer(self,q,p,**kwargs):return {'input_ids':p.split()}
+        def score(self,q,passages,*,sort_by_length=False):
+            assert sort_by_length
+            return dict(scores=[1.],truncated=0,token_lengths=[10])
+    reply=score_request(Model(),dict(query='blue',sources=[source],candidates=[candidate]),sort_by_length=True)
+    assert reply['ids']==['a'] and reply['batching']=='length'
+
+
 @pytest.mark.asyncio
 async def test_experimental_lane_preserves_its_own_encoding_batch(tmp_path,monkeypatch):
     # Emulate batch-dependent numerical output: sharing vectors from a different

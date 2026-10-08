@@ -12,10 +12,12 @@ from .config import ROOT
 
 
 class RerankService:
-    def __init__(self, model_path, *, timeout=8, startup_timeout=60, command=None):
+    def __init__(self, model_path, *, timeout=8, startup_timeout=60, command=None, sort_by_length=False):
         model_path=Path(model_path)
         if not model_path.is_absolute():model_path=ROOT/model_path
         self.command=command or [sys.executable,'-m','app.museum.rerank_worker',str(model_path)]
+        self.batching='length' if sort_by_length else 'original'
+        if sort_by_length and command is None:self.command.append('--sort-by-length')
         self.timeout=timeout;self.startup_timeout=startup_timeout
         self.process=None;self.state='not_started';self.busy=False
 
@@ -44,7 +46,7 @@ class RerankService:
 
     async def rank(self, query, candidates, sources):
         started=time.perf_counter()
-        trace=dict(status=self.state,budget_ms=round(self.timeout*1000),candidate_ids=[c['source_id'] for c in candidates])
+        trace=dict(status=self.state,budget_ms=round(self.timeout*1000),candidate_ids=[c['source_id'] for c in candidates],batching=self.batching)
         if self.state!='ready' or not self.process:return None,trace
         if self.busy:
             trace.update(status='busy',ms=0);return None,trace
@@ -55,6 +57,7 @@ class RerankService:
             await self.process.stdin.drain()
             reply=json.loads(await self.process.stdout.readline())
             if reply.get('request_id')!=request_id or reply.get('error'):raise ValueError('Invalid worker reply')
+            if reply.get('batching','original')!=self.batching:raise ValueError('Worker batching mismatch')
             ids=reply['ids'];expected=trace['candidate_ids']
             if len(ids)!=len(expected) or len(set(ids))!=len(ids) or set(ids)!=set(expected):
                 raise ValueError('Changed candidate identity')

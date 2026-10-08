@@ -9,7 +9,7 @@ from .local_reranker import LocalPairReranker,MODEL_REVISION,contextual_evidence
 from .semantic_chunks import dense_views
 
 
-def score_request(model, request):
+def score_request(model, request, *, sort_by_length=False):
     query=request['query'];candidates=request['candidates'];sources=request['sources']
     if not isinstance(query,str) or not 0<len(query)<=600 or not 1<=len(candidates)<=25:
         raise ValueError('Invalid request bounds')
@@ -26,9 +26,10 @@ def score_request(model, request):
         audit.append(dict(source_id=source['_id'],source_hash=source['source_hash'],
             passage_sha256=hashlib.sha256(evidence['passage'].encode()).hexdigest(),
             **{k:[{a:v for a,v in item.items() if a!='text'} for item in evidence[k]] for k in ['included','omitted']}))
-    result=model.score(query,passages)
+    result=model.score(query,passages,sort_by_length=True) if sort_by_length else model.score(query,passages)
     if result['truncated'] or max(result['token_lengths'])>256:raise ValueError('Evidence budget drift')
-    return dict(ids=ranked_ids(candidates,result['scores']),evidence=audit,model_revision=MODEL_REVISION)
+    return dict(ids=ranked_ids(candidates,result['scores']),evidence=audit,model_revision=MODEL_REVISION,
+                batching='length' if sort_by_length else 'original')
 
 
 def emit(value):
@@ -38,7 +39,8 @@ def emit(value):
 def main():
     try:
         with contextlib.redirect_stdout(sys.stderr):
-            path=Path(sys.argv[1]);manifest=json.loads((path/'download-manifest.json').read_bytes())
+            path=Path(sys.argv[1]);sort_by_length='--sort-by-length' in sys.argv[2:]
+            manifest=json.loads((path/'download-manifest.json').read_bytes())
             if manifest['revision']!=MODEL_REVISION:raise ValueError('Model revision mismatch')
             for name,meta in manifest['files'].items():
                 file=(path/name).resolve()
@@ -55,7 +57,7 @@ def main():
         request={}
         try:
             request=json.loads(line)
-            with contextlib.redirect_stdout(sys.stderr):result=score_request(model,request)
+            with contextlib.redirect_stdout(sys.stderr):result=score_request(model,request,sort_by_length=sort_by_length)
             emit(dict(request_id=request['request_id'],**result))
         except Exception as exc:
             emit(dict(request_id=request.get('request_id'),error=type(exc).__name__))

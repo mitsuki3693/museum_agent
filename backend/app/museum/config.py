@@ -18,6 +18,7 @@ class MuseumSettings(BaseSettings):
     # Opt-in after corpus-specific acceptance. Original is the rollback/default.
     museum_dense_view: Literal['original', 'filtered', 'administrative'] = 'original'
     museum_text_rerank: bool = False
+    museum_rerank_sort_by_length: bool = False
     # Optional retrieval-only Chinese titles; default excludes draft annotations.
     museum_search_fields: Path | None = None
     museum_search_allow_drafts: bool = False

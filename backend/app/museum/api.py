@@ -184,6 +184,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "storage": config.museum_storage, "retrieval": config.museum_embedding,
                 "corpus_count": len(app.state.index.records), "corpus_hash": app.state.index.corpus_hash,
                 "text_rerank": {"enabled": config.museum_text_rerank,
+                    "batching": "length" if config.museum_rerank_sort_by_length else "original",
                     "state": app.state.index.reranker.state if app.state.index.reranker else 'disabled',
                     "budget_ms": round(config.museum_rerank_timeout*1000)},
                 "prompt_version": MuseumEngine.PROMPT_VERSION,

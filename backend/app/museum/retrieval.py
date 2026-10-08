@@ -117,7 +117,8 @@ class MuseumIndex:
         if self.settings.museum_text_rerank and self.rerank_vectors is not None:
             from .rerank_service import RerankService
             self.reranker=RerankService(self.settings.museum_rerank_model,
-                timeout=self.settings.museum_rerank_timeout,startup_timeout=self.settings.museum_rerank_startup_timeout)
+                timeout=self.settings.museum_rerank_timeout,startup_timeout=self.settings.museum_rerank_startup_timeout,
+                sort_by_length=self.settings.museum_rerank_sort_by_length)
             await self.reranker.start()
 
     async def close(self):
