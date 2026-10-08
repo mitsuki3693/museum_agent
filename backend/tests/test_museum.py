@@ -51,6 +51,31 @@ async def test_no_unverified_final_retry_is_shown(museum_settings):
     assert len(trace["attempts"]) == 2
 
 @pytest.mark.asyncio
+async def test_repair_has_rejected_draft_and_still_needs_fresh_verdict(museum_settings):
+    """The repair call must see what was rejected, not just detached criticisms."""
+    rejected = draft(text="不是青铜，但它是青铜。")
+    museum_settings.museum_answer_policy = 'repair'
+    corrected = draft()
+    e, store, fake = await engine(museum_settings,
+        [rejected, {"passed":False,"issues":["self contradiction"]},
+         corrected, {"passed":True,"issues":[]}])
+    messages = []
+    original = fake.complete_json
+    async def capture(value):
+        messages.append(value)
+        return await original(value)
+    fake.complete_json = capture
+    result = await e.answer("它不是青铜吗？", {"_id":"repair"}, "brief", "test-1")
+    repair = json.loads(messages[2][1]['content'])
+    assert repair['rejected_draft'] == rejected
+    assert repair['previous_issues'] == ['self contradiction']
+    assert len(messages) == 4  # A repair is never accepted without verification.
+    assert result['answer'] == corrected['claims'][0]['text']
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert trace['attempts'][0]['draft'] == rejected
+    assert trace['attempts'][1]['verdict']['passed'] is True
+
+@pytest.mark.asyncio
 async def test_forged_quote_rejected_without_semantic_call(museum_settings):
     e, _, fake = await engine(museum_settings,[draft("Material: gold."),draft("Material: gold.")])
     result = await e.answer("material",{"_id":"s"},"brief","test-1")
@@ -88,6 +113,18 @@ def test_strict_verdict_rejects_truthy_strings():
     from pydantic import ValidationError
     with pytest.raises(ValidationError):
         Verdict.model_validate({"passed":"false","issues":[]})
+
+@pytest.mark.parametrize('policy,version', [
+    ('legacy', 'museum-grounded-v5-photo-context'),
+    ('repair', 'museum-grounded-v7-focused-repair'),
+])
+def test_health_reports_actual_answer_policy(museum_settings, policy, version):
+    assert museum_settings.museum_answer_policy == 'legacy'
+    museum_settings.museum_answer_policy = policy
+    with TestClient(create_app(museum_settings)) as client:
+        health = client.get('/api/museum/health').json()
+        assert health['answer_policy'] == policy
+        assert health['prompt_version'] == version
 
 def get_session(client):
     token=client.post('/api/museum/sessions').json()['token']
