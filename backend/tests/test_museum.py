@@ -83,6 +83,34 @@ async def test_forged_quote_rejected_without_semantic_call(museum_settings):
     assert result["status"] == "verification_failed"
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('kind', ['valid','rejected','incomplete','forged'])
+async def test_structured_verifier_preserves_engine_guards_and_trace(museum_settings, kind):
+    museum_settings.museum_verifier_policy = 'entailment_v1'
+    review = {'checks':[{'index':0,'supported':kind!='rejected','reason':'Review evidence.'}],
+              'answers_question':True,'relevance_reason':'Relevant.',
+              'respects_identity':True,'identity_reason':'No photo assertion.'}
+    if kind == 'incomplete':
+        review['checks'] = []
+    replies = ([draft('Material: gold.'),draft('Material: gold.')] if kind=='forged'
+               else [draft(),review,draft(),review])
+    e, store, fake = await engine(museum_settings, replies)
+    result = await e.answer('材质是什么？', {'_id':'structured'}, 'brief', 'test-1')
+    assert result['status'] == {'valid':'answered','incomplete':'service_unavailable'}.get(kind,'verification_failed')
+    assert fake.calls == (4 if kind=='rejected' else 2)
+    assert bool(result['claims']) == (kind=='valid')
+    trace = await store.get('museum_traces', result['trace_id'])
+    if kind in {'valid','rejected'}:
+        assert trace['attempts'][0]['structured_review'] == review
+
+def test_structured_review_policy_is_opt_in_and_visible(museum_settings):
+    assert museum_settings.museum_verifier_policy == 'legacy'
+    museum_settings.museum_verifier_policy = 'entailment_v1'
+    with TestClient(create_app(museum_settings)) as client:
+        health = client.get('/api/museum/health').json()
+        assert health['verifier_policy'] == 'entailment_v1'
+        assert health['prompt_version'].endswith('-review-entailment_v1')
+
+@pytest.mark.asyncio
 async def test_verifier_outage_is_not_a_pass(museum_settings):
     e, _, _ = await engine(museum_settings,[draft(),TimeoutError()])
     result = await e.answer("material",{"_id":"s"},"brief","test-1")

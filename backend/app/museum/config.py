@@ -14,6 +14,7 @@ class MuseumSettings(BaseSettings):
     # Experimental prompts did not pass repeated live acceptance. Keep legacy.
     museum_answer_policy: Literal['legacy', 'focus', 'repair', 'geography', 'facts'] = 'legacy'
     museum_rewrite_overlong_answers: bool = False
+    museum_verifier_policy: Literal['legacy','entailment_v1'] = 'legacy'
     mongodb_uri: str = "mongodb://127.0.0.1:27017"
     mongodb_db: str = "museum_agent"
     museum_embedding: Literal["lexical", "local"] = "lexical"
