@@ -184,12 +184,40 @@ class MuseumEngine:
         elif sources and not discovery_handled:
             issues = []
             rejected_draft = None
-            for attempt in range(2):
+            generation_sources = sources
+            fact_selection = None
+            generation_allowed = True
+            if self.settings.museum_answer_policy == 'facts':
+                from .fact_selection import select_facts, selection_issues, selected_sources
+                fact_started = time.perf_counter()
+                try:
+                    selection = await select_facts(client, query, rewritten, history, sources, identity_boundary)
+                    fact_selection = selection.model_dump()
+                    selection_errors = selection_issues(selection, sources)
+                    attempts.append({'stage':'fact_selection', 'selection':fact_selection,
+                        'issues':selection_errors, 'ms':round((time.perf_counter()-fact_started)*1000)})
+                    generation_allowed = bool(selection.facts) and not selection_errors
+                    if selection_errors:
+                        result.update(status='verification_failed',
+                            answer='本次证据提取未通过核对，可以先查看原始资料。',
+                            sources=[self.public_source(s) for s in sources],
+                            verification={'passed':False, 'kind':'invalid_fact_selection'})
+                    elif selection.facts:
+                        generation_sources = selected_sources(selection, sources)
+                except Exception as exc:
+                    generation_allowed = False
+                    attempts.append({'stage':'fact_selection', 'error':type(exc).__name__,
+                                     'ms':round((time.perf_counter()-fact_started)*1000)})
+                    result.update(status='service_unavailable', answer='资料分析暂时不可用，请稍后重试。',
+                                  sources=[self.public_source(s) for s in sources])
+            for attempt in range(2 if generation_allowed else 0):
                 stage = "generation"
                 try:
                     payload = {"question": query, "rewritten_query": rewritten,
-                        "history": history, "style": mode, "sources": sources, "previous_issues": issues,
+                        "history": history, "style": mode, "sources": generation_sources, "previous_issues": issues,
                         "identity_boundary": identity_boundary}
+                    if fact_selection is not None:
+                        payload['fact_selection'] = fact_selection
                     if repair_guidance(self.settings.museum_answer_policy):
                         payload['rejected_draft'] = rejected_draft
                     content = json.dumps(payload, ensure_ascii=False)
@@ -215,6 +243,11 @@ class MuseumEngine:
                     omitted_claims = max(0, len(draft.claims) - limit)
                     draft.claims = draft.claims[:limit]
                     issues = evidence_issues(draft, sources)
+                    if fact_selection is not None:
+                        for i, claim in enumerate(draft.claims):
+                            if not any(claim.source_id == fact['source_id'] and claim.quote in fact['quote']
+                                       for fact in fact_selection['facts']):
+                                issues.append(f'claim_{i}:outside_selected_evidence')
                     if draft.abstain and not issues:
                         attempts.append({"attempt": attempt, "status": "abstained"})
                         break

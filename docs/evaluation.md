@@ -107,3 +107,51 @@ python scripts/check_origin_followups.py --policy repair --replay eval/private/o
 | origin-followups-geography-v1.json | 7dad0d1bfdf027608d3dfece90dbca79fb6dfa84030c020bebb99cfd118a81c6 |
 
 下一轮只验证“先提取当前问题所需的制作地点／装饰风格及逐字证据，再组织一句直接回答”，明确区分支持、冲突、未知。不硬编码这件壶的答案，不放宽 Verifier，不把相同供应商的自审当作人工评测；加入至少另一件藏品的反向与未知对照，再决定是否切换网页。
+
+## 结构化事实提取与两件藏品对照（2026-10-08）
+
+新增 opt-in `MUSEUM_ANSWER_POLICY=facts`（v9）；公共默认和本机网页保持 legacy。路径为：原检索 → 事实选择 → Python 检查来源／quote／value → 用所选引用生成 → 原逐字引用检查与独立语义核对。选择最多四条，区分 place/style/material 等属性及 production/decoration/other 阶段。value 必须是 quote 子串，quote 必须来自同一 source_id；答案引用也不得超出选中的证据。空选择以资料不足返回；调用失败与证据不足分开记录。结构及子串正确不保证关系语义正确，所以没有将该步骤当作独立事实认证。
+
+新加入对照瓶 va-o496777：馆方描述为中国制作瓷瓶、后在代尔夫特添加柿右卫门风格珐琅装饰。它与原代尔夫特执壶的产地前提不同；不硬编码答案。固定两件原文、历史、模型和温度，共八个问题，分别覆盖中国产地、明确地点／错误前提、风格与产地区别、未记载的早餐。每题交替 legacy/facts 次序，原检索固定为选定作品；不测召回，不改生产会话。
+
+| 首轮八题状态 | legacy | facts |
+|---|---:|---:|
+| answered | 2 | 4 |
+| insufficient_evidence（两道早餐） | 2 | 2 |
+| verification_failed | 3 | 0 |
+| service_unavailable | 1 | 2 |
+
+此为模型和服务状态，非八题人工准确率。未重试或丢弃服务错误。助手逐句复核了显示答案与引用：facts 将混合产地瓶子的制作与加彩分开，符合原文；执壶回答仍可能重复地点、沿用未经统一审核的工厂中文名。正式人工审核字段保持 pending。
+
+随后单独固定四题做一次 facts 复测（非原首轮错误重试，完整保留两轮）：
+
+| 问题 | 首轮 facts | 定向复测 facts |
+|---|---|---|
+| 执壶错误前提 | 服务错误 | 两次核对失败 |
+| 瓶子是否中国制作 | 回答区分制作／加彩 | 同样区分，约 6.84 秒 |
+| 瓶身既然在代尔夫特制作… | 澄清瓶身在中国、加彩在代尔夫特 | 服务错误 |
+| 柿右卫门风格是否说明日本制作 | 服务错误 | 修正后回答：风格不等于产地，约 30.58 秒 |
+
+因此只证明一条混合阶段回答在两次执行中保持，不代表整体稳定。facts 增加一次调用；慢响应、原执壶错误前提和供应商错误仍未解决，不能直接启用网页。
+
+### 新发现：简明回答截断
+
+复测执壶首次生成四条，修正生成三条，原流程分别只保留前两条。修正版第三条包含“中国风装饰与在中国制作不同”的说明，被截掉；保留文本仍有重复地点和否定推断问题。完整供应商响应已单独留存，Trace 同时保留截断后的实际核对稿与 omitted_claims。尚未证明仅保留第三条就会通过，也没有放宽 brief 限制。下一步应在超限时要求重新组织限定条数的完整答复，而非直接裁掉尾部，并仍进行完整核对。
+
+### 验证与复现
+
+- 375 项后端回归通过，新增事实来源伪造、quote 伪造、value 越界、空选择、结构错误、超时、生成引用越过选定范围、语义拒绝及健康状态版本检查。
+- 首轮 16 次任务共 55 次调用／52 条用量；复测 4 次任务共 20 次调用／18 条用量。已返回用量合计 51,218 token，其余 5 次未知，不当作零。不据此给出 API 价格或延迟 SLA。
+- 真实文本 API、内存存储和固定来源；未做 HTTP／网页／手机验收，未上传图片，未写入生产 MongoDB，未扩库。
+- 公共代码仅含策略与脚本；原文、模型草稿和评测报告只保留本地忽略目录。报告逐题落盘，保留传输失败，不筛选成功结果。
+
+```text
+PYTHONPATH=backend
+python scripts/check_fact_selection.py --freeze
+python scripts/check_fact_selection.py --output eval/private/<新的配对报告>.json
+python scripts/check_fact_selection.py --policy facts --cases jug-premise,bottle-china,bottle-premise,bottle-style --output eval/private/<新的定向报告>.json
+```
+
+freeze 只执行一次，读取前一轮私有输入及已导入的第二件馆藏；拒绝覆盖。完整配对调用上限 88，四题单策略上限 24；均不自动重试传输，仅保留引擎一次草稿修正。
+
+首轮报告 `fact-selection-paired-v1.json` SHA256 `03d26b538c139c7baf44f94457dacef6dce6b9bdd2cc2bc44e1d755e8a6a2e54`；定向复测 `fact-selection-repeat-v1.json` SHA256 `8057e9206fbac1b91df5a58bd2b6bbe30d3b44447444b6608137de8489e096a5`。

@@ -5,6 +5,7 @@ VERSIONS = {
     'focus': 'museum-grounded-v6-question-focus',
     'repair': 'museum-grounded-v7-focused-repair',
     'geography': 'museum-grounded-v8-focused-repair',
+    'facts': 'museum-grounded-v9-fact-selection',
 }
 
 FOCUS = (
@@ -23,6 +24,9 @@ REPAIR = (
 )
 
 def focus_guidance(policy):
+    if policy == 'facts':
+        from .fact_selection import GUIDANCE
+        return GUIDANCE
     return '' if policy == 'legacy' else FOCUS + (GEOGRAPHY if policy == 'geography' else '')
 
 def repair_guidance(policy):

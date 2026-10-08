@@ -114,9 +114,73 @@ def test_strict_verdict_rejects_truthy_strings():
     with pytest.raises(ValidationError):
         Verdict.model_validate({"passed":"false","issues":[]})
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize('change,status', [
+    ({'source_id':'other'}, 'verification_failed'),
+    ({'quote':'Material: gold.'}, 'verification_failed'),
+    ({'value':'gold'}, 'verification_failed'),
+    ({}, 'answered'),
+])
+async def test_fact_selection_checks_spans_before_generation(museum_settings, change, status):
+    museum_settings.museum_answer_policy = 'facts'
+    fact = {'aspect':'material','scope':'production','source_id':'test-1',
+            'value':'bronze','quote':'Material: bronze.', **change}
+    e, store, fake = await engine(museum_settings, [{'facts':[fact]}, draft(), {'passed':True,'issues':[]}])
+    result = await e.answer('材质是什么？', {'_id':'facts'}, 'brief', 'test-1')
+    assert result['status'] == status
+    assert fake.calls == (3 if status == 'answered' else 1)
+    assert bool(result['claims']) == (status == 'answered')
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert trace['attempts'][0]['stage'] == 'fact_selection'
+
+@pytest.mark.asyncio
+async def test_empty_facts_abstains_without_generation(museum_settings):
+    museum_settings.museum_answer_policy = 'facts'
+    e, _, fake = await engine(museum_settings, [{'facts':[]}])
+    result = await e.answer('早餐吃什么？', {'_id':'unknown'}, 'brief', 'test-1')
+    assert result['status'] == 'insufficient_evidence'
+    assert result['claims'] == [] and fake.calls == 1
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('response', [TimeoutError('private provider body'), {'facts':'malformed'}])
+async def test_fact_service_failure_is_not_evidence_of_absence(museum_settings, response):
+    museum_settings.museum_answer_policy = 'facts'
+    e, store, fake = await engine(museum_settings, [response])
+    result = await e.answer('哪里制作？', {'_id':'outage'}, 'brief', 'test-1')
+    assert result['status'] == 'service_unavailable'
+    assert result['claims'] == [] and fake.calls == 1
+    assert 'private provider body' not in result['answer']
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert trace['attempts'][0]['stage'] == 'fact_selection'
+    assert 'error' in trace['attempts'][0]
+
+@pytest.mark.asyncio
+async def test_facts_do_not_replace_semantic_verification(museum_settings):
+    museum_settings.museum_answer_policy = 'facts'
+    facts = {'facts':[{'aspect':'material','scope':'production','source_id':'test-1',
+                      'value':'bronze','quote':'Material: bronze.'}]}
+    bad = draft(text='这件不是青铜但又是青铜。')
+    verdict = {'passed':False, 'issues':['contradiction']}
+    e, _, fake = await engine(museum_settings, [facts,bad,verdict,bad,verdict])
+    result = await e.answer('是青铜吗？', {'_id':'bad'}, 'brief', 'test-1')
+    assert result['status'] == 'verification_failed'
+    assert result['claims'] == [] and fake.calls == 5
+
+@pytest.mark.asyncio
+async def test_generation_cannot_cite_unselected_source_fragment(museum_settings):
+    museum_settings.museum_answer_policy = 'facts'
+    facts = {'facts':[{'aspect':'material','scope':'production','source_id':'test-1',
+                      'value':'bronze','quote':'Material: bronze.'}]}
+    extra = draft(quote='Date: 1884.', text='年代为1884年。')
+    e, _, fake = await engine(museum_settings, [facts,extra,extra])
+    result = await e.answer('材质是什么？', {'_id':'extra'}, 'brief', 'test-1')
+    assert result['status'] == 'verification_failed'
+    assert result['claims'] == [] and fake.calls == 3
+
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
+    ('facts', 'museum-grounded-v9-fact-selection'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'

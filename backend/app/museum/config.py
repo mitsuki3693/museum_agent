@@ -12,7 +12,7 @@ class MuseumSettings(BaseSettings):
     deepseek_model: str = "deepseek-flash"
     museum_storage: Literal["memory", "mongo"] = "memory"
     # Experimental prompts did not pass repeated live acceptance. Keep legacy.
-    museum_answer_policy: Literal['legacy', 'focus', 'repair', 'geography'] = 'legacy'
+    museum_answer_policy: Literal['legacy', 'focus', 'repair', 'geography', 'facts'] = 'legacy'
     mongodb_uri: str = "mongodb://127.0.0.1:27017"
     mongodb_db: str = "museum_agent"
     museum_embedding: Literal["lexical", "local"] = "lexical"
