@@ -88,6 +88,14 @@ def ranked_ids(candidates, scores):
     return [ids[i] for i in sorted(range(len(ids)),key=lambda i:float(scores[i]),reverse=True)]
 
 
+def batch_indices(lengths, batch_size, *, sort_by_length=False):
+    """Stable optional grouping; callers must restore original result indices."""
+    if batch_size < 1:
+        raise ValueError('batch_size must be positive')
+    order = sorted(range(len(lengths)), key=lambda i:lengths[i]) if sort_by_length else list(range(len(lengths)))
+    return [order[start:start+batch_size] for start in range(0,len(order),batch_size)]
+
+
 class LocalPairReranker:
     def __init__(self,path,*,max_length=512,batch_size=4):
         import torch
@@ -98,17 +106,17 @@ class LocalPairReranker:
             trust_remote_code=False,use_safetensors=True,dtype=torch.float32).to('cpu').eval()
         if self.model.config.num_labels!=1:raise ValueError('Expected one relevance logit')
 
-    def score(self,query,passages):
+    def score(self,query,passages,*,sort_by_length=False):
         pairs=[[query,p] for p in passages]
         if not pairs:return dict(scores=[],token_lengths=[],truncated=0)
         lengths=[len(t) for t in self.tokenizer(pairs,truncation=False)['input_ids']]
-        scores=[]
+        scores=[None]*len(pairs)
         with self.torch.inference_mode():
-            for start in range(0,len(pairs),self.batch_size):
-                inputs=self.tokenizer(pairs[start:start+self.batch_size],padding=True,truncation='only_second',
+            for indices in batch_indices([min(n,self.max_length) for n in lengths],self.batch_size,sort_by_length=sort_by_length):
+                inputs=self.tokenizer([pairs[i] for i in indices],padding=True,truncation='only_second',
                     return_tensors='pt',max_length=self.max_length)
                 values=self.model(**inputs,return_dict=True).logits.reshape(-1).float().tolist()
-                scores.extend(values)
+                for index,value in zip(indices,values,strict=True):scores[index]=value
         if len(scores)!=len(pairs) or not all(math.isfinite(s) for s in scores):
             raise ValueError('Non-finite or missing model output')
         return dict(scores=scores,token_lengths=lengths,truncated=sum(n>self.max_length for n in lengths))
