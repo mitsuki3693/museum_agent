@@ -34,7 +34,7 @@ PROMPT = (
 async def select_facts(client, query, rewritten, history, sources, identity_boundary):
     return FactSelection.model_validate(await client.complete_json([
         {'role':'system', 'content':PROMPT},
-        {'role':'user', 'content':json.dumps({'question':query, 'rewritten_query':rewritten,
+        {'role':'user', 'content':json.dumps({'question':query,
             'history':history, 'sources':sources, 'identity_boundary':identity_boundary}, ensure_ascii=False)},
     ]))
 
@@ -84,6 +84,12 @@ GUIDANCE = (
     'fact_selection 是按当前问题提取的候选证据，非权威结论；只用所附 sources 的逐字证据回答。'
     '第一条先回应问题；前提与证据冲突则澄清，不沿用错误前提。'
     '必须保留制作和装饰等阶段差别；不可把后期装饰地点说成整个作品产地。'
-    'value 和 quote 之外不补国家、背景或临时译名；未知就说明资料不足。'
+    'value 和 quote 之外不补国家或背景。工厂、人名等专名若没有来源明确给出的中文名，'
+    '需要提到时逐字保留原文名称；不按字面翻译，也不沿用历史回答或用户给出的未经证实的译名。'
+    '专名与当前问题无关时可省略，不要为了完整而补工厂名。'
+    '纠正错误前提时，先正面陈述引文明确记载的事实，再解释相关属性的区别；'
+    '不要把“本段没有提及”扩大为“所有资料未记载”或“从未发生”。'
+    '必须说明证据缺口时明确限定为“这段引文未提供……的信息”，不能断言实际不存在；'
+    '原文明示的否定或制作与装饰的直接对照仍可忠实表达。未知就说明资料不足。'
     '直接给最小充分答复，不靠追加历史背景凑条数；每条 quote 支持整条 text。'
 )

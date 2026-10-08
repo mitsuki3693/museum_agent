@@ -220,6 +220,8 @@ class MuseumEngine:
                         "history": history, "style": mode, "sources": generation_sources, "previous_issues": issues,
                         "identity_boundary": identity_boundary}
                     if fact_selection is not None:
+                        # Search paraphrases can lose constraints; they are not a new user task.
+                        payload.pop('rewritten_query')
                         payload['fact_selection'] = fact_selection
                     if repair_guidance(self.settings.museum_answer_policy) or (
                         self.settings.museum_rewrite_overlong_answers and rejected_draft is not None):

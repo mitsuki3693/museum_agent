@@ -128,11 +128,43 @@ async def test_combined_followup_selects_recomposes_and_reviews(museum_settings)
     assert result['status'] == 'answered' and fake.calls == 5
     assert result['claims'] == draft()['claims']
     trace = await store.get('museum_traces',result['trace_id'])
-    assert trace['prompt_version'] == 'museum-grounded-v10-relation-evidence-bounded-v1-review-entailment_v1'
+    assert trace['prompt_version'] == 'museum-grounded-v12-original-question-bounded-v1-review-entailment_v1'
     generations = [a for a in trace['attempts'] if 'draft' in a]
     assert len(generations) == 2
     assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
     assert generations[1]['structured_review'] == review
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('unknown', [False,True])
+async def test_retrieval_rewrite_is_not_used_as_the_answering_question(museum_settings, unknown):
+    museum_settings.museum_answer_policy = 'facts'
+    original = 'What was the maker eating?' if unknown else 'What material was used?'
+    wrong_rewrite = 'When was the object made?'
+    facts = {'facts':[] if unknown else [{'aspect':'material','scope':'production',
+        'source_id':'test-1','value':'bronze','quote':'Material: bronze.'}]}
+    replies = [{'query':wrong_rewrite},facts] + ([] if unknown else [draft(),{'passed':True,'issues':[]}])
+    e, store, fake = await engine(museum_settings,replies)
+    messages = []
+    complete = fake.complete_json
+    async def capture(value):
+        messages.append(value)
+        return await complete(value)
+    fake.complete_json = capture
+    searches = []
+    search = e.index.search
+    async def capture_search(*args,**kwargs):
+        searches.append((args,kwargs))
+        return await search(*args,**kwargs)
+    e.index.search = capture_search
+    result = await e.answer(original, {'_id':'original-query','history':[{'role':'user','content':'This vase.'}]},'brief','test-1')
+    assert result['status'] == ('insufficient_evidence' if unknown else 'answered')
+    for call in messages[1:]:
+        payload = json.loads(call[1]['content'])
+        assert payload['question'] == original
+        assert 'rewritten_query' not in payload
+    trace = await store.get('museum_traces',result['trace_id'])
+    assert trace['rewritten_query'] == wrong_rewrite
+    assert searches and searches[0][0][0] == wrong_rewrite
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('scenario', ['valid_relation','bare_only','borrowed_relation','nested_label'])
@@ -275,7 +307,7 @@ async def test_generation_cannot_cite_unselected_source_fragment(museum_settings
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
-    ('facts', 'museum-grounded-v10-relation-evidence'),
+    ('facts', 'museum-grounded-v12-original-question'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'
