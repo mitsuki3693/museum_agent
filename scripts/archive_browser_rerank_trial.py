@@ -15,9 +15,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('trace_ids', nargs='+')
     parser.add_argument('--corpus-count', type=int, required=True)
+    parser.add_argument('--output', type=Path,
+                        default=Path('eval/private/reranker-browser-trial-v1.json'))
     args = parser.parse_args()
     settings = MuseumSettings()
-    output = Path('eval/private/reranker-browser-trial-v1.json')
+    output = args.output
+    private_root = Path('eval/private').resolve()
+    if not output.resolve().is_relative_to(private_root):
+        parser.error('--output must stay within eval/private')
     with MongoClient(settings.mongodb_uri) as client:
         db = client[settings.mongodb_db]
         rows = []
