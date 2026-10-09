@@ -47,6 +47,7 @@ class MuseumIndex:
         self.search_fields = {}
         self.search_fields_meta = None
         self.chinese_recall = None
+        self.catalogue_metadata = None
         self.records: dict[str, dict[str, Any]] = {}
         self.corpus_hash = ""
         self.accessions: dict[str, list[str]] = {}
@@ -65,6 +66,8 @@ class MuseumIndex:
         self.records = {r["_id"]: r for r in records if r.get("status") == "active"}
         if len(self.records) != len(records):
             raise ValueError("Corpus contains duplicates or inactive records")
+        from .catalogue_metadata import CatalogueMetadata
+        self.catalogue_metadata = CatalogueMetadata(self.records)
         if self.settings.museum_search_fields:
             from .search_fields import load_search_fields
             path=self.settings.museum_search_fields
@@ -132,9 +135,10 @@ class MuseumIndex:
         if self.reranker:await self.reranker.stop()
 
     async def search_for_answer(self, query, object_id=None, variant='hybrid'):
+        metadata = self.metadata_query(query) if not object_id and variant=='hybrid' and not self.exact_accession_ids(query) else None
         # A complete annotated title must not be lost to generic dense votes.
         # Preserve homonyms and provenance checks; this is not photo identity.
-        if self.search_fields and not object_id and variant=='hybrid' and not self.exact_accession_ids(query):
+        if self.search_fields and not metadata and not object_id and variant=='hybrid' and not self.exact_accession_ids(query):
             from .recall_fields import named_title_ids,order_named_ids
             named=named_title_ids(query,self.search_fields)
             if named:
@@ -167,6 +171,20 @@ class MuseumIndex:
             trace.update(recall_version=VERSION,search_fields=self.search_fields_meta,
                          fallback_material_status=(fallback_material or {}).get('status'))
             if glossary:trace['fallback_glossary']=glossary
+        if metadata:
+            from .catalogue_metadata import VERSION
+            evidence = self.catalogue_metadata.lookup(metadata)
+            # Existing ranking may order genuine field matches, never admit
+            # an unrelated prose hit or exclude a newly found field match.
+            preferred = [s['_id'] for s in baseline if s['_id'] in evidence]
+            ids = preferred + sorted(set(evidence)-set(preferred))
+            current = await self._current_sources(ids)
+            rows = current[:5]
+            trace.update(status='metadata', candidate_ids=[r['_id'] for r in rows],
+                metadata=dict(version=VERSION, **metadata, matched_count=len(current),
+                    truncated=len(current)>5, evidence={r['_id']:evidence[r['_id']] for r in rows}),
+                pre_route_ids=trace['fallback_ids'], fallback_ids=[r['_id'] for r in rows])
+            return rows,trace
         if not self.settings.museum_text_rerank:return baseline,trace
         if object_id or self.exact_accession_ids(query) or variant!='hybrid':
             trace['status']='bypassed';return baseline,trace
@@ -202,6 +220,11 @@ class MuseumIndex:
 
     def exact_accession_ids(self, query: str) -> list[str]:
         return list(self.accessions.get(canonical_accession(query), []))
+
+    def metadata_query(self, query):
+        if self.settings.museum_metadata_routing and self.catalogue_metadata:
+            return self.catalogue_metadata.parse(query)
+        return None
 
     async def _current_sources(self, ids):
         results = []

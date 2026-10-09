@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-09",
+  "scope": "Development regression and exact-field contracts; not human-reviewed accuracy or online A/B",
+  "versions": {
+    "museum_corpus": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+    "museum_private_corpus": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+    "museum_search_fields": "c4563fde9dff4b693055db72e0c8a152d3ee7897a7b4353c498070ab688dac13"
+  },
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "algorithm_version": "catalogue-author-date-v1",
+  "algorithm_files_sha256": {
+    "backend/app/museum/catalogue_metadata.py": "8d6454173b462ab0b0f7c3dab11292a84c18aa346d740be3e69dc3bf8448171c",
+    "backend/app/museum/retrieval.py": "d1532fe33fe3bbe5c10924d3cd5db76f5be6e998b9b12b2c4a2edb02b3355aec",
+    "backend/app/museum/engine.py": "a5cc513985c5afea4e2134e0dbfd4a113b0e195448f3a49fc93762578f85fa60"
+  },
+  "private_evidence_sha256": {
+    "catalogue-metadata-v1.json": "569e18baf8eb3c18187dcc146f4a20ebf0c7443e4ed1be236d608d2f16e872a9",
+    "catalogue-metadata-live-v1.json": "b1aaf934b1afb8a84506cc24c8507093823451a07ec3ddaf4fc5e4fdba9c753a",
+    "catalogue-metadata-browser-v1.json": "b47000e788ef4088a53be99c903f34e69d7fa96b8c745bacb3c37ba9045bc011",
+    "catalogue-metadata-eval-runs-v1.json": "7e6c3fce21962ad1bcf958ad0472a3d76afd46e47ff4c6deadfc83c79f8e91dd",
+    "bilingual-v1-frozen.json": "8c5dedd62e69222acee0935aba052b260048e282445b530d6e1f39bfaa6738e3"
+  },
+  "summary": {
+    "known_development": {
+      "n": 3,
+      "before_top1": 2,
+      "after_top1": 2,
+      "before_top5": 3,
+      "after_top5": 3,
+      "worse_rank": [],
+      "changed_case_count": 0,
+      "before_mrr_at5": 0.7778,
+      "after_mrr_at5": 0.7778
+    },
+    "old114": {
+      "n": 114,
+      "before_top1": 91,
+      "after_top1": 94,
+      "before_top5": 110,
+      "after_top5": 112,
+      "worse_rank": [],
+      "changed_case_count": 12,
+      "before_mrr_at5": 0.8728,
+      "after_mrr_at5": 0.8962
+    },
+    "old_unscored": {
+      "n": 5,
+      "before_top1": 4,
+      "after_top1": 4,
+      "before_top5": 5,
+      "after_top5": 5,
+      "worse_rank": [],
+      "changed_case_count": 0,
+      "before_mrr_at5": 0.9,
+      "after_mrr_at5": 0.9
+    },
+    "source_checked_holdout": {
+      "n": 8,
+      "before_top1": 4,
+      "after_top1": 4,
+      "before_top5": 8,
+      "after_top5": 8,
+      "worse_rank": [],
+      "changed_case_count": 0,
+      "before_mrr_at5": 0.7188,
+      "after_mrr_at5": 0.7188
+    }
+  },
+  "contracts": {
+    "total": 13,
+    "passed": 13
+  },
+  "http": {
+    "tasks": 13,
+    "passed": 13,
+    "model_calls": 0,
+    "rerank_calls": 0,
+    "idempotency_and_conflict_passed": true,
+    "latency_ms_min": 217,
+    "latency_ms_max": 461
+  },
+  "browser": {
+    "tasks": 2,
+    "author_candidate_and_image_verified": true,
+    "date_candidates_verified": true,
+    "missing_image_cards": 1,
+    "model_calls": 0
+  },
+  "mongo": {
+    "http_traces": 13,
+    "browser_traces": 2,
+    "offline_eval_runs": 2,
+    "paired_cases": 125,
+    "readback": true
+  },
+  "backend_tests_passed": 440
+}
