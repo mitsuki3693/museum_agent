@@ -1,0 +1,750 @@
+{
+  "date": "2026-10-10",
+  "corpus_count": 1012,
+  "unique_photos": 6,
+  "repeats": 3,
+  "comparison_runs": 36,
+  "api_calls": 42,
+  "usage_records": 41,
+  "known_total_tokens": 142550,
+  "token_usage": {
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "total_tokens": null
+  },
+  "cost": null,
+  "groups": [
+    {
+      "case_id": "01",
+      "group": "full",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "correct_candidate": 3
+      }
+    },
+    {
+      "case_id": "01",
+      "group": "full",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "correct_candidate": 3
+      }
+    },
+    {
+      "case_id": "04",
+      "group": "full",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "correct_candidate": 3
+      }
+    },
+    {
+      "case_id": "04",
+      "group": "full",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "correct_candidate": 3
+      }
+    },
+    {
+      "case_id": "05",
+      "group": "partial",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "execution_failure": 1,
+        "correct_candidate": 1,
+        "similar_browse": 1
+      }
+    },
+    {
+      "case_id": "05",
+      "group": "partial",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "correct_candidate": 2,
+        "execution_failure": 1
+      }
+    },
+    {
+      "case_id": "08",
+      "group": "partial",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "no_identity": 3
+      }
+    },
+    {
+      "case_id": "08",
+      "group": "partial",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "wrong_candidate": 3
+      }
+    },
+    {
+      "case_id": "11",
+      "group": "ood",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "no_identity": 3
+      }
+    },
+    {
+      "case_id": "11",
+      "group": "ood",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "no_identity": 3
+      }
+    },
+    {
+      "case_id": "12",
+      "group": "ood",
+      "mode": "legacy",
+      "repeats": 3,
+      "counts": {
+        "no_identity": 3
+      }
+    },
+    {
+      "case_id": "12",
+      "group": "ood",
+      "mode": "surface",
+      "repeats": 3,
+      "counts": {
+        "no_identity": 3
+      }
+    }
+  ],
+  "retrieval": [
+    {
+      "case_id": "01",
+      "group": "full",
+      "expected": "va-europe1-flower-pyramid",
+      "capture_completed": true,
+      "target_in_references": true
+    },
+    {
+      "case_id": "04",
+      "group": "full",
+      "expected": "va-neptune-triton",
+      "capture_completed": true,
+      "target_in_references": true
+    },
+    {
+      "case_id": "05",
+      "group": "partial",
+      "expected": "va-europe1-flower-pyramid",
+      "capture_completed": true,
+      "target_in_references": true
+    },
+    {
+      "case_id": "08",
+      "group": "partial",
+      "expected": "va-neptune-triton",
+      "capture_completed": true,
+      "target_in_references": false
+    },
+    {
+      "case_id": "11",
+      "group": "ood",
+      "expected": null,
+      "capture_completed": true,
+      "target_in_references": null
+    },
+    {
+      "case_id": "12",
+      "group": "ood",
+      "expected": null,
+      "capture_completed": true,
+      "target_in_references": null
+    }
+  ],
+  "latency": {
+    "legacy": {
+      "samples": 18,
+      "p50_ms": 6256,
+      "p95_ms": 21179
+    },
+    "surface": {
+      "samples": 18,
+      "p50_ms": 5657,
+      "p95_ms": 10614
+    }
+  },
+  "gate": {
+    "passed": false,
+    "failures": [
+      "execution_failure",
+      "wrong_candidate"
+    ]
+  },
+  "default_enabled": false,
+  "identity_accuracy_measured": false,
+  "decision": "reject_surface_v1",
+  "scope": "Known developer photos; text reranker disabled; frozen OCR/candidates; not blind or online AB",
+  "rows": [
+    {
+      "case_id": "01",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 6256,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "01",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 4598,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "01",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5217,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "01",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5657,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "01",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5194,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "01",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 4802,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 7218,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 6569,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 6735,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 8412,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 7632,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 7403,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "execution_failure",
+      "completed": false,
+      "candidate_ids": null,
+      "number_ids": null,
+      "similar_ids": null,
+      "ms": 21179,
+      "error_type": "LLMError",
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5032,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "similar_browse",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "ms": 4360,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 4790,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-europe1-flower-pyramid"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 4761,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "05",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "execution_failure",
+      "completed": false,
+      "candidate_ids": null,
+      "number_ids": null,
+      "similar_ids": null,
+      "ms": 2701,
+      "error_type": "ValueError",
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o14761-samson"
+      ],
+      "ms": 6712,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o14761-samson"
+      ],
+      "ms": 6531,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o14761-samson"
+      ],
+      "ms": 10870,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "wrong_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5889,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "wrong_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 5577,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "wrong_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "number_ids": [],
+      "similar_ids": [],
+      "ms": 10614,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 5493,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 3856,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 9983,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 5329,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 5223,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "11",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o77966-flower-pyramid"
+      ],
+      "ms": 10337,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "legacy",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 5934,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "legacy",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 5664,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "legacy",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 6421,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "surface",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 6837,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "surface",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 8227,
+      "error_type": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "surface",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "number_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "ms": 8108,
+      "error_type": null,
+      "schema_issues": null
+    }
+  ],
+  "archive": {
+    "run_id": "surface-controls-v1-paired",
+    "mongo_readback": true,
+    "dashboard_readback": true,
+    "default_policy": "legacy"
+  },
+  "backend_tests": 561,
+  "model": "deepseek-flash",
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "index_hash": "7d3f4128affbfa1e90f6fb1cf056c3b4abab2acf4fc8f2276c8ed8a5123f5e8c",
+  "evidence_hashes": {
+    "plan.json": "f75a15cf98f79868e603afe2d440782f7de7387ea93ea75179b18a4a45c8a001",
+    "capture.json": "7366e279b9f33aa9fe3d1b336ce8afc15eb6368bdc77f05eb80de85a679b3988",
+    "results.json": "86760faf630252e30d8b6bf460e047805c7c1877e987b679e6372a493a2c18ed",
+    "tests.xml": "704f6e5ae97cdb5b8d724c5abf5043d8cec9860b386fa8196b589d4e67ce97e9"
+  }
+}
