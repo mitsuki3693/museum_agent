@@ -1,0 +1,151 @@
+{
+  "date": "2026-10-10",
+  "scope": "Local development timing and literal source checks; not general QA accuracy or online A/B",
+  "corpus_count": 1012,
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "versions": {
+    "museum_corpus": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+    "museum_private_corpus": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+    "museum_search_fields": "c4563fde9dff4b693055db72e0c8a152d3ee7897a7b4353c498070ab688dac13"
+  },
+  "policy": "catalogue-literal-answer-v1",
+  "timing_version": "answer-phases-v1",
+  "prompt_version": "museum-grounded-v13-selected-spans-bounded-v1-review-entailment_v1",
+  "model": "deepseek-flash",
+  "corpus_eligible_fields": {
+    "author": 800,
+    "date": 840,
+    "material": 752
+  },
+  "baseline": [
+    {
+      "case_id": "author",
+      "ms": 5879,
+      "calls": 4,
+      "timing": {
+        "catalogue": 0,
+        "rewrite": 1197.896,
+        "retrieval": 0.023,
+        "discovery": 0,
+        "fact_selection": 1604.133,
+        "generation": 1466.173,
+        "verification": 1609.244,
+        "prepared_narration": 0
+      }
+    },
+    {
+      "case_id": "date",
+      "ms": 5215,
+      "calls": 4,
+      "timing": {
+        "catalogue": 0,
+        "rewrite": 1115.369,
+        "retrieval": 0.023,
+        "discovery": 0,
+        "fact_selection": 1372.721,
+        "generation": 1358.859,
+        "verification": 1367.217,
+        "prepared_narration": 0
+      }
+    },
+    {
+      "case_id": "material",
+      "ms": 5952,
+      "calls": 4,
+      "timing": {
+        "catalogue": 0,
+        "rewrite": 1232.527,
+        "retrieval": 0.021,
+        "discovery": 0,
+        "fact_selection": 1311.222,
+        "generation": 1656.654,
+        "verification": 1750.531,
+        "prepared_narration": 0
+      }
+    },
+    {
+      "case_id": "open",
+      "ms": 5879,
+      "calls": 4,
+      "timing": {
+        "catalogue": 0,
+        "rewrite": 1308.547,
+        "retrieval": 0.033,
+        "discovery": 0,
+        "fact_selection": 1204.716,
+        "generation": 1538.0,
+        "verification": 1827.345,
+        "prepared_narration": 0
+      }
+    }
+  ],
+  "direct_offline_questions": 3,
+  "open_replay_unchanged": true,
+  "http": {
+    "fields": {
+      "n": 12,
+      "min_ms": 28,
+      "median_ms": 31.0,
+      "max_ms": 57,
+      "model_usage_items": 0,
+      "answered": 12
+    },
+    "prepared": {
+      "n": 3,
+      "min_ms": 8,
+      "median_ms": 34,
+      "max_ms": 35,
+      "model_usage_items": 0,
+      "answered": 3
+    },
+    "open": {
+      "n": 1,
+      "status": "answered",
+      "ms": 5601,
+      "usage_items": 4,
+      "timing": {
+        "catalogue": 0,
+        "rewrite": 1223.335,
+        "retrieval": 185.894,
+        "discovery": 0,
+        "fact_selection": 1518.889,
+        "generation": 1263.704,
+        "verification": 1394.298,
+        "prepared_narration": 0
+      },
+      "verified": true
+    },
+    "idempotency_conflict_feedback_isolation": true,
+    "mongo_readback": true
+  },
+  "model_accounting": {
+    "actual_calls": 20,
+    "usage_records": 20,
+    "known_total_tokens": 17796,
+    "missing_total_token_records": 0,
+    "price_estimated": false
+  },
+  "archive": {
+    "run_id": "catalogue-literal-answer-v1-paired",
+    "rows": 8,
+    "readback": true,
+    "metric_export_timing": true
+  },
+  "backend_tests_passed": 476,
+  "source_files_sha256": {
+    "backend/app/museum/catalogue_answers.py": "c9d0d4df5ed532a64d457068fa03189ee19b770303314b490d67a633cfb2c73b",
+    "backend/app/museum/qa_timing.py": "adff5dc555f40737ea9ec2d41144418eaf34c0599a9a4b526cf8d25e7fce5808",
+    "backend/app/museum/engine.py": "8595d1647dd1def150ba37a39b6b87952483515e40d037c079719978624161d9",
+    "backend/app/museum/runtime.py": "40a9410e127e0345880d860b2abf3456a420bde029557fbb6f6747b2438f0f55",
+    "backend/app/museum/config.py": "64f63c3ba9cb2a868342328b98310a96a770a25c7bdd34ca83e9212a6d4ef6da",
+    "backend/app/museum/api.py": "2511b3c1d2ab1a621e0abff049c60a53e354ed4b860932f141c1427c17c388ab"
+  },
+  "private_evidence_sha256": {
+    "catalogue-answer-input-v1.json": "6a1892531ffccc23308d64da73c13f0337c5e084ebd95b6c32a97e9aed950480",
+    "catalogue-answer-phases-v1.json": "ce519a70a049cb15b48745c9897c0a7d0012523ba4995dd3e3526c494373e520",
+    "catalogue-answer-live-v1.json": "4b00ed6a596d865fd4d3c7075c81087be43ba60340a6ecfdaa1584094f9ba746",
+    "catalogue-answer-fields-v1.json": "8786000d6cd1395d8bb3e517c2e0dfc893636e1f25ab2bfef8076933858dc7fe",
+    "catalogue-answer-tests-v1.xml": "3f25dcfa160bfe51771474a6a00b72d5231451951fdf2b77d987ac22eecaa3f6",
+    "catalogue-answer-archive-v1.json": "fb50e736bf79fe33ad2d843dacfaa363a6fe79e4d4dfd0ee0a51833deced8b50"
+  }
+}

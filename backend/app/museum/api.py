@@ -195,6 +195,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                     "budget_ms": round(config.museum_rerank_timeout*1000)},
                 "prompt_version": app.state.engine.PROMPT_VERSION,
                 "answer_policy": config.museum_answer_policy,
+                "catalogue_answers": config.museum_catalogue_answers,
                 "rewrite_overlong_answers": config.museum_rewrite_overlong_answers,
                 "verifier_policy": config.museum_verifier_policy,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,

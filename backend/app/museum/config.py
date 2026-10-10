@@ -39,6 +39,7 @@ class MuseumSettings(BaseSettings):
     # Retrieval-only catalogue vocabulary; disable to replay the v2 glossary.
     museum_catalogue_glossary: bool = False
     museum_metadata_routing: bool = False
+    museum_catalogue_answers: bool = False
     # Optional retrieval-only Chinese titles; default excludes draft annotations.
     museum_search_fields: Path | None = None
     museum_search_allow_drafts: bool = False

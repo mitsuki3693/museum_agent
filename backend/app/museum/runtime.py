@@ -182,6 +182,7 @@ async def review_rows(store, *, stage=None, status=None, session_id=None, before
 
 def export_metrics(data):
     """Allowlist-only export: no free text, session hashes, photos or source passages."""
+    from .qa_timing import public_timing
     salt = secrets.token_bytes(32)
     def anon(value):
         return hmac.new(salt, str(value).encode(), hashlib.sha256).hexdigest()[:24]
@@ -206,6 +207,7 @@ def export_metrics(data):
                          "reference_rescued_ids": row.get("reference_rescued_ids", []),
                          "retrieved_ids": result.get("retrieved_ids", row.get("visual_retrieved_ids", [])),
                          "candidate_ids": row.get("candidate_ids", []), "latency_ms": result.get("latency_ms"),
+                         "answer_timing": public_timing(row.get('timing')),
                          "match_state": row.get("match_state"), "similar_candidate_ids": row.get("similar_candidate_ids", []),
                          "user_confirmed_object_id": row.get("user_confirmed_object_id"),
                          "parent_photo": anon(row["parent_photo_trace_id"]) if row.get("parent_photo_trace_id") else None,
