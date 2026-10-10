@@ -1,0 +1,729 @@
+{
+  "date": "2026-10-10",
+  "corpus_count": 1012,
+  "unique_development_photos": 4,
+  "comparison_runs": 24,
+  "groups": [
+    {
+      "case_id": "04",
+      "mode": "original",
+      "counts": {
+        "correct_candidate": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "04",
+      "mode": "back_reference",
+      "counts": {
+        "correct_candidate": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "07",
+      "mode": "original",
+      "counts": {
+        "correct_candidate": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "07",
+      "mode": "back_reference",
+      "counts": {
+        "correct_candidate": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "08",
+      "mode": "original",
+      "counts": {
+        "no_identity": 1,
+        "wrong_candidate": 2
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "08",
+      "mode": "back_reference",
+      "counts": {
+        "similar_browse": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "12",
+      "mode": "original",
+      "counts": {
+        "no_identity": 3
+      },
+      "repeats": 3
+    },
+    {
+      "case_id": "12",
+      "mode": "back_reference",
+      "counts": {
+        "no_identity": 3
+      },
+      "repeats": 3
+    }
+  ],
+  "retrieval": [
+    {
+      "case_id": "04",
+      "mode": "original",
+      "completed": true,
+      "expected_in_refs": true,
+      "visual_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o381737"
+      ],
+      "reference_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o381737",
+        "va-o1743612",
+        "va-o1743610"
+      ],
+      "image_ids": [
+        "va-alternate",
+        "va-o14761-samson-reference",
+        "va-o381737-primary",
+        "va-o1743612-primary",
+        "va-o1743610-primary"
+      ]
+    },
+    {
+      "case_id": "04",
+      "mode": "back_reference",
+      "completed": true,
+      "expected_in_refs": true,
+      "visual_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o381737"
+      ],
+      "reference_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o381737",
+        "va-o1743612",
+        "va-o1743610"
+      ],
+      "image_ids": [
+        "va-alternate",
+        "va-o14761-samson-reference",
+        "va-o381737-primary",
+        "va-o1743612-primary",
+        "va-o1743610-primary"
+      ]
+    },
+    {
+      "case_id": "07",
+      "mode": "original",
+      "completed": true,
+      "expected_in_refs": true,
+      "visual_ids": [
+        "va-o14761-samson",
+        "va-o381698",
+        "va-o381737"
+      ],
+      "reference_ids": [
+        "va-o14761-samson",
+        "va-o381698",
+        "va-o381737",
+        "va-o1743610",
+        "va-o452542"
+      ],
+      "image_ids": [
+        "va-o14761-samson-reference",
+        "va-o381698-primary",
+        "va-o381737-primary",
+        "va-o1743610-primary",
+        "va-o452542-primary"
+      ]
+    },
+    {
+      "case_id": "07",
+      "mode": "back_reference",
+      "completed": true,
+      "expected_in_refs": true,
+      "visual_ids": [
+        "va-o14761-samson",
+        "va-o381698",
+        "va-neptune-triton"
+      ],
+      "reference_ids": [
+        "va-o14761-samson",
+        "va-o381698",
+        "va-neptune-triton",
+        "va-o1743610",
+        "va-o452542"
+      ],
+      "image_ids": [
+        "va-o14761-samson-reference",
+        "va-o381698-primary",
+        "va-neptune-archival-back-v1",
+        "va-o1743610-primary",
+        "va-o452542-primary"
+      ]
+    },
+    {
+      "case_id": "08",
+      "mode": "original",
+      "completed": true,
+      "expected_in_refs": false,
+      "visual_ids": [
+        "va-o14761-samson",
+        "va-o312600",
+        "va-o381698"
+      ],
+      "reference_ids": [
+        "va-o14761-samson",
+        "va-o312600",
+        "va-o381698",
+        "va-o1743612",
+        "va-o1743610"
+      ],
+      "image_ids": [
+        "va-o14761-samson-reference",
+        "va-o312600-primary",
+        "va-o381698-primary",
+        "va-o1743612-primary",
+        "va-o1743610-primary"
+      ]
+    },
+    {
+      "case_id": "08",
+      "mode": "back_reference",
+      "completed": true,
+      "expected_in_refs": true,
+      "visual_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o312600"
+      ],
+      "reference_ids": [
+        "va-neptune-triton",
+        "va-o14761-samson",
+        "va-o312600",
+        "va-o1743612",
+        "va-o1743610"
+      ],
+      "image_ids": [
+        "va-neptune-archival-back-v1",
+        "va-o14761-samson-reference",
+        "va-o312600-primary",
+        "va-o1743612-primary",
+        "va-o1743610-primary"
+      ]
+    },
+    {
+      "case_id": "12",
+      "mode": "original",
+      "completed": true,
+      "expected_in_refs": false,
+      "visual_ids": [
+        "va-o381698",
+        "va-o381737",
+        "va-o308091"
+      ],
+      "reference_ids": [
+        "va-o381698",
+        "va-o381737",
+        "va-o308091",
+        "va-o1743610",
+        "va-o177054"
+      ],
+      "image_ids": [
+        "va-o381698-primary",
+        "va-o381737-primary",
+        "va-o308091-primary",
+        "va-o1743610-primary",
+        "va-o177054-primary"
+      ]
+    },
+    {
+      "case_id": "12",
+      "mode": "back_reference",
+      "completed": true,
+      "expected_in_refs": false,
+      "visual_ids": [
+        "va-o381698",
+        "va-o381737",
+        "va-o308091"
+      ],
+      "reference_ids": [
+        "va-o381698",
+        "va-o381737",
+        "va-o308091",
+        "va-o1743610",
+        "va-o177054"
+      ],
+      "image_ids": [
+        "va-o381698-primary",
+        "va-o381737-primary",
+        "va-o308091-primary",
+        "va-o1743610-primary",
+        "va-o177054-primary"
+      ]
+    }
+  ],
+  "api_calls": 28,
+  "usage_records": 28,
+  "known_total_tokens": 99318,
+  "total_tokens": 99318,
+  "cost": null,
+  "latency": {
+    "original": {
+      "samples": 12,
+      "p50_ms": 5927,
+      "p95_ms": 7483
+    },
+    "back_reference": {
+      "samples": 12,
+      "p50_ms": 6190,
+      "p95_ms": 7024
+    }
+  },
+  "gate": {
+    "passed": false,
+    "failures": [
+      "08:task_not_preserved"
+    ],
+    "automatic_deployment": false
+  },
+  "default_enabled": false,
+  "decision": "hold_original",
+  "scope": "Fixed developer photos; BGE disabled in both arms; only gallery differs; legacy/single preserved",
+  "human_reviewed": false,
+  "online_ab": false,
+  "rows": [
+    {
+      "case_id": "04",
+      "mode": "original",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 7483,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "original",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6935,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "original",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 7107,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "back_reference",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6408,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "back_reference",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6712,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "04",
+      "mode": "back_reference",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-neptune-triton"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6429,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "original",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 3817,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "original",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 4067,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "original",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 5077,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "back_reference",
+      "repeat": 1,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 4177,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "back_reference",
+      "repeat": 2,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 3598,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "07",
+      "mode": "back_reference",
+      "repeat": 3,
+      "outcome": "correct_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 4583,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "original",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o14761-samson"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6302,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "original",
+      "repeat": 2,
+      "outcome": "wrong_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 5927,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "original",
+      "repeat": 3,
+      "outcome": "wrong_candidate",
+      "completed": true,
+      "candidate_ids": [
+        "va-o14761-samson"
+      ],
+      "similar_ids": [],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6438,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "back_reference",
+      "repeat": 1,
+      "outcome": "similar_browse",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 5580,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "back_reference",
+      "repeat": 2,
+      "outcome": "similar_browse",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 7024,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "08",
+      "mode": "back_reference",
+      "repeat": 3,
+      "outcome": "similar_browse",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-neptune-triton"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6860,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "original",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 5514,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "original",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6602,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "original",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 5590,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "back_reference",
+      "repeat": 1,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6696,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "back_reference",
+      "repeat": 2,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 4930,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    },
+    {
+      "case_id": "12",
+      "mode": "back_reference",
+      "repeat": 3,
+      "outcome": "no_identity",
+      "completed": true,
+      "candidate_ids": [],
+      "similar_ids": [
+        "va-o381698"
+      ],
+      "number_ids": [],
+      "references_complete": true,
+      "ms": 6190,
+      "error_type": null,
+      "error_cause": null,
+      "schema_issues": null
+    }
+  ],
+  "archive": {
+    "run_id": "neptune-scale-identity-v1",
+    "mongo_readback": true,
+    "dashboard_readback": true,
+    "default_policy": "legacy"
+  },
+  "relevant_tests": 60,
+  "model": "deepseek-flash",
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "evidence_hashes": {
+    "plan.json": "e49fb5f15ec0a57382b6aa4ec912600d6ba1c70b5bd7c5c5519de4bb60a3e456",
+    "capture.json": "ebf8c694b2ece746033ed98e3eb7a3ae904840da2545baaef14eb7a1b024de21",
+    "results.json": "54e4421aaca777bb70c336230bef9e940ac302747243ee199526786d7893a6f8",
+    "tests.xml": "573965f97e89ae57318c0bba2f667d9f6a502bd8f33e7256385b314165b6a8b0"
+  }
+}
