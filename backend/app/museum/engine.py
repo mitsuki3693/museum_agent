@@ -118,7 +118,7 @@ class MuseumEngine:
             session.pop('object_id', None)
             session.pop('photo_selection', None)
         selection = session.get("photo_selection", {})
-        similar_context = selection.get("action") == "view_similar" and selection.get("object_id") == effective_object
+        similar_context = selection.get("action") in {"view_similar", "view_number"} and selection.get("object_id") == effective_object
         if self.settings.museum_catalogue_answers and effective_object and not similar_context:
             from .catalogue_answers import literal_answer, parse_field_question
             if parse_field_question(query):
@@ -127,7 +127,8 @@ class MuseumEngine:
                     direct = literal_answer(query, source, self.index.records.get(effective_object))
                 if direct:
                     return await self._literal_result(query, session, mode, source, direct, timing, started, variant)
-        identity_boundary = ("游客只选择查看相似馆藏，上传照片的作品身份尚未确认。当前资料仅属于所选馆藏，"
+        identity_boundary = (("游客仅按照片编号查看馆藏，" if selection.get("action") == "view_number" else "游客只选择查看相似馆藏，")
+                             + "上传照片的作品身份尚未确认。当前资料仅属于所选馆藏，"
                              "不能用这些资料回答照片中作品的作者、年代或身份；如果问题特指上传照片，必须说明无法确认。"
                              if similar_context else "")
         rewritten = query

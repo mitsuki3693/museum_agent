@@ -41,7 +41,7 @@ class FeedbackRequest(BaseModel):
 
 class PhotoActionRequest(BaseModel):
     trace_id: str = Field(min_length=1, max_length=64)
-    action: Literal["confirm", "view_similar", "retry", "reject", "search", "browse"]
+    action: Literal["confirm", "view_similar", "view_number", "retry", "reject", "search", "browse"]
     object_id: str | None = Field(default=None, max_length=100)
 
 class ReviewRequest(BaseModel):
@@ -325,7 +325,8 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 current.update(history=[], object_id=None)
                 current.pop("photo_selection", None)
             else:
-                allowed = trace.get("candidate_ids" if body.action == "confirm" else "similar_candidate_ids", [])
+                field = {"confirm":"candidate_ids", "view_similar":"similar_candidate_ids", "view_number":"number_candidate_ids"}[body.action]
+                allowed = trace.get(field, [])
                 if body.object_id not in allowed or body.object_id not in app.state.index.records:
                     raise HTTPException(422, "这件作品不属于该操作允许的候选")
                 if body.action == "confirm":
@@ -446,6 +447,8 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 result["photo_selection"] = current["photo_selection"]
                 if current["photo_selection"]["action"] == "view_similar":
                     result["context_notice"] = "以下介绍的是你选择查看的相似馆藏，不代表已确认上传照片中的作品。"
+                elif current["photo_selection"]["action"] == "view_number":
+                    result["context_notice"] = "以下介绍的是按照片中编号找到的馆藏，不代表已确认上传照片中的作品；请补拍正面或展签再核对。"
                 trace = await app.state.store.get("museum_traces", claimed["trace_id"])
                 trace.update(result=result, photo_selection=current["photo_selection"])
                 await app.state.store.upsert("museum_traces", trace)

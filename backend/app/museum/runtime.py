@@ -208,6 +208,8 @@ def export_metrics(data):
                          "photo_text_route": row.get("photo_text_route"),
                          "ocr_exact_ids": row.get("ocr_exact_ids", []),
                          "photo_retrieval_version": row.get("photo_retrieval_version"),
+                         "number_candidate_ids": row.get("number_candidate_ids", []),
+                         "number_clue_version": row.get("number_clue_version"),
                          "retrieved_ids": result.get("retrieved_ids", row.get("visual_retrieved_ids", [])),
                          "candidate_ids": row.get("candidate_ids", []), "latency_ms": result.get("latency_ms"),
                          "answer_timing": public_timing(row.get('timing')),

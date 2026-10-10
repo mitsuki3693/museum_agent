@@ -2,8 +2,8 @@
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {VoiceInput} from "./MuseumSpeech";
 
-export default function ChatComposer({busy, configured, selectedName, similar = false, retrying = false, onSend, onUnselect, onRoute}: {
-  busy: boolean; configured: boolean; selectedName: string; similar?: boolean; retrying?: boolean;
+export default function ChatComposer({busy, configured, selectedName, similar = false, numberClue = false, retrying = false, onSend, onUnselect, onRoute}: {
+  busy: boolean; configured: boolean; selectedName: string; similar?: boolean; numberClue?: boolean; retrying?: boolean;
   onSend: (text: string, file: File | null) => void; onUnselect: () => void;
   onRoute: (text: string) => void;
 }) {
@@ -31,7 +31,7 @@ export default function ChatComposer({busy, configured, selectedName, similar = 
   }
   return <div className="composer-area">
     {retrying && <div className="photo-recovery-actions"><p className="photo-action-note">正在继续查找同一件作品。可发送照片，或输入名称、展签文字。</p><button type="button" className="quiet" disabled={busy} onClick={onUnselect}>取消补拍／换件作品</button></div>}
-    {selectedName && !file && <div className="context-chip"><span>{similar ? "正在看相似馆藏" : "正在聊"} · {selectedName}</span><button type="button" disabled={busy} onClick={onUnselect}>换一件 ×</button></div>}
+    {selectedName && !file && <div className="context-chip"><span>{numberClue ? "编号关联馆藏 · 照片未确认" : similar ? "正在看相似馆藏" : "正在聊"} · {selectedName}</span><button type="button" disabled={busy} onClick={onUnselect}>换一件 ×</button></div>}
     <form className="composer" onSubmit={event => {event.preventDefault(); send();}}>
       {file && <div className="attachment-preview">
         {preview && <img src={preview} alt="待发送的照片"/>}

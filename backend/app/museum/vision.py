@@ -9,7 +9,7 @@ import time
 import uuid
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, ValidationError
 from PIL import Image, ImageOps, UnidentifiedImageError
-from .photo_policy import Comparisons, decide, POLICY_VERSION
+from .photo_policy import Comparisons, decide, POLICY_VERSION, add_number_clues, NUMBER_CLUE_VERSION
 
 MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 MAX_PIXELS = 24_000_000
@@ -68,6 +68,7 @@ class PhotoRecognizer:
         visual = getattr(self.engine, "visual_index", None)
         visual_hits, visual_error = [], None
         text_ids, compared_ids = [], []
+        candidates = []
         photo_text_trace = {'route': 'semantic_observation', 'exact_ids': [],
                             'version': 'photo-ocr-field-routing-v1'}
         comparison_refs, rescued_ids = [], []
@@ -166,6 +167,7 @@ class PhotoRecognizer:
         else:
             error = None
             error_cause = None
+        add_number_clues(result, candidates, photo_text_trace['exact_ids'])
         result["retake_count"] = session.get("_retake_count", 0)
         # No image, base64, OCR text, user filename or location is retained in the trace.
         trace_id = session.get("_trace_id") or uuid.uuid4().hex
@@ -179,6 +181,8 @@ class PhotoRecognizer:
             "observation_usable": observation.usable if observation else None,
             "status": result["status"], "candidate_ids": [s["id"] for s in result["candidates"]],
             "match_state": result["match_state"], "similar_candidate_ids": [s["id"] for s in result["similar_candidates"]],
+            "number_candidate_ids": [s['id'] for s in result['number_candidates']],
+            "number_clue_version": NUMBER_CLUE_VERSION,
             "identity_confirmed": False, "comparison_summary": comparison_summary,
             "parent_photo_trace_id": session.get("_parent_photo_trace_id"), "interactions": [],
             "retake_count": result["retake_count"],

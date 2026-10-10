@@ -23,7 +23,7 @@ const styles = [["brief", "简明版"], ["deep", "深入一点"], ["children", "
 export default function Home() {
   const [health, setHealth] = useState<Health | null>(null), [items, setItems] = useState<MuseumObject[]>([]);
   const [selected, setSelected] = useState("");
-  const [selectedAsSimilar, setSelectedAsSimilar] = useState(false), [photoParent, setPhotoParent] = useState("");
+  const [selectedAsSimilar, setSelectedAsSimilar] = useState<false | "similar" | "number">(false), [photoParent, setPhotoParent] = useState("");
   const [photoQuestion, setPhotoQuestion] = useState(""), [collectionRequest, setCollectionRequest] = useState(0);
   const [turns, setTurns] = useState<Turn[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [feedback, setFeedback] = useState<Record<string, string>>({}), [generation, setGeneration] = useState(0);
@@ -117,8 +117,8 @@ export default function Home() {
       if (action === "retry") {
         setSelected(""); setSelectedAsSimilar(false); setPhotoParent(turn.photo.trace_id); setPhotoQuestion(turn.photoQuestion || "");
         document.querySelector(".chat-footer")?.scrollIntoView({behavior: "smooth", block: "end"});
-      } else if (action === "confirm" || action === "view_similar") {
-        setSelected(objectId!); setSelectedAsSimilar(action === "view_similar"); setPhotoParent(""); setPhotoQuestion("");
+      } else if (action === "confirm" || action === "view_similar" || action === "view_number") {
+        setSelected(objectId!); setSelectedAsSimilar(action === "view_number" ? "number" : action === "view_similar" ? "similar" : false); setPhotoParent(""); setPhotoQuestion("");
       } else {
         setSelected(""); setSelectedAsSimilar(false); setPhotoParent(""); setPhotoQuestion("");
       }
@@ -128,10 +128,10 @@ export default function Home() {
       // Focus after React has re-enabled the composer input.
       requestAnimationFrame(() => openPhotoAlternative(action));
     }
-    if (saved && objectId && (action === "confirm" || action === "view_similar")) {
+    if (saved && objectId && (action === "confirm" || action === "view_similar" || action === "view_number")) {
       const item = items.find(work => work.id === objectId), name = item ? workName(item) : "这件馆藏";
       if (action === "confirm" && turn.photoQuestion) await ask(turn.photoQuestion, objectId);
-      else await ask(action === "view_similar" ? `请简明介绍这件相似馆藏《${name}》。这不代表我确认了照片中的作品。` : `请简明讲解《${name}》。`, objectId, "brief", "narration");
+      else await ask(action === "view_number" ? `请简明介绍按编号找到的馆藏《${name}》。这不代表我确认了照片中的作品。` : action === "view_similar" ? `请简明介绍这件相似馆藏《${name}》。这不代表我确认了照片中的作品。` : `请简明讲解《${name}》。`, objectId, "brief", "narration");
     }
   }
   function candidateCards(rows: Candidate[], question = "") {
@@ -195,7 +195,7 @@ export default function Home() {
     <footer className="chat-footer"><div className="chat-width">
       {error && <p role="alert" className="error">{error}</p>}
       <ChatComposer key={generation} busy={busy} configured={Boolean(health?.model_configured)} selectedName={selectedItem ? workName(selectedItem) : ""}
-        similar={selectedAsSimilar} retrying={Boolean(photoParent)}
+        similar={selectedAsSimilar === "similar"} numberClue={selectedAsSimilar === "number"} retrying={Boolean(photoParent)}
         onSend={(text, file) => {if (file) identify(file, text); else {setPhotoParent(""); setPhotoQuestion(""); ask(text);}}} onUnselect={unselect} onRoute={text => {setPhotoParent(""); setPhotoQuestion(""); ask(text.trim() || "帮我规划参观路线。", selected, "brief", "route");}}/>
       <details className="demo-info"><summary>关于这个演示</summary><p>资料为固定快照，不提供实时展位、开放时间或票价。本演示与馆方无隶属关系。语音由浏览器识别，确认文字后才发送；请勿输入个人敏感信息。{health?.storage === "memory" && "演示会话保留 30 分钟，服务重启后聊天和反馈会清空。"}{health?.storage === "mongo" && "会话到期后需重新开始；执行记录与反馈会保留供项目复盘，不保存原始照片。"} <a href="/review">回答评审记录</a> · <a href="/staff-demo">馆方协作演示</a> · <a href="/conservation-demo">文保工作台演示</a></p></details>
     </div></footer>

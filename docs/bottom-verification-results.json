@@ -1,0 +1,277 @@
+{
+  "date": "2026-10-10",
+  "corpus_count": 1012,
+  "unique_photos": 2,
+  "repeats": 3,
+  "api_calls": 6,
+  "policy_replay_api_calls": 0,
+  "groups": [
+    {
+      "case_id": "va-2020MP1936",
+      "repeats": 3,
+      "before_displayed": 3,
+      "after_displayed": 3,
+      "visual_candidates": 3,
+      "number_clues": 0
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeats": 3,
+      "before_displayed": 0,
+      "after_displayed": 3,
+      "visual_candidates": 0,
+      "number_clues": 3
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 16623,
+    "completion_tokens": 4405,
+    "total_tokens": 21028
+  },
+  "cost": null,
+  "identity_accuracy_measured": false,
+  "visual_decisions_changed": false,
+  "number_clue_version": "photo-number-clue-v1",
+  "decision": "adopt_catalogue_browse_fallback",
+  "remaining_problem": "front_back_correspondence_not_solved",
+  "human_reviewed": false,
+  "results": [
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 1,
+      "variant": "cached-response-number-clue",
+      "before_displayed": true,
+      "after_displayed": true,
+      "visual_candidate_before": true,
+      "visual_candidate_after": true,
+      "number_clue": false,
+      "identity_confirmed": false,
+      "comparison_ms": 4468,
+      "target_decision": {
+        "candidate_id": "va-o161638",
+        "model_identity": "same_work",
+        "tier": "likely_match",
+        "reason": "label_or_distinctive_agreement",
+        "matching_parts": [
+          "decoration",
+          "outline"
+        ],
+        "different_parts": [],
+        "label_supported": false,
+        "shared_features": [
+          "decoration",
+          "outline",
+          "color"
+        ],
+        "needs": [
+          "label",
+          "whole",
+          "base"
+        ]
+      }
+    },
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 2,
+      "variant": "cached-response-number-clue",
+      "before_displayed": true,
+      "after_displayed": true,
+      "visual_candidate_before": true,
+      "visual_candidate_after": true,
+      "number_clue": false,
+      "identity_confirmed": false,
+      "comparison_ms": 4552,
+      "target_decision": {
+        "candidate_id": "va-o161638",
+        "model_identity": "same_work",
+        "tier": "uncertain",
+        "reason": "partial_distinctive_agreement",
+        "matching_parts": [
+          "decoration"
+        ],
+        "different_parts": [],
+        "label_supported": false,
+        "shared_features": [
+          "decoration",
+          "color",
+          "outline"
+        ],
+        "needs": [
+          "base",
+          "whole",
+          "label"
+        ]
+      }
+    },
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 3,
+      "variant": "cached-response-number-clue",
+      "before_displayed": true,
+      "after_displayed": true,
+      "visual_candidate_before": true,
+      "visual_candidate_after": true,
+      "number_clue": false,
+      "identity_confirmed": false,
+      "comparison_ms": 4241,
+      "target_decision": {
+        "candidate_id": "va-o161638",
+        "model_identity": "same_work",
+        "tier": "likely_match",
+        "reason": "label_or_distinctive_agreement",
+        "matching_parts": [
+          "decoration",
+          "outline"
+        ],
+        "different_parts": [],
+        "label_supported": false,
+        "shared_features": [
+          "decoration",
+          "color",
+          "outline"
+        ],
+        "needs": [
+          "label",
+          "whole",
+          "base"
+        ]
+      }
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 1,
+      "variant": "cached-response-number-clue",
+      "before_displayed": false,
+      "after_displayed": true,
+      "visual_candidate_before": false,
+      "visual_candidate_after": false,
+      "number_clue": true,
+      "identity_confirmed": false,
+      "comparison_ms": 3747,
+      "target_decision": {
+        "candidate_id": "va-o163433",
+        "model_identity": "different_work",
+        "tier": "similar_only",
+        "reason": "visible_difference",
+        "matching_parts": [],
+        "different_parts": [
+          "decoration",
+          "outline"
+        ],
+        "label_supported": true,
+        "shared_features": [
+          "blue_white",
+          "outline"
+        ],
+        "needs": [
+          "whole"
+        ]
+      }
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 2,
+      "variant": "cached-response-number-clue",
+      "before_displayed": false,
+      "after_displayed": true,
+      "visual_candidate_before": false,
+      "visual_candidate_after": false,
+      "number_clue": true,
+      "identity_confirmed": false,
+      "comparison_ms": 3309,
+      "target_decision": {
+        "candidate_id": "va-o163433",
+        "model_identity": "different_work",
+        "tier": "similar_only",
+        "reason": "visible_difference",
+        "matching_parts": [],
+        "different_parts": [
+          "decoration",
+          "outline"
+        ],
+        "label_supported": true,
+        "shared_features": [
+          "blue_white",
+          "outline"
+        ],
+        "needs": [
+          "whole"
+        ]
+      }
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 3,
+      "variant": "cached-response-number-clue",
+      "before_displayed": false,
+      "after_displayed": true,
+      "visual_candidate_before": false,
+      "visual_candidate_after": false,
+      "number_clue": true,
+      "identity_confirmed": false,
+      "comparison_ms": 3959,
+      "target_decision": {
+        "candidate_id": "va-o163433",
+        "model_identity": "different_work",
+        "tier": "similar_only",
+        "reason": "visible_difference",
+        "matching_parts": [],
+        "different_parts": [
+          "decoration",
+          "outline"
+        ],
+        "label_supported": true,
+        "shared_features": [
+          "blue_white",
+          "outline"
+        ],
+        "needs": [
+          "whole"
+        ]
+      }
+    }
+  ],
+  "archive": {
+    "run_id": "bottom-verification-v1-number-clue",
+    "mongo_readback": true,
+    "dashboard_readback": true
+  },
+  "model": "deepseek-flash",
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "visual_index_hash": "7d3f4128affbfa1e90f6fb1cf056c3b4abab2acf4fc8f2276c8ed8a5123f5e8c",
+  "backend_tests": 542,
+  "frontend_tests": 15,
+  "frontend_build": true,
+  "browser": {
+    "mode": "cached-real-comparison UI replay; narration mocked; real action API/MongoDB",
+    "paid_api_calls": 0,
+    "results": [
+      {
+        "width": 1440,
+        "overflow": false,
+        "page_errors": [],
+        "correct_reference_image_loaded": true,
+        "chat_requests": 1,
+        "actual_action_persisted": true,
+        "identity_confirmed": false,
+        "developer_fixture_removed": true
+      },
+      {
+        "width": 390,
+        "overflow": false,
+        "page_errors": [],
+        "correct_reference_image_loaded": true,
+        "chat_requests": 1,
+        "actual_action_persisted": true,
+        "identity_confirmed": false,
+        "developer_fixture_removed": true
+      }
+    ]
+  },
+  "private_evidence_sha256": {
+    "plan.json": "a5804ccf59007ac2b5e67182db527cabac0b584df36fb81cbac24892dbf0457a",
+    "results.json": "65e962b75c4cb41573066b11084eef2d1d155254bca4d1d3d08b39fff8308b3c",
+    "number-clue-replay.json": "89da58b24c5e667d2faadd2d1220f1044ae289e91b72be2ff19d8939a0382cae",
+    "tests.xml": "f8e6a6665875d00c3ee71714848134d553c45507ac10b702e4137db9f2c48b68"
+  }
+}

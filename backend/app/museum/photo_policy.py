@@ -6,6 +6,27 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 
 POLICY_VERSION = "photo-policy-v4-two-candidate-display"
+NUMBER_CLUE_VERSION = "photo-number-clue-v1"
+
+def add_number_clues(result: dict, sources: list[dict], exact_ids: list[str]):
+    """Preserve exact-field evidence for catalogue browsing, never identification.
+
+    exact_ids must come from the validated OCR field router, not label_support
+    substring matching, a VLM claim, or fuzzy accession completion.
+    """
+    result['number_candidates'] = []
+    if result['status'] not in {'not_matched', 'needs_confirmation'}:
+        return
+    allowed = {s['_id']:s for s in sources}
+    selected = {c['id'] for c in result['candidates']}
+    for sid in dict.fromkeys(exact_ids):
+        if sid not in allowed or sid in selected:
+            continue
+        source = allowed[sid]
+        result['number_candidates'].append(dict(id=sid,title=source['title'],
+            source_url=source.get('source_url',''),artist=source.get('fields',{}).get('artist_display','')))
+        if len(result['number_candidates']) == 2:
+            break
 
 SHARED = {
     "blue_white": "蓝白装饰", "tiered": "多层塔形结构", "spouts": "多个插花口",

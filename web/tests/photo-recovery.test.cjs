@@ -50,9 +50,24 @@ test('rejected cards are disabled while recovery remains possible', () => {
   assert(html.includes('已记录这些候选都不是') && html.includes('浏览馆藏'));
 });
 test('submitted choices cannot fire a second action from the same card', () => {
-  for (const action of ['confirm', 'view_similar', 'retry', 'search', 'browse']) {
+  for (const action of ['confirm', 'view_similar', 'view_number', 'retry', 'search', 'browse']) {
     const html = render(result, action);
     assert(!html.includes('class="photo-recovery-actions"'));
     assert.equal((html.match(/disabled=""/g) || []).length, 2);
   }
+});
+
+test('number conflicts offer labelled browsing, not visual confirmation or generic similarity', () => {
+  const html = render({...result, candidates: [], number_candidates: [candidates[0]], similar_candidates: [candidates[1]]});
+  assert(html.includes('编号有线索，照片尚未确认') && html.includes('按编号找到'));
+  assert(html.includes('查看这件馆藏') && !html.includes('就是这件，继续聊'));
+  assert(!html.includes('Work b') && !html.includes('相似作品'));
+  assert(html.includes('补拍正面') && html.includes('都不是'));
+  const closed = render({...result, candidates: [], number_candidates: [candidates[0]]}, 'view_number');
+  assert(closed.includes('原照片的身份仍未确认') && !closed.includes('class="photo-recovery-actions"'));
+});
+
+test('service failure does not show stale number clues', () => {
+  const html = render({...result, status: 'service_unavailable', number_candidates: candidates});
+  assert(!html.includes('按编号找到') && !html.includes('查看这件馆藏'));
 });

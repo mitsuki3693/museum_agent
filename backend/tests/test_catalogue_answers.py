@@ -77,9 +77,10 @@ async def test_premises_multiple_intents_and_other_objects_keep_model_path(tmp_p
 
 
 @pytest.mark.asyncio
-async def test_viewing_similar_object_is_not_photo_confirmation(tmp_path):
+@pytest.mark.parametrize('action', ['view_similar', 'view_number'])
+async def test_viewing_similar_object_is_not_photo_confirmation(tmp_path, action):
     engine, store, client, _ = await setup_engine(tmp_path)
-    session=dict(_id='s',object_id='test-1',photo_selection=dict(action='view_similar',object_id='test-1'))
+    session=dict(_id='s',object_id='test-1',photo_selection=dict(action=action,object_id='test-1'))
     result=await engine.answer('作者是谁？',session,'brief',None)
     assert client.calls>0
     trace=await store.get('museum_traces',result['trace_id'])
