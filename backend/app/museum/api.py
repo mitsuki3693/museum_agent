@@ -186,6 +186,11 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "text_rerank": {"enabled": config.museum_text_rerank,
                     "chinese_recall": config.museum_chinese_recall,
                     "batching": "length" if config.museum_rerank_sort_by_length else "original",
+                    "backend": config.museum_rerank_backend,
+                    "context_token_budget": config.museum_rerank_context_budget,
+                    "auto_recover": config.museum_rerank_auto_recover,
+                    "restarts": getattr(app.state.index.reranker,'restarts',0),
+                    "consecutive_failures": getattr(app.state.index.reranker,'failures',0),
                     "state": app.state.index.reranker.state if app.state.index.reranker else 'disabled',
                     "budget_ms": round(config.museum_rerank_timeout*1000)},
                 "prompt_version": app.state.engine.PROMPT_VERSION,
@@ -222,18 +227,17 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
 
     @app.get("/api/museum/objects")
     async def objects():
+        from .collection_images import image_availability
         image_file = config.museum_corpus.parent / "sample-images.json"
         images = {}
         if image_file.exists():
             for image in json.loads(image_file.read_text(encoding="utf-8-sig")).get("data", []):
-                if image.get("is_public_domain") is True and image.get("image_id"):
-                    key = f'artic-{image["id"]}'
-                    images[key] = f'/collection/{key}.jpg'
+                images[f'artic-{image["id"]}'] = image
         return [{"id": r["_id"], "title": r["title"], "source_url": r["source_url"],
                  "accession_number": r.get("fields", {}).get("accession_number") or r.get("fields", {}).get("main_reference_number"),
                  "display_title": r.get("display_title"), "collection": r.get("collection", "Art Institute of Chicago"),
                  "has_narration": bool(r.get("narrations")), "source_kind": r.get("source_kind", "collection_record"),
-                 "image_url": f'/api/museum/objects/{r["_id"]}/image' if r.get("local_image") else images.get(r["_id"])}
+                 **image_availability(config,r,images)}
                 for r in app.state.index.records.values()]
 
     @app.get("/api/museum/objects/{object_id}/image")

@@ -128,6 +128,9 @@ class MuseumIndex:
             self.reranker=RerankService(self.settings.museum_rerank_model,
                 timeout=self.settings.museum_rerank_timeout,startup_timeout=self.settings.museum_rerank_startup_timeout,
                 sort_by_length=self.settings.museum_rerank_sort_by_length,
+                auto_recover=self.settings.museum_rerank_auto_recover,
+                backend=self.settings.museum_rerank_backend,onnx_path=self.settings.museum_rerank_onnx_path,
+                context_budget=self.settings.museum_rerank_context_budget,
                 evidence_controls=self.settings.museum_chinese_recall)
             await self.reranker.start()
 

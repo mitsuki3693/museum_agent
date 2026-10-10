@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 import httpx
 from bs4 import BeautifulSoup
+from types import SimpleNamespace
+from app.museum.collection_images import image_availability
 
 ROOT=Path(__file__).resolve().parents[2]
 IDS=[27992,28560,111628,6565,80607,14620,20684,8624,16487,81558,117266,16568]
@@ -35,7 +37,7 @@ def convert(payload):
 def main():
     with httpx.Client(timeout=45,follow_redirects=True) as client:
         response=client.get('https://api.artic.edu/api/v1/artworks',params={
-            'ids':','.join(map(str,IDS)),'fields':','.join([*FIELDS,'timestamp'])})
+            'ids':','.join(map(str,IDS)),'fields':','.join([*FIELDS,'timestamp','image_id','is_public_domain'])})
         response.raise_for_status()
         payload=response.json()
     rows=convert(payload)
@@ -47,6 +49,19 @@ def main():
     pending=folder/'corpus.pending.json'
     pending.write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
     pending.replace(folder/'corpus.json')
+    # Text import is not image acquisition. Audit local display availability
+    # explicitly; metadata access never implies permission to copy an image.
+    images=[]
+    for d in payload['data']:
+        item={k:d.get(k) for k in ['id','title','image_id','is_public_domain']}
+        sid=f"artic-{d['id']}"
+        availability=image_availability(SimpleNamespace(museum_private_corpus=None),{'_id':sid},{sid:item})
+        item.update(image_status=availability['image_status'],image_reason=availability['image_reason'])
+        images.append(item)
+    manifest=dict(data=images,checked_at=datetime.now(timezone.utc).isoformat(),source='https://api.artic.edu/api/v1/artworks')
+    image_pending=folder/'sample-images.pending.json'
+    image_pending.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+    image_pending.replace(folder/'sample-images.json')
     print(f'Imported {len(rows)} text records. Existing evaluation must be re-reviewed after corpus updates.')
 
 if __name__=='__main__':

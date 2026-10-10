@@ -1,0 +1,5 @@
+# Optional CPU experiment; baseline PyTorch remains supported.
+onnx==1.23.2
+onnxruntime==1.31.0
+onnxscript==0.7.2
+psutil==7.2.2

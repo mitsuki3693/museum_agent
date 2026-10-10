@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-10",
+  "scope": "Local sequential development regression, not visitor accuracy or online A/B",
+  "corpus_count": 1012,
+  "versions": {
+    "museum_corpus": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+    "museum_private_corpus": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+    "museum_search_fields": "c4563fde9dff4b693055db72e0c8a152d3ee7897a7b4353c498070ab688dac13"
+  },
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "model_revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+  "export_manifest_sha256": "dc3271b5b2133d4f19cd8b4712da355172aa16719125527d6832a801d91f1318",
+  "configuration": {
+    "backend": "int8",
+    "max_candidates": 25,
+    "context_budget": 256,
+    "deadline_seconds": 8,
+    "auto_recover": true
+  },
+  "quality": {
+    "paired": 107,
+    "scored": 103,
+    "lost_top5": [],
+    "worse_rank": [
+      "old-G01",
+      "paraphrase-lilies",
+      "dev-chair"
+    ],
+    "before_top5": 100,
+    "after_top5": 100,
+    "same_top5_order": 25,
+    "same_top5_set": 53,
+    "before_top1": 91,
+    "before_mrr_at5": 0.9243,
+    "after_top1": 91,
+    "after_mrr_at5": 0.9256
+  },
+  "timing": {
+    "baseline": {
+      "n": 36,
+      "p50_ms": 6832.5,
+      "p95_ms": 8100,
+      "max_ms": 8233,
+      "over_8000": 2
+    },
+    "int8": {
+      "n": 36,
+      "p50_ms": 2826.5,
+      "p95_ms": 3422,
+      "max_ms": 3454,
+      "over_8000": 0
+    },
+    "includes_generation": false,
+    "cold_start_excluded": true
+  },
+  "recovery": {
+    "fault_deadline_ms": 1,
+    "forced_request_ms": 681,
+    "fallback_equal": true,
+    "while_loading_ms": 388,
+    "next_ready_applied": true,
+    "restarts": 1,
+    "site_restart_required": false
+  },
+  "live": {
+    "metadata_contracts": 13,
+    "passed": 13,
+    "metadata_model_calls": 0,
+    "mongo_readback": true,
+    "backend": "int8",
+    "discovery_requests": 2,
+    "discovery_target_present": 2,
+    "discovery_usage_items": 2,
+    "cold_rerank_ms": 7380,
+    "cold_http_ms": 9918,
+    "warm_rerank_ms": 3890,
+    "warm_http_ms": 6145
+  },
+  "rejected_pool_limits": [
+    8,
+    12,
+    16
+  ],
+  "budget_192": {
+    "probe_queries": 12,
+    "full_quality_accepted": false,
+    "activated": false
+  },
+  "image_availability": {
+    "not_public_domain": 1,
+    "not_in_image_manifest": 8,
+    "available": 1003
+  },
+  "mongo_eval_runs": [
+    {
+      "run_id": "rerank-int8-v1-paired-1",
+      "cases": 80,
+      "readback": true
+    },
+    {
+      "run_id": "rerank-int8-v1-paired-2",
+      "cases": 27,
+      "readback": true
+    }
+  ],
+  "backend_tests_passed": 454,
+  "algorithm_files_sha256": {
+    "backend/app/museum/config.py": "3d1a13758fc7f9d21141f5018b2053798681947ad5248e0fb990e0e8c5f773b1",
+    "backend/app/museum/rerank_service.py": "b336b0b6be1e6dc1486b400e4cfb8c4947b01d6e8f424d5f71261bc9903b9e09",
+    "backend/app/museum/worker_job.py": "a8fc77bba2f139fd4d2a6494e2232437dba0db306010c95fc932f1a75be0fc55",
+    "backend/app/museum/rerank_worker.py": "07e0b29e8ab72914b2a7341f1a23b09051c6a865bfa599642a764a8afe0f958f",
+    "backend/app/museum/local_reranker.py": "3f8c70d623e32ed7ba412a48c50c430a37ab4295f40caa3850d5b101244a91df",
+    "backend/app/museum/onnx_reranker.py": "923cd46df3c25757cee694b2d183274b88b0adca27378946e9c6790287bba1ff",
+    "backend/app/museum/rerank_selection.py": "f2dd5390b74d6d98d061de23ed9717828545d8f1a82b380536b3a1681ef6d7ef",
+    "backend/app/museum/retrieval.py": "83aaf1ba7e6e344b2820fa10fe490fe6e3e07b2376ee9b56a38fd6f1c6c805d1",
+    "backend/app/museum/api.py": "e78fcf832b51e49d0c06c23240a372c6115836cb7fcba476cb75af040c420c0f",
+    "backend/app/museum/collection_images.py": "d38a6aa32d0d8ec80c997d1865336b1dbc0bda21481b4d1bd9197cef9c835a16"
+  },
+  "private_evidence_sha256": {
+    "rerank-latency-input-v1.json": "ecdcf76886c6e36f50d4f7682c53f669e5fea07d4842bb9bd59676f5343d9dfc",
+    "rerank-latency-profile-v1.json": "a631febb79e6e9decc6b81b6b51cb37b0b7f8118dbf553ff885b8f5e25960752",
+    "rerank-pool-v1.json": "70fe7031ce391b37d0f808a587ec81f6adf42112ebad7a950edba0ee81ef51ff",
+    "rerank-budget-v1.json": "bdefa433776bcb157c5b1f798a75c6fbdb52a0c820fad44cd0a9627db2773e70",
+    "rerank-onnx-probe-v1.json": "4ef6b0cb5222cedbc2eb7ef48000bb9e52ce444909075b0f9d98af9db97c749c",
+    "rerank-torch-full-v1.json": "8c196bc9f7e78d5b9afc3c795d28367fa51ab4e65572f766637951efdf3b3c36",
+    "rerank-int8-full-v1.json": "2081bbaca43f9f68e639ebe9a677f1b46302df9b616cb990b6ad74c0c870e0ca",
+    "rerank-int8-quality-v1.json": "faf8c4ecd36e3af69baa0e4d1e693199d6bc3a3ef2400f2319a87e17e3256ad3",
+    "rerank-int8-192-probe-v1.json": "6f82b75bf99b2d20c2e0d22f37abc2c6c87ba82a6905402bfd8bff16b4c9946d",
+    "rerank-int8-192-quality-v1.json": "adb8d36c7e907ae77ab201e15d4bffe3634b72d81310e74a4b065bae2c64dc3e",
+    "rerank-int8-http-v1.json": "82de84bf743f205308de949c3a7feb2a84a4a4b60b5accf186e903f75c540218",
+    "catalogue-metadata-live-int8-v1.json": "59e179e0397da27f02bbc955389c6ead1b6a4dddab0a191c812b06655469d2f6",
+    "rerank-int8-live-v1.json": "e5bc933a4e892755bf40645ee4d23811f7ea52775ffaa7b98f2d33cb30e8a851",
+    "rerank-int8-live-warm-v1.json": "522e9c84d5f51e53ecbd33ad920beb900072d21bc8efc328b022d8165e9fd039",
+    "rerank-int8-eval-runs-v1.json": "d9a12f8d57330741ed69bd8d032cbf693b63b08ebac476b67614102d9eff40dd",
+    "image-availability-v1.json": "61bd02ee3c052c1dba2d7c9229152864164b93e00843d9de52996e13511d65db",
+    "aic-6565-live-metadata.json": "6e60fa726223a9980059f3f04171e8387d3af04972d5d4271bec07d7c15edb9d",
+    "rerank-latency-deploy-tests.xml": "56770ab4600578e45e99edcc8db623e8f17e213e1ed28c1e92891580cbd7cfeb"
+  }
+}

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, field_validator
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -23,6 +23,17 @@ class MuseumSettings(BaseSettings):
     museum_dense_view: Literal['original', 'filtered', 'administrative'] = 'original'
     museum_text_rerank: bool = False
     museum_rerank_sort_by_length: bool = False
+    museum_rerank_auto_recover: bool = False
+    museum_rerank_backend: Literal['torch','onnx','int8'] = 'torch'
+    museum_rerank_onnx_path: Path = ROOT / 'models/bge-reranker-v2-m3-onnx-v1'
+    museum_rerank_context_budget: Literal[160,192,256] = 256
+
+    @field_validator('museum_rerank_context_budget', mode='before')
+    @classmethod
+    def parse_rerank_budget(cls, value):
+        # Environment files supply strings; preserve the Literal allowlist.
+        return int(value) if isinstance(value, str) and value in {'160','192','256'} else value
+
     museum_chinese_recall: bool = False
     museum_fallback_glossary: bool = False
     # Retrieval-only catalogue vocabulary; disable to replay the v2 glossary.

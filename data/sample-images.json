@@ -1,6 +1,16 @@
 {
   "data": [
     {
+      "id": 6565,
+      "title": "American Gothic",
+      "is_public_domain": false,
+      "image_id": "b272df73-a965-ac37-4172-be4e99483637",
+      "image_status": "missing",
+      "image_reason": "not_public_domain",
+      "source_url": "https://api.artic.edu/api/v1/artworks/6565?fields=id,title,image_id,is_public_domain",
+      "checked_at": "2026-10-10"
+    },
+    {
       "id": 28560,
       "title": "The Bedroom",
       "is_public_domain": true,
