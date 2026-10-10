@@ -113,7 +113,7 @@ class PhotoRecognizer:
                 ranking_refs = list(comparison_refs)
                 if reference_mode == "multiview" and visual and verification_mode == "legacy":
                     comparison_refs = visual.comparison_views(comparison_refs)
-                if candidates and verification_mode != "legacy" and visual:
+                if candidates and verification_mode not in {"legacy", "surface"} and visual:
                     from .partial_verification import verify, decide_visible, VERSION
                     stage = "compare_candidates"
                     prompt_version, policy_version = VERSION + ":" + verification_mode, VERSION
@@ -133,7 +133,7 @@ class PhotoRecognizer:
                         if hit["source_id"] in compared_ids:
                             content.extend([{"type": "text", "text": "馆藏参考图，候选 id：" + hit["source_id"]},
                                 {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(visual.reference_image(hit)).decode()}}])
-                    comparisons = Comparisons.model_validate(await client.complete_json([
+                    messages = [
                         {"role": "system", "content":
                          '只识别用户内容中的第一张图片（待识别的游客照片）。后面的图片全部是系统提供的候选参考图，'
                          '不能因为你在参考图里看见了某件作品，就把它当成游客拍到的作品。'
@@ -153,10 +153,19 @@ class PhotoRecognizer:
                          '"relation":"match|different|not_visible","distinctive":true}],'
                          '"shared_features":["blue_white|tiered|spouts|figures|pose|outline|decoration|color|composition"],'
                          '"needs":["label|whole|base|top|angle"]}]}。枚举每项只选一个值，shared_features最多3项，needs最多3项。'},
-                        {"role": "user", "content": content}]))
-                    result, comparison_summary = decide(comparisons, candidates,
-                        ranking_refs, observation.visible_text,
-                        getattr(visual, "label_required_ids", set()))
+                        {"role": "user", "content": content}]
+                    if verification_mode == "surface":
+                        from .surface_verification import surface_messages, parse_surface, decide_surface, VERSION
+                        prompt_version = policy_version = VERSION
+                        response = await client.complete_json(surface_messages(messages)) if comparison_refs else {'comparisons': []}
+                        comparisons = parse_surface(response, [h['source_id'] for h in comparison_refs])
+                        result, comparison_summary, visibility_summary = decide_surface(comparisons, candidates,
+                            ranking_refs, observation.visible_text, getattr(visual, "label_required_ids", set()))
+                    else:
+                        comparisons = Comparisons.model_validate(await client.complete_json(messages))
+                        result, comparison_summary = decide(comparisons, candidates,
+                            ranking_refs, observation.visible_text,
+                            getattr(visual, "label_required_ids", set()))
         except Exception as exc:
             result.update(status="service_unavailable", message="照片识别暂时不可用，可以先选择示例作品或输入名称。")
             error = type(exc).__name__

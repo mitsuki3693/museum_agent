@@ -61,7 +61,7 @@ class MuseumSettings(BaseSettings):
     museum_visual_cache: Path = ROOT / ".runtime/visual-features"
     # Default unchanged until paired verification demonstrates a benefit.
     museum_photo_reference_mode: Literal["single", "multiview"] = "single"
-    museum_photo_verification: Literal["legacy", "visibility", "candidate", "partial"] = "legacy"
+    museum_photo_verification: Literal["legacy", "visibility", "candidate", "partial", "surface"] = "legacy"
     # A separately sourced, optional route snapshot; never inferred from artwork descriptions.
     museum_route_manifest: Path | None = None
     museum_floor_demo_manifest: Path | None = None
