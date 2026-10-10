@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-10",
+  "scope": "Development retrieval and manually transcribed OCR routing; not photo accuracy",
+  "corpus_count": 1012,
+  "visual_reference_images": 1006,
+  "corpus_sha256": "bc99a5fc8baa9038a03bef4b79a6b55f76780f14a14251c0a2a679d6eeca9c88",
+  "public_corpus_sha256": "a8523ab4e68896fbd9c7969adca0031a002d3541e40cd3d7b52a5038d9c64a27",
+  "gallery_sha256": "c7c5f5c67699533a3a0d48045ba72f57d9a909f6b63d90c0bf499d61920f2ae4",
+  "model_revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+  "index_hash": "7d3f4128affbfa1e90f6fb1cf056c3b4abab2acf4fc8f2276c8ed8a5123f5e8c",
+  "baseline_reproduced": 42,
+  "baseline": {
+    "stage30": {
+      "in_corpus": 20,
+      "out_of_corpus": 10,
+      "top1": 13,
+      "top2": 14,
+      "top3": 14,
+      "top5": 14,
+      "top10": 17,
+      "top20": 19,
+      "mrr": 0.700864
+    },
+    "legacy12": {
+      "in_corpus": 10,
+      "out_of_corpus": 2,
+      "top1": 9,
+      "top2": 9,
+      "top3": 9,
+      "top5": 9,
+      "top10": 10,
+      "top20": 10,
+      "mrr": 0.916667
+    }
+  },
+  "candidate": {
+    "stage30": {
+      "in_corpus": 20,
+      "out_of_corpus": 10,
+      "top1": 13,
+      "top2": 15,
+      "top3": 15,
+      "top5": 15,
+      "top10": 18,
+      "top20": 19,
+      "mrr": 0.72496
+    },
+    "legacy12": {
+      "in_corpus": 10,
+      "out_of_corpus": 2,
+      "top1": 8,
+      "top2": 9,
+      "top3": 9,
+      "top5": 9,
+      "top10": 10,
+      "top20": 10,
+      "mrr": 0.866667
+    }
+  },
+  "changes": [
+    {
+      "id": "legacy-04",
+      "baseline_rank": 1,
+      "candidate_rank": 2
+    },
+    {
+      "id": "va-2020MP1936",
+      "baseline_rank": 57,
+      "candidate_rank": 83
+    },
+    {
+      "id": "va-2007BM5078",
+      "baseline_rank": 17,
+      "candidate_rank": 19
+    },
+    {
+      "id": "va-2017KD6167",
+      "baseline_rank": 8,
+      "candidate_rank": 2
+    },
+    {
+      "id": "va-2017KD6168",
+      "baseline_rank": 10,
+      "candidate_rank": 6
+    },
+    {
+      "id": "va-2017KD6169",
+      "baseline_rank": 11,
+      "candidate_rank": 7
+    }
+  ],
+  "decision": "experimental crop averaging not enabled due to regression",
+  "deployed_fix": "photo-ocr-field-routing-v1",
+  "ocr_model_tested": false,
+  "ocr_routing": [
+    {
+      "case_id": "plate-mark",
+      "baseline_rank": 1,
+      "candidate_rank": 1,
+      "route": "ocr_exact_accession"
+    },
+    {
+      "case_id": "jug-component-mark",
+      "baseline_rank": 1,
+      "candidate_rank": 1,
+      "route": "semantic_observation"
+    },
+    {
+      "case_id": "plate-wrong-final-digit",
+      "baseline_rank": 1,
+      "candidate_rank": 1,
+      "route": "semantic_observation"
+    },
+    {
+      "case_id": "plate-partial",
+      "baseline_rank": 1,
+      "candidate_rank": 1,
+      "route": "semantic_observation"
+    },
+    {
+      "case_id": "caption-only-number",
+      "baseline_rank": 3,
+      "candidate_rank": 3,
+      "route": "semantic_observation"
+    }
+  ],
+  "backend_tests_passed": 500,
+  "api_calls": 0,
+  "archive": {
+    "run_id": "photo-crop-aggregation-v1",
+    "rows": 42,
+    "readback": true
+  },
+  "live_health": {
+    "corpus_count": 1012,
+    "storage": "mongo",
+    "photo_verification": "legacy",
+    "photo_reference_mode": "single"
+  },
+  "private_evidence_sha256": {
+    "capture.json": "70fec21adbe945ad69d408134f5b3bcc7c41a69502b6a61bfdcf56ff28828bf7",
+    "query-coverage.json": "7147de7f13a021f6ca02e2ae2b5ed41d0aae5530ebdd80c0885df1ba926c6b85",
+    "diagnosis.json": "376bb49c953b82de46b081f46761aead896497a743a52863a4e8e053771a7c34",
+    "ocr-inputs.json": "95ed20b8f18ac8c37d11b9c746c586d8ed30bb24a6997492726f577119237a5e",
+    "ocr-replay.json": "1557c06cebed2675db0b95abc97345ea0f76304ded3f995ca7c5c897b11c4d3b",
+    "tests-final.xml": "c9342e0907f43031e1b47807f7b36856346293f1e965801a7743b9d11e595264",
+    "archive.json": "f576a3659d0c1d8b3cfa42f06a7a15d273b5ad0e429bd06fa8f5b9318b466819"
+  },
+  "implementation_sha256": {
+    "backend/app/museum/retrieval.py": "bb2022393f695e1f24c749f676f3ccb9dec5af0a98e1907ac18ee18c848f9380",
+    "backend/app/museum/vision.py": "e9b22e418fddf5e03a010feff237c4a6b0aafe6396d93d248285ebd2c1a16ebf",
+    "backend/app/museum/runtime.py": "a8229688f0bb331d5ef03e85d7c83d3dcd3512f58658a532b0658008d9f1c78c",
+    "scripts/evaluate_visual_aggregation.py": "d4c05b3b0b7be5b1d8c09d20e5fb5e96a5b1b5b21f08c0da880941e59d57b9ac"
+  }
+}

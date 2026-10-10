@@ -224,6 +224,30 @@ class MuseumIndex:
     def exact_accession_ids(self, query: str) -> list[str]:
         return list(self.accessions.get(canonical_accession(query), []))
 
+    async def search_photo_observation(self, visible_text: str, description: str):
+        """Keep complete OCR fields separate from fallible appearance captions.
+
+        Only whole lines (optionally with a known field label) enter exact lookup.
+        No substring extraction, OCR character repair, or identity decision. All
+        records, including identifier collisions, still need normal verification.
+        """
+        exact_ids = []
+        for line in unicodedata.normalize('NFKC', visible_text[:1200]).splitlines():
+            value = re.sub(
+                r'^\s*(?:museum\s+number|accession\s+(?:number|no\.?)|object\s+number|馆藏编号|藏品编号)\s*[:：]\s*',
+                '', line, flags=re.IGNORECASE).strip()
+            exact_ids.extend(self.exact_accession_ids(value))
+        current_exact = await self._current_sources(exact_ids)
+        query = (visible_text + ' ' + description).strip()
+        fallback = await self.search(query) if query else []
+        # Search may await model inference: revalidate both lanes afterwards.
+        ordered = await self._current_sources([s['_id'] for s in current_exact + fallback])
+        hits = ordered[:5]
+        valid_ids = {s['_id'] for s in hits}
+        matched = [s['_id'] for s in current_exact if s['_id'] in valid_ids]
+        return hits, {'route': 'ocr_exact_accession' if matched else 'semantic_observation',
+                      'exact_ids': matched, 'version': 'photo-ocr-field-routing-v1'}
+
     def metadata_query(self, query):
         if self.settings.museum_metadata_routing and self.catalogue_metadata:
             return self.catalogue_metadata.parse(query)

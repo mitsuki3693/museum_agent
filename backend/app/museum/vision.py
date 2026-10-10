@@ -55,6 +55,8 @@ class PhotoRecognizer:
         visual = getattr(self.engine, "visual_index", None)
         visual_hits, visual_error = [], None
         text_ids, compared_ids = [], []
+        photo_text_trace = {'route': 'semantic_observation', 'exact_ids': [],
+                            'version': 'photo-ocr-field-routing-v1'}
         comparison_refs, rescued_ids = [], []
         reference_mode = getattr(getattr(self.engine, "settings", None), "museum_photo_reference_mode", "single")
         verification_mode = getattr(getattr(self.engine, "settings", None), "museum_photo_verification", "legacy")
@@ -71,7 +73,11 @@ class PhotoRecognizer:
             query = (observation.visible_text + " " + observation.visual_description).strip()
             if observation.usable and (query or visual):
                 stage = "retrieve_candidates"
-                text_candidates = await self.engine.index.search(query) if query else []
+                if hasattr(self.engine.index, 'search_photo_observation'):
+                    text_candidates, photo_text_trace = await self.engine.index.search_photo_observation(
+                        observation.visible_text, observation.visual_description)
+                else:
+                    text_candidates = await self.engine.index.search(query) if query else []
                 text_ids = [s["_id"] for s in text_candidates]
                 candidates = []
                 if visual:
@@ -173,6 +179,8 @@ class PhotoRecognizer:
             "visual_retrieved_ids": [hit["source_id"] for hit in visual_hits],
             "visual_scores": [hit["score"] for hit in visual_hits],
             "text_retrieved_ids": text_ids, "compared_ids": compared_ids,
+            "photo_text_route": photo_text_trace['route'], "ocr_exact_ids": photo_text_trace['exact_ids'],
+            "photo_retrieval_version": photo_text_trace['version'],
             "comparison_reference_ids": [h['source_id'] for h in comparison_refs],
             "comparison_image_ids": [h['reference_id'] for h in comparison_refs],
             "reference_mode": reference_mode,
