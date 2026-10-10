@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-10",
+  "experiment": "bottom-mark-ocr-v1",
+  "corpus_count": 1012,
+  "unique_photos": 2,
+  "planned_repeats": 3,
+  "max_calls": 6,
+  "api_calls": 6,
+  "requested_model": "deepseek-flash",
+  "reported_models": [
+    "deepseek-flash"
+  ],
+  "prompt_sha256": "f24491ea7d52fad35beeffea01768105d2110ee58f597211ada4fddcebc06dd7",
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "unique_images": 2,
+  "schema_ok": 6,
+  "number_line_match": 6,
+  "candidate_top1": 6,
+  "candidate_top5": 6,
+  "usage_known_calls": 6,
+  "cost": null,
+  "identity_tested": false,
+  "human_reviewed": false,
+  "online_ab": false,
+  "groups": [
+    {
+      "case_id": "va-2020MP1936",
+      "samples": 3,
+      "schema_ok": 3,
+      "number_line_match": 3,
+      "top1": 3,
+      "top5": 3,
+      "exact_route": 0
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "samples": 3,
+      "schema_ok": 3,
+      "number_line_match": 3,
+      "top1": 3,
+      "top5": 3,
+      "exact_route": 3
+    }
+  ],
+  "tokens": {
+    "prompt_tokens": 3300,
+    "completion_tokens": 589,
+    "total_tokens": 3889
+  },
+  "identity_confirmations": null,
+  "decision": "retain_existing_ocr_lane_pending_full_photo_verification",
+  "real_ocr_tested": true,
+  "reranker_enabled": false,
+  "vision_comparison_tested": false,
+  "observation_ms_range": [
+    1900.47,
+    2385.4
+  ],
+  "results": [
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 1,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [],
+      "observation_ms": 2087.71,
+      "retrieval_ms": 217.64,
+      "failure_stage": null,
+      "identity_tested": false
+    },
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 2,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [],
+      "observation_ms": 1914.59,
+      "retrieval_ms": 211.76,
+      "failure_stage": null,
+      "identity_tested": false
+    },
+    {
+      "case_id": "va-2020MP1936",
+      "repeat": 3,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [],
+      "observation_ms": 2385.4,
+      "retrieval_ms": 203.78,
+      "failure_stage": null,
+      "identity_tested": false
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 1,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [
+        "va-o163433"
+      ],
+      "observation_ms": 1900.47,
+      "retrieval_ms": 194.88,
+      "failure_stage": null,
+      "identity_tested": false
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 2,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [
+        "va-o163433"
+      ],
+      "observation_ms": 2024.82,
+      "retrieval_ms": 231.52,
+      "failure_stage": null,
+      "identity_tested": false
+    },
+    {
+      "case_id": "va-2007BM5078",
+      "repeat": 3,
+      "variant": "production_observation",
+      "schema_ok": true,
+      "number_line_match": true,
+      "candidate_rank": 1,
+      "exact_ids": [
+        "va-o163433"
+      ],
+      "observation_ms": 2106.32,
+      "retrieval_ms": 199.74,
+      "failure_stage": null,
+      "identity_tested": false
+    }
+  ],
+  "archive": {
+    "run_id": "bottom-mark-ocr-v1-live",
+    "mongo_readback": true,
+    "dashboard_readback": true
+  },
+  "private_evidence_sha256": {
+    "plan.json": "2ea6af682d616fd9963a4eecf6b40e20e3f085dfedb60c5291a9b46ef7cde48b",
+    "results.json": "95afd558b1a6f1dddd0fdf16c253b1728ce3bd4e38d052252cbaea2d06f8d3c6",
+    "manual-replay.json": "e0838a6ea22a9a4f06e48856390997a5c47879d9f721eb8a05e7910a9042e89c"
+  }
+}
