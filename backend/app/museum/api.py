@@ -24,6 +24,7 @@ from .photo_policy import POLICY_VERSION
 from .routes import RoutePlanner, RoutePreferences, RouteService, is_route_question
 from .floor_demo import FloorDemo
 from .operations_demo import OperationsDemo
+from .eval_dashboard import EvalDisplay, evaluation_dashboard
 
 class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=600)
@@ -52,7 +53,7 @@ class ReviewRequest(BaseModel):
 class EvalRunRequest(BaseModel):
     id: str = Field(alias="_id", min_length=1, max_length=64)
     created_at: float
-    kind: Literal["text", "photo", "reliability"]
+    kind: Literal["text", "photo", "reliability", "route", "conservation"]
     status: Literal["completed", "failed"]
     dataset_version: str = Field(max_length=100)
     dataset_hash: str = Field(min_length=64, max_length=64)
@@ -66,6 +67,7 @@ class EvalRunRequest(BaseModel):
     visual_index_hash: str | None = None
     photo_prompt_version: str | None = None
     summary: dict = Field(default_factory=dict)
+    display: EvalDisplay | None = None
     results: list[dict] = Field(default_factory=list, max_length=80)
 
 class EvalGrade(BaseModel):
@@ -537,6 +539,10 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             raise HTTPException(409, "评测批次已存在，不能覆盖")
         return {"saved": True, "run_id": body.id}
 
+    @app.get("/api/museum/admin/evaluations", dependencies=[Depends(admin)])
+    async def evaluations():
+        return await evaluation_dashboard(app.state.store)
+
     @app.post("/api/museum/admin/eval-runs/{run_id}/grades", dependencies=[Depends(admin), Depends(writing)])
     async def grade_eval(run_id: str, body: EvalGrade):
         if body.facts_correct > body.facts_total or body.citations_supported > body.citations_total:
@@ -544,7 +550,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
         row = await app.state.store.get("eval_runs", run_id)
         if not row:
             raise HTTPException(404, "评测批次不存在")
-        target = next((r for r in row["results"] if r["case_id"] == body.case_id and r["variant"] == body.variant), None)
+        target = next((r for r in row["results"] if r.get("case_id") == body.case_id and r.get("variant") == body.variant), None)
         if target is None:
             raise HTTPException(404, "评测题目不存在")
         target["human_grade"] = {**body.model_dump(), "reviewed_at": time.time()}
