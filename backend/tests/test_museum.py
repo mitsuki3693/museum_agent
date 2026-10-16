@@ -128,7 +128,7 @@ async def test_combined_followup_selects_recomposes_and_reviews(museum_settings)
     assert result['status'] == 'answered' and fake.calls == 5
     assert result['claims'] == draft()['claims']
     trace = await store.get('museum_traces',result['trace_id'])
-    assert trace['prompt_version'] == 'museum-grounded-v13-selected-spans-bounded-v1-review-entailment_v1'
+    assert trace['prompt_version'] == 'museum-grounded-v14-separated-spans-json-bounded-v1-review-entailment_v1'
     generations = [a for a in trace['attempts'] if 'draft' in a]
     assert len(generations) == 2
     assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
@@ -344,7 +344,7 @@ async def test_generation_cannot_cite_unselected_source_fragment(museum_settings
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
-    ('facts', 'museum-grounded-v13-selected-spans'),
+    ('facts', 'museum-grounded-v14-separated-spans-json'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'
@@ -426,6 +426,7 @@ async def test_overlong_reply_is_recomposed_then_verified(museum_settings, mode,
     fake.complete_json = capture
     result = await e.answer('不是青铜吗？', {'_id':'length'}, mode, 'test-1')
     assert result['status'] == 'answered' and fake.calls == 3
+    assert json.loads(captured[0][1]['content'])['max_claims'] == limit
     payload = json.loads(captured[1][1]['content'])
     assert payload['rejected_draft'] == excessive
     assert payload['max_claims'] == limit

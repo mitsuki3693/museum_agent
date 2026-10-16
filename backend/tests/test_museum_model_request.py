@@ -27,8 +27,10 @@ async def test_museum_disables_thinking_on_actual_http_payload(monkeypatch):
     assert await museum.complete_json([{"role": "user", "content": "JSON please"}]) == {"ok": True}
     assert requests[-1]["thinking"] == {"type": "disabled"}
     assert requests[-1]["max_tokens"] == 1800
+    assert requests[-1]["response_format"] == {"type": "json_object"}
     assert museum.usage_records == [{"model": config.deepseek_model, "total_tokens": 20}]
 
     legacy = DeepSeekClient(Settings(_env_file=None, deepseek_api_key="test-only"))
     await legacy.complete([{"role": "user", "content": "hello"}])
     assert "thinking" not in requests[-1]
+    assert "response_format" not in requests[-1]

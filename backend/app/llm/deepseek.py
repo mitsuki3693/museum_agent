@@ -10,8 +10,10 @@ from app.llm.client import LLMClient
 
 
 class DeepSeekClient(LLMClient):
-    def __init__(self, settings: Settings, *, thinking: Literal["enabled", "disabled"] | None = None) -> None:
+    def __init__(self, settings: Settings, *, thinking: Literal["enabled", "disabled"] | None = None,
+                 json_output: bool = False) -> None:
         self.thinking = thinking
+        self.json_output = json_output
         super().__init__(
             base_url=settings.deepseek_base_url,
             api_key=settings.deepseek_api_key,
@@ -25,4 +27,7 @@ class DeepSeekClient(LLMClient):
         return "deepseek"
 
     def _extra_payload(self) -> dict:
-        return {"thinking": {"type": self.thinking}} if self.thinking is not None else {}
+        payload = {"thinking": {"type": self.thinking}} if self.thinking is not None else {}
+        if self.json_output:
+            payload["response_format"] = {"type": "json_object"}
+        return payload

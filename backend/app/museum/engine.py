@@ -61,7 +61,8 @@ class MuseumEngine:
             deepseek_api_key=self.settings.deepseek_api_key,
             deepseek_base_url=self.settings.deepseek_base_url,
             deepseek_model=self.settings.deepseek_model,
-            deepseek_timeout=25, deepseek_max_tokens=1800, deepseek_temperature=0), thinking="disabled")
+            deepseek_timeout=25, deepseek_max_tokens=1800, deepseek_temperature=0),
+            thinking="disabled", json_output=True)
 
     async def narrate(self, query: str, session: dict, mode: str, object_id: str):
         """Use a versioned, checked script only for an explicit narration request."""
@@ -109,7 +110,9 @@ class MuseumEngine:
         client = self.client_factory()
         history = session.get("history", [])[-6:]
         effective_object = (object_id or None) if object_id is not None else session.get("object_id")
-        exact_accession = not object_id and bool(self.index.exact_accession_ids(query))
+        # The UI sends its previous selection on every chat request. A complete
+        # known accession explicitly switches works even with that stale id.
+        exact_accession = bool(self.index.exact_accession_ids(query))
         metadata_lookup = not object_id and self.settings.museum_metadata_routing and self.index.metadata_query(query)
         if exact_accession or metadata_lookup:
             # A full identifier/field lookup starts a new selection. Do not
@@ -245,6 +248,7 @@ class MuseumEngine:
                 try:
                     payload = {"question": query, "rewritten_query": rewritten,
                         "history": history, "style": mode, "sources": generation_sources, "previous_issues": issues,
+                        "max_claims": 5 if mode == 'deep' else 2,
                         "identity_boundary": identity_boundary}
                     if fact_selection is not None:
                         # Search paraphrases can lose constraints; they are not a new user task.
@@ -268,6 +272,9 @@ class MuseumEngine:
                          'children 面向6岁儿童，最多2条、每条约50字，用短句与一个观察小任务，解释必要术语，不编造对话。'
                          '所有风格均不补充资料外知识；神话角色明确说神话中的；用途设计不能写成已安装。'
                          '每条陈述独立完整，必须附 source_id 及能支持整条陈述的逐字原文 quote。'
+                         'claims 条数不得超过 max_claims；证据是备选，不必把每个属性都讲到。'
+                         '简明讲解优先一到两个可观察的特点，可以省略无关年代、产地等；不能为了少一条而拼接不连续引文。'
+                         'sources.evidence_spans 中每项为独立连续原文，不同项之间不能拼接为一条 quote。'
                          + focus_guidance(self.settings.museum_answer_policy) +
                          '先选一段连续的 quote，再用中文忠实转述；不能把来源其他段落里的事实拼进这一条。'
                          '不必在每条开头补作品名称、作者或年份；若补充，这些也必须在该条 quote 中。'

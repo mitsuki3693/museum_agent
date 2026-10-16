@@ -48,7 +48,8 @@ async def test_exact_match_still_checks_active_source_hash_and_context(tmp_path)
 
 
 @pytest.mark.asyncio
-async def test_engine_exact_lookup_needs_confirmation_without_llm_and_is_traced(tmp_path):
+@pytest.mark.parametrize('selected', [None, 'w1'])
+async def test_engine_exact_lookup_needs_confirmation_without_llm_and_is_traced(tmp_path, selected):
     cfg,store,index=await build(tmp_path)
     class NoModel:
         calls=0
@@ -57,7 +58,7 @@ async def test_engine_exact_lookup_needs_confirmation_without_llm_and_is_traced(
             raise AssertionError('Bare accession lookup must not use the model')
     client=NoModel();engine=MuseumEngine(cfg,store,index,lambda:client)
     session={'_id':'s','object_id':'w1','history':[{'role':'user','content':'介绍前一件'}]}
-    result=await engine.answer('c 2359 1910',session,'brief',None)
+    result=await engine.answer('c 2359 1910',session,'brief',selected)
     assert result['status']=='needs_confirmation'
     assert [c['id'] for c in result['candidates']]==['w0']
     assert client.calls==0

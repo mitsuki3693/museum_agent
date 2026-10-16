@@ -74,10 +74,31 @@ def usable_facts(selection):
 
 
 def selected_sources(selection, sources):
-    """Reduce generation context only; final quote/semantic checks use originals."""
-    return [{**s, 'content':'\n'.join(dict.fromkeys(f.quote for f in selection.facts
-                if f.source_id == s['_id']))} for s in sources
-            if any(f.source_id == s['_id'] for f in selection.facts)]
+    """Keep selected spans without inventing adjacency absent from the source.
+
+    Merge only overlapping or whitespace-adjacent spans in original order.
+    Final quote/semantic checks still use the untouched source record.
+    """
+    result = []
+    for source in sources:
+        content = source['content']
+        intervals = []
+        for quote in dict.fromkeys(f.quote for f in selection.facts if f.source_id == source['_id']):
+            start = content.find(quote)
+            if start < 0:
+                raise ValueError('Selected quote is not in the original source')
+            intervals.append((start, start + len(quote)))
+        merged = []
+        for start, end in sorted(intervals):
+            if merged and (start <= merged[-1][1] or not content[merged[-1][1]:start].strip()):
+                merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
+            else:
+                merged.append((start, end))
+        spans = [content[start:end] for start, end in merged]
+        if spans:
+            result.append({**source, 'evidence_spans': spans,
+                'content': '\n\n[独立证据片段；不与前段连续]\n\n'.join(spans)})
+    return result
 
 
 def quote_within_selection(source_id, quote, facts):
