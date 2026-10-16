@@ -128,7 +128,7 @@ async def test_combined_followup_selects_recomposes_and_reviews(museum_settings)
     assert result['status'] == 'answered' and fake.calls == 5
     assert result['claims'] == draft()['claims']
     trace = await store.get('museum_traces',result['trace_id'])
-    assert trace['prompt_version'] == 'museum-grounded-v14-separated-spans-json-bounded-v1-review-entailment_v1'
+    assert trace['prompt_version'] == 'museum-grounded-v15-bounded-fact-reselection-bounded-v1-review-entailment_v1'
     generations = [a for a in trace['attempts'] if 'draft' in a]
     assert len(generations) == 2
     assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
@@ -252,10 +252,11 @@ async def test_fact_selection_checks_spans_before_generation(museum_settings, ch
     museum_settings.museum_answer_policy = 'facts'
     fact = {'aspect':'material','scope':'production','source_id':'test-1',
             'value':'bronze','quote':'Material: bronze.', **change}
-    e, store, fake = await engine(museum_settings, [{'facts':[fact]}, draft(), {'passed':True,'issues':[]}])
+    replies = [{'facts':[fact]}, draft(), {'passed':True,'issues':[]}] if status == 'answered' else [{'facts':[fact]}] * 2
+    e, store, fake = await engine(museum_settings, replies)
     result = await e.answer('材质是什么？', {'_id':'facts'}, 'brief', 'test-1')
     assert result['status'] == status
-    assert fake.calls == (3 if status == 'answered' else 1)
+    assert fake.calls == (3 if status == 'answered' else 2)
     assert bool(result['claims']) == (status == 'answered')
     trace = await store.get('museum_traces', result['trace_id'])
     assert trace['attempts'][0]['stage'] == 'fact_selection'
@@ -267,6 +268,38 @@ async def test_empty_facts_abstains_without_generation(museum_settings):
     result = await e.answer('早餐吃什么？', {'_id':'unknown'}, 'brief', 'test-1')
     assert result['status'] == 'insufficient_evidence'
     assert result['claims'] == [] and fake.calls == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('repair', ['valid', 'invalid', 'empty'])
+async def test_misquoted_fact_gets_one_bounded_reselection(museum_settings, repair):
+    museum_settings.museum_answer_policy = 'facts'
+    bad = {'facts':[{'aspect':'material','scope':'production','source_id':'test-1',
+                    'value':'bronze','quote':'The material is bronze.'}]}
+    good = {'facts':[{**bad['facts'][0], 'quote':'Material: bronze.'}]}
+    fixed = {'valid':good, 'invalid':bad, 'empty':{'facts':[]}}[repair]
+    replies = [bad, fixed] + ([draft(), {'passed':True,'issues':[]}] if repair=='valid' else [])
+    e, store, fake = await engine(museum_settings, replies)
+    calls = []
+    complete = fake.complete_json
+    async def capture(messages):
+        calls.append(json.loads(messages[1]['content']))
+        return await complete(messages)
+    fake.complete_json = capture
+    result = await e.answer('材质是什么？', {'_id':'reselect'}, 'brief', 'test-1')
+    assert result['status'] == {'valid':'answered','invalid':'verification_failed','empty':'insufficient_evidence'}[repair]
+    assert fake.calls == (4 if repair=='valid' else 2)
+    assert calls[1]['rejected_selection'] == bad
+    assert calls[1]['previous_issues'] == ['fact_0:quote_not_in_source']
+    assert calls[1]['question'] == calls[0]['question']
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert trace['attempts'][0]['selection'] == bad
+    assert trace['attempts'][0]['issues'] == ['fact_0:quote_not_in_source']
+    assert trace['attempts'][1]['selection'] == fixed
+    if repair == 'valid':
+        assert result['verification']['passed'] is True
+    else:
+        assert result['claims'] == []
 
 
 @pytest.mark.asyncio
@@ -293,7 +326,8 @@ async def test_selected_spans_can_join_only_with_original_contiguous_coverage(mu
     e, store, fake = await engine(museum_settings, [])
     async def respond(messages):
         fake.calls += 1
-        if fake.calls == 1:
+        payload = json.loads(messages[1]['content'])
+        if 'sources' in payload and 'style' not in payload:
             return facts
         if 'style' in json.loads(messages[1]['content']):
             return draft(quote=quote, text='Example factory.' if scenario=='single' else 'Example factory, 1691-1700.')
@@ -344,7 +378,7 @@ async def test_generation_cannot_cite_unselected_source_fragment(museum_settings
 @pytest.mark.parametrize('policy,version', [
     ('legacy', 'museum-grounded-v5-photo-context'),
     ('repair', 'museum-grounded-v7-focused-repair'),
-    ('facts', 'museum-grounded-v14-separated-spans-json'),
+    ('facts', 'museum-grounded-v15-bounded-fact-reselection'),
 ])
 def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     assert museum_settings.museum_answer_policy == 'legacy'

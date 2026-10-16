@@ -221,14 +221,24 @@ class MuseumEngine:
                 from .fact_selection import select_facts, selection_issues, selected_sources, usable_facts, bare_place_quote, quote_within_selection
                 fact_started = time.perf_counter()
                 try:
-                    selection = await timing.run('fact_selection', select_facts(client, query, rewritten, history, sources, identity_boundary))
-                    raw_selection = selection.model_dump()
-                    selection_errors = selection_issues(selection, sources)
-                    selection, excluded = usable_facts(selection)
-                    fact_selection = selection.model_dump()
-                    attempts.append({'stage':'fact_selection', 'selection':raw_selection,
-                        'usable_selection':fact_selection, 'excluded_facts':excluded,
-                        'issues':selection_errors, 'ms':round((time.perf_counter()-fact_started)*1000)})
+                    rejected_selection, selection_errors = None, []
+                    # One re-selection opportunity; neither fuzzy repair nor a relaxed verifier.
+                    for selection_attempt in range(2):
+                        fact_started = time.perf_counter()
+                        selection = await timing.run('fact_selection', select_facts(
+                            client, query, rewritten, history, sources, identity_boundary,
+                            rejected_selection=rejected_selection, previous_issues=selection_errors))
+                        raw_selection = selection.model_dump()
+                        selection_errors = selection_issues(selection, sources)
+                        selection, excluded = usable_facts(selection)
+                        fact_selection = selection.model_dump()
+                        attempts.append({'stage':'fact_selection', 'selection_attempt':selection_attempt + 1,
+                            'selection':raw_selection, 'usable_selection':fact_selection,
+                            'excluded_facts':excluded, 'issues':selection_errors,
+                            'ms':round((time.perf_counter()-fact_started)*1000)})
+                        if not selection_errors:
+                            break
+                        rejected_selection = raw_selection
                     generation_allowed = bool(selection.facts) and not selection_errors
                     if selection_errors:
                         result.update(status='verification_failed',
