@@ -72,3 +72,34 @@ def test_private_corpus_opt_in_and_image_traversal_blocked(tmp_path):
     with TestClient(create_app(config)) as client:
         assert client.get('/api/museum/objects/guide-1/image').status_code==404
     assert MuseumSettings(_env_file=None).museum_private_corpus is None
+
+
+@pytest.mark.parametrize('script_state', ['missing', 'stale'])
+def test_confirmed_homonym_narration_does_not_reopen_discovery(tmp_path, script_state):
+    config = settings_for(tmp_path, bad_hash=True)
+    rows = json.loads(config.museum_private_corpus.read_text())
+    rows[0]['title'] = '金字塔形花器'
+    if script_state == 'missing':
+        rows[0].pop('narrations')
+    other = {**rows[0], '_id': 'guide-2'}
+    other.pop('narrations', None)
+    config.museum_private_corpus.write_text(json.dumps(rows + [other]), encoding='utf-8')
+    with TestClient(create_app(config)) as client:
+        headers = session(client)
+        def ask(query, action='question', object_id=None):
+            response = client.post('/api/museum/chat', headers=headers, json={
+                'query': query, 'action': action, 'object_id': object_id,
+                'request_id': str(uuid.uuid4())})
+            assert response.status_code == 200
+            return response.json()
+        found = ask('金字塔形花器')
+        assert {c['id'] for c in found['candidates']} == {'guide-1', 'guide-2'}
+        # The actual click path submits the display name AND the chosen ID.
+        for chosen in ('guide-1', 'guide-2'):
+            result = ask('请简明讲解《金字塔形花器（马尔伯勒纹章款）》。', 'narration', chosen)
+            assert result['status'] == 'retrieval_only'
+            assert not result.get('candidates')
+            assert result['retrieved_ids'] == [chosen]
+            assert result['conversation']['selected_object_id'] == chosen
+            followup = ask('这个像塔一样的花器到底怎么插花？请解释结构和用途。', object_id=chosen)
+            assert followup['retrieved_ids'] == [chosen]

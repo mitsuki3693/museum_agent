@@ -84,7 +84,7 @@ class MuseumEngine:
                 except (KeyError, ValidationError, TypeError):
                     valid = False
         if not valid:
-            return await self.answer(query, session, mode, object_id)
+            return await self.answer(query, session, mode, object_id, confirmed_narration=True)
         initial_context = {'object_id': session.get('object_id'), 'request_object_id': object_id,
                            'history': list(session.get('history', [])),
                            'photo_selection': session.get('photo_selection')}
@@ -113,7 +113,8 @@ class MuseumEngine:
         session["object_id"] = object_id
         return result
 
-    async def answer(self, query: str, session: dict, mode: str, object_id: str | None, variant="hybrid"):
+    async def answer(self, query: str, session: dict, mode: str, object_id: str | None, variant="hybrid",
+                     *, confirmed_narration=False):
         started = time.perf_counter()
         timing = AnswerTiming()
         client = self.client_factory()
@@ -127,9 +128,15 @@ class MuseumEngine:
             history = []
             session['history'] = []
         effective_object = (object_id or None) if object_id is not None else session.get("object_id")
-        route = self.index.conversation_router.route(query, effective_object)
+        if confirmed_narration:
+            # A narration action already carries the chosen catalogue ID.
+            # Missing/stale prepared prose must not reopen name disambiguation.
+            from .conversation_routing import Route
+            route = Route('narration', query)
+        else:
+            route = self.index.conversation_router.route(query, effective_object)
         exact_accession = route.kind == 'accession'
-        metadata_lookup = (route.kind != 'comparison' and self.settings.museum_metadata_routing
+        metadata_lookup = (not confirmed_narration and route.kind != 'comparison' and self.settings.museum_metadata_routing
                            and self.index.metadata_query(query))
         if route.reset or metadata_lookup:
             # A full identifier/field lookup starts a new selection. Do not
@@ -168,7 +175,10 @@ class MuseumEngine:
                 rewrite_error = type(exc).__name__
         rerank_trace={'status':'disabled'}
         with timing.measure('retrieval'):
-            if route.kind in {'accession', 'title'}:
+            if confirmed_narration:
+                sources = await self.index._current_sources([effective_object] if effective_object else [])
+                rerank_trace = {'status': 'confirmed_narration'}
+            elif route.kind in {'accession', 'title'}:
                 sources = await self.index._current_sources(route.candidate_ids)
                 rerank_trace = {'status': 'named_title' if route.kind == 'title' else route.kind, 'matched_count': len(sources)}
             elif route.kind in {'clarify', 'unknown_accession'} or route.unknown_identifiers:
