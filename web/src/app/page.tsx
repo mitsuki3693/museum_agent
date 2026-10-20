@@ -14,10 +14,10 @@ import type {FacilityResult, RouteOptions, RoutePreferences, VisitRoute} from "@
 
 type Source = {id: string; title: string; content: string; source_url: string; fetched_at: string; license: string; attribution?: string; license_url?: string; source_kind?: string; narrator?: string};
 type Candidate = {id: string; title: string; artist?: string};
-type Result = {trace_id: string; status: string; answer: string; mode: string; context_notice?: string; candidates?: Candidate[]; claims: {text: string; source_id: string; quote: string}[]; sources: Source[]; route_options?: RouteOptions; route_preferences?: RoutePreferences; route?: VisitRoute; facilities?: FacilityResult};
+type Result = {trace_id: string; status: string; answer: string; mode: string; context_notice?: string; candidates?: Candidate[]; continuation_query?: string; conversation?: {selected_object_id: string | null; selection_reset: boolean; route: string}; photo_selection?: {object_id: string; action: string}; claims: {text: string; source_id: string; quote: string}[]; sources: Source[]; route_options?: RouteOptions; route_preferences?: RoutePreferences; route?: VisitRoute; facilities?: FacilityResult};
 type Turn = {id: string; question: string; image?: string; photoQuestion?: string; photoAction?: PhotoAction; pending: boolean; result?: Result; photo?: PhotoResult; error?: string; request?: QuestionRequest};
 type Health = {model_configured: boolean; storage: string; corpus_count: number};
-const labels: Record<string, string> = {needs_confirmation: "先确认作品", answered: "附引用依据", retrieval_only: "原始资料", insufficient_evidence: "资料不足", verification_failed: "讲解尚未通过核对", service_unavailable: "服务暂不可用", route_setup: "确认参观偏好", route_ready: "参观顺序建议", route_unavailable: "暂不能规划这条路线", facility_found: "馆方设施信息", facility_unavailable: "设施资料不足"};
+const labels: Record<string, string> = {needs_clarification: "请补充作品线索", needs_confirmation: "先确认作品", answered: "附引用依据", retrieval_only: "原始资料", insufficient_evidence: "资料不足", verification_failed: "讲解尚未通过核对", service_unavailable: "服务暂不可用", route_setup: "确认参观偏好", route_ready: "参观顺序建议", route_unavailable: "暂不能规划这条路线", facility_found: "馆方设施信息", facility_unavailable: "设施资料不足"};
 const styles = [["brief", "简明版"], ["deep", "深入一点"], ["children", "讲给孩子听"]];
 
 export default function Home() {
@@ -54,6 +54,12 @@ export default function Home() {
       const session = await ensureSession();
       const result = await askMuseum(session, request);
       updateTurn(id, {pending: false, result});
+      if (result.conversation) {
+        setSelected(result.conversation.selected_object_id || "");
+        const action = result.photo_selection?.action;
+        setSelectedAsSimilar(action === "view_similar" ? "similar" : action === "view_number" ? "number" : false);
+        if (result.conversation.selection_reset) {setPhotoParent(""); setPhotoQuestion("");}
+      }
     } catch (e) {updateTurn(id, {pending: false, error: (e as Error).message});}
     finally {inFlight.current = false; setBusy(false);}
   }
@@ -167,7 +173,7 @@ export default function Home() {
               {turn.result && <>
                 {turn.result.context_notice && <p className="photo-context-notice">{turn.result.context_notice}</p>}
                 {turn.result.claims.length ? turn.result.claims.map((claim, index) => <p className="answer-text" key={index}>{claim.text}</p>) : <p className="answer-text">{turn.result.answer}</p>}
-                {Boolean(turn.result.candidates?.length) && candidateCards(turn.result.candidates!)}
+                {Boolean(turn.result.candidates?.length) && candidateCards(turn.result.candidates!, turn.result.continuation_query)}
                 {turn.result.route_options && <RoutePanel options={turn.result.route_options} initial={turn.result.route_preferences} route={turn.result.route} facilities={turn.result.facilities} busy={busy} onChoose={choose} onFind={query => ask(query, selected, "brief", "route")}
                   onPlan={preferences => {const options = turn.result!.route_options!; const start = options.starts?.find(item => item.id === preferences.start_id)?.title || preferences.start_id;
                     const interests = options.interests?.filter(item => preferences.interests.includes(item.id)).map(item => item.label).join("、") || "综合参观";

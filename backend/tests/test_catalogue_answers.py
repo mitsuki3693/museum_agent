@@ -66,7 +66,7 @@ async def test_original_qualifiers_and_full_value_are_preserved(tmp_path, query,
 @pytest.mark.asyncio
 @pytest.mark.parametrize('query', [
     '它不是青铜的吗？','它是什么材质，为什么选择这种材料？',
-    '作者是谁？他吃过什么早餐？','另一个作品的作者是谁？',
+    '作者是谁？他吃过什么早餐？',
     '比较这两件作品的年代','这个仿品是什么年代的？','Who made this and why?',
 ])
 async def test_premises_multiple_intents_and_other_objects_keep_model_path(tmp_path, query):

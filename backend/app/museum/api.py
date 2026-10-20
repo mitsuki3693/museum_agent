@@ -198,6 +198,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "prompt_version": app.state.engine.PROMPT_VERSION,
                 "answer_policy": config.museum_answer_policy,
                 "catalogue_answers": config.museum_catalogue_answers,
+                "conversation_policy": "conversation-routing-v1",
+                "material_display_policy": "material-display-zh-v1",
+                "fact_retry_policy": "one-transient-retry-within-45s-v1",
                 "rewrite_overlong_answers": config.museum_rewrite_overlong_answers,
                 "verifier_policy": config.museum_verifier_policy,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
@@ -421,6 +424,9 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
             if not await app.state.store.claim_request(claimed):
                 raise HTTPException(409, "该请求已被处理，请稍后查询")
             current["_trace_id"] = claimed["trace_id"]
+            request_context = {'object_id': current.get('object_id'), 'request_object_id': body.object_id,
+                               'history': list(current.get('history', [])),
+                               'photo_selection': current.get('photo_selection')}
             await app.state.store.upsert("museum_traces", {
                 "_id": claimed["trace_id"], "session_id": current["_id"], "created_at": claimed["created_at"],
                 "status": "running", "query": body.query, "action": body.action,
@@ -443,15 +449,21 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                     http_status = 503
                     result = await failure_trace(current, body.query, "service_unavailable", body.action, started, type(exc).__name__)
             current.pop("_trace_id", None)
+            # Authoritative state also covers prepared narration and literal
+            # answers. Clients must not keep sending an obsolete selection.
+            result.setdefault('conversation', {
+                'route': body.action, 'selected_object_id': current.get('object_id'),
+                'selection_reset': False})
             if current.get("photo_selection"):
                 result["photo_selection"] = current["photo_selection"]
                 if current["photo_selection"]["action"] == "view_similar":
                     result["context_notice"] = "以下介绍的是你选择查看的相似馆藏，不代表已确认上传照片中的作品。"
                 elif current["photo_selection"]["action"] == "view_number":
                     result["context_notice"] = "以下介绍的是按照片中编号找到的馆藏，不代表已确认上传照片中的作品；请补拍正面或展签再核对。"
-                trace = await app.state.store.get("museum_traces", claimed["trace_id"])
-                trace.update(result=result, photo_selection=current["photo_selection"])
-                await app.state.store.upsert("museum_traces", trace)
+            trace = await app.state.store.get("museum_traces", claimed["trace_id"])
+            trace.update(result=result, photo_selection=current.get("photo_selection"))
+            trace.setdefault('initial_context', request_context)
+            await app.state.store.upsert("museum_traces", trace)
             await app.state.store.upsert("museum_sessions", current)
             await app.state.store.upsert("museum_request_cache", {**claimed, "state": "completed", "result": result, "http_status": http_status})
             if http_status != 200:

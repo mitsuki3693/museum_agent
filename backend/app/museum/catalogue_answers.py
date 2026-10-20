@@ -1,13 +1,22 @@
 """Literal answers for an already selected work, never photo identification.
 
 Only whole, narrow questions are eligible. Keep qualifiers, maker roles and
-original vocabulary verbatim; no generated translations or inferred facts.
+original vocabulary verbatim; translations are exact, versioned glossary entries.
 """
 import hashlib
 import re
 import unicodedata
 
 VERSION = 'catalogue-literal-answer-v1'
+MATERIAL_GLOSSARY_VERSION = 'material-display-zh-v1'
+# Whole-value matches only: no partial replacements that lose qualifiers.
+MATERIAL_ZH = {
+    'plaster painted': '彩绘石膏', 'painted plaster': '彩绘石膏',
+    'plaster': '石膏', 'marble': '大理石', 'bronze': '青铜',
+    'wood': '木材', 'oak': '橡木', 'porcelain': '瓷', 'earthenware': '陶器',
+    'stoneware': '炻器', 'glass': '玻璃', 'silver': '银', 'terracotta': '赤陶',
+    'tin-glazed earthenware, painted in blue': '蓝绘锡釉陶器',
+}
 LABELS = {
     'author': ('Maker', '作者 Artist'),
     'date': ('Date', '年代 Date'),
@@ -56,6 +65,11 @@ def literal_answer(query, source, expected):
     quote, value = entries[0]
     if not value or len(value) > 700 or len(quote) > 1200:
         return None
-    return dict(field=field, text=f'{HEADINGS[field]}：{value}', quote=quote,
+    translated = (MATERIAL_ZH.get(' '.join(value.casefold().split()))
+                  if field == 'material' and re.search('[\u4e00-\u9fff]', query) else None)
+    display = f'{translated}（{value}）' if translated else value
+    return dict(field=field, text=f'{HEADINGS[field]}：{display}', quote=quote,
+                display_glossary=MATERIAL_GLOSSARY_VERSION if translated else None,
+                original_value=value,
                 source_id=source['_id'], source_hash=source['source_hash'],
                 content_hash=hashlib.sha256(content.encode()).hexdigest(), version=VERSION)

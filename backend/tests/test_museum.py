@@ -343,14 +343,16 @@ async def test_selected_spans_can_join_only_with_original_contiguous_coverage(mu
 @pytest.mark.parametrize('response', [TimeoutError('private provider body'), {'facts':'malformed'}])
 async def test_fact_service_failure_is_not_evidence_of_absence(museum_settings, response):
     museum_settings.museum_answer_policy = 'facts'
-    e, store, fake = await engine(museum_settings, [response])
+    count = 2 if isinstance(response, TimeoutError) else 1
+    e, store, fake = await engine(museum_settings, [response] * count)
     result = await e.answer('哪里制作？', {'_id':'outage'}, 'brief', 'test-1')
     assert result['status'] == 'service_unavailable'
-    assert result['claims'] == [] and fake.calls == 1
+    assert result['claims'] == [] and fake.calls == count
     assert 'private provider body' not in result['answer']
     trace = await store.get('museum_traces', result['trace_id'])
     assert trace['attempts'][0]['stage'] == 'fact_selection'
     assert 'error' in trace['attempts'][0]
+    assert trace['timing']['calls']['fact_selection'] == count
 
 @pytest.mark.asyncio
 async def test_facts_do_not_replace_semantic_verification(museum_settings):

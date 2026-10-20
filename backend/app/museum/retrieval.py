@@ -85,6 +85,8 @@ class MuseumIndex:
             if key:
                 self.accessions.setdefault(key, []).append(r['_id'])
             await self.store.upsert("museum_sources", r)
+        from .conversation_routing import ConversationRouter
+        self.conversation_router = ConversationRouter(self.records, self.accessions, self.search_fields)
         chunks = []
         for r in records:
             pieces = [p for line in r["content"].splitlines() for p in textwrap.wrap(line, width=220)]
