@@ -202,6 +202,7 @@ def create_app(settings: MuseumSettings | None = None, client_factory=None):
                 "material_display_policy": "material-display-zh-v1",
                 "fact_retry_policy": "one-transient-retry-within-45s-v1",
                 "rewrite_overlong_answers": config.museum_rewrite_overlong_answers,
+                "rewrite_timeout_seconds": config.museum_rewrite_timeout,
                 "verifier_policy": config.museum_verifier_policy,
                 "photo_prompt_version": PhotoRecognizer.PROMPT_VERSION,
                 "photo_policy_version": POLICY_VERSION,

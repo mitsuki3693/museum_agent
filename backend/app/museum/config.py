@@ -53,6 +53,8 @@ class MuseumSettings(BaseSettings):
     museum_backup_dir: Path = ROOT / ".runtime/backups"
     museum_daily_backup: bool = False
     museum_timeout: float = 100
+    # Optional retrieval paraphrase; never consume the full answer budget.
+    museum_rewrite_timeout: float = Field(default=3, gt=0, le=25)
     museum_corpus: Path = ROOT / "data/corpus.json"
     museum_private_corpus: Path | None = None
     # Opt-in: unset manifest is the explicit rollback to caption/text retrieval.

@@ -33,6 +33,100 @@ async def make_engine(tmp_path):
     return MuseumEngine(cfg, store, index), store
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize('rewrite_behavior', ['slow', 'fast', 'network', 'invalid'])
+@pytest.mark.parametrize('verification_passes', [True, False])
+async def test_rewrite_budget_keeps_original_context_and_mandatory_review(
+        tmp_path, rewrite_behavior, verification_passes):
+    import asyncio
+    import time
+    engine, store = await make_engine(tmp_path)
+    # Short test budget exercises the same deadline without waiting seconds.
+    engine.settings = engine.settings.model_copy(update={
+        'deepseek_api_key': 'fixture-only', 'museum_rewrite_timeout': .03})
+    class Fake:
+        cancelled = False
+        rewrites = 0
+        generation = None
+        async def complete_json(self, messages):
+            if messages[0]['content'].startswith('将追问改写'):
+                self.rewrites += 1
+                if rewrite_behavior == 'fast':
+                    return {'query': 'Neptune and Triton figures'}
+                if rewrite_behavior == 'network':
+                    import httpx
+                    raise httpx.ConnectError('fixture-private-provider-error')
+                if rewrite_behavior == 'invalid':
+                    return {'query': 123}
+                try:
+                    await asyncio.sleep(.25)
+                except asyncio.CancelledError:
+                    self.cancelled = True
+                    raise
+                return {'query': 'late and irrelevant rewrite'}
+            if messages[0]['content'].startswith('你是独立事实审查员'):
+                return {'passed': verification_passes,
+                        'issues': [] if verification_passes else ['unsupported']}
+            self.generation = json.loads(messages[1]['content'])
+            return {'abstain': False, 'claims': [{
+                'text': '作品表现海神与特里同。', 'source_id': 'old',
+                'quote': 'Title: Neptune and Triton'}]}
+    client = Fake()
+    engine.client_factory = lambda: client
+    session = old_session()
+    session.pop('photo_selection')
+    query = '它表现了哪些人物？'
+    started = time.perf_counter()
+    result = await engine.answer(query, session, 'brief', 'old')
+    elapsed = time.perf_counter() - started
+    trace = await store.get('museum_traces', result['trace_id'])
+    assert client.cancelled == (rewrite_behavior == 'slow')
+    assert elapsed < .20
+    assert client.rewrites == 1
+    assert result['status'] == ('answered' if verification_passes else 'verification_failed')
+    assert result['verification']['passed'] == verification_passes
+    assert session['object_id'] == 'old'
+    expected = 'Neptune and Triton figures' if rewrite_behavior == 'fast' else query
+    assert trace['rewritten_query'] == expected
+    assert trace['rewrite_policy']['timeout_seconds'] == .03
+    assert client.generation['history'][0]['content'] == '介绍海神'
+    assert client.generation['rewritten_query'] == expected
+    assert trace['timing']['calls']['verification'] == (1 if verification_passes else 2)
+    assert not trace['timing']['retry_used']
+    assert 'fixture-private-provider-error' not in json.dumps(trace)
+    if rewrite_behavior == 'slow':
+        assert trace['rewrite_error'] == 'TimeoutError'
+        assert trace['timing']['events'][0]['error_kind'] == 'timeout'
+    if rewrite_behavior == 'network':
+        assert trace['timing']['events'][0]['error_kind'] == 'network'
+
+
+@pytest.mark.asyncio
+async def test_cancelling_answer_during_rewrite_does_not_start_generation(tmp_path):
+    import asyncio
+    engine, store = await make_engine(tmp_path)
+    engine.settings.deepseek_api_key = 'fixture-only'
+    entered, cancelled = asyncio.Event(), asyncio.Event()
+    class Fake:
+        calls = 0
+        async def complete_json(self, messages):
+            self.calls += 1
+            entered.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+    client = Fake()
+    engine.client_factory = lambda: client
+    task = asyncio.create_task(engine.answer('它表现了哪些人物？', old_session(), 'brief', 'old'))
+    await asyncio.wait_for(entered.wait(), timeout=1)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert cancelled.is_set() and client.calls == 1
+    assert await store.find('museum_traces', {}) == []
+
+
 def old_session():
     return dict(_id='session', object_id='old', history=[
         dict(role='user', content='介绍海神'), dict(role='assistant', content='这是海神与特里同。')],
