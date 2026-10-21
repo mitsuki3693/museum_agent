@@ -1,4 +1,6 @@
 "use client";
+import {staticDemo} from "@/lib/site-mode";
+import PagesRoute from "@/components/PagesRoute";
 import {useEffect, useState} from "react";
 import {museumApi} from "@/lib/museum-api";
 import type {VisitRoute} from "@/lib/route-types";
@@ -13,7 +15,8 @@ type Case = {
 type Map = {available: boolean; level: string; attribution: string; source_url: string;
   view_box: [number, number, number, number]; tiles: {id: string; x: number; y: number; size: number; url: string}[]};
 
-export default function StaffDemo() {
+export default function StaffDemo() {return staticDemo ? <PagesRoute staff/> : <LiveStaffDemo/>;}
+function LiveStaffDemo() {
   const [data, setData] = useState<Case | null>(null), [map, setMap] = useState<Map | null>(null);
   const [error, setError] = useState(""), [loading, setLoading] = useState(true);
   const [reviewed, setReviewed] = useState(false), [confirmed, setConfirmed] = useState(false);

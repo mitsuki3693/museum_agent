@@ -1,4 +1,6 @@
 "use client";
+import {staticDemo} from "@/lib/site-mode";
+import PagesVisitor from "@/components/PagesVisitor";
 import {useEffect, useState, useRef} from "react";
 import ChatComposer from "@/components/ChatComposer";
 import CollectionPicker from "@/components/CollectionPicker";
@@ -20,7 +22,8 @@ type Health = {model_configured: boolean; storage: string; corpus_count: number}
 const labels: Record<string, string> = {needs_clarification: "请补充作品线索", needs_confirmation: "先确认作品", answered: "附引用依据", retrieval_only: "原始资料", insufficient_evidence: "资料不足", verification_failed: "讲解尚未通过核对", service_unavailable: "服务暂不可用", route_setup: "确认参观偏好", route_ready: "参观顺序建议", route_unavailable: "暂不能规划这条路线", facility_found: "馆方设施信息", facility_unavailable: "设施资料不足"};
 const styles = [["brief", "简明版"], ["deep", "深入一点"], ["children", "讲给孩子听"]];
 
-export default function Home() {
+export default function Home() {return staticDemo ? <PagesVisitor/> : <LiveHome/>;}
+function LiveHome() {
   const [health, setHealth] = useState<Health | null>(null), [items, setItems] = useState<MuseumObject[]>([]);
   const [selected, setSelected] = useState("");
   const [selectedAsSimilar, setSelectedAsSimilar] = useState<false | "similar" | "number">(false), [photoParent, setPhotoParent] = useState("");

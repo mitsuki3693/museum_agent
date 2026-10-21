@@ -27,7 +27,7 @@ async function mount() {
   const apiCalls = [];
   let cursor = 0, nextId = 0;
   const components = Object.fromEntries([
-    'ChatComposer', 'CollectionPicker', 'ArtworkCandidate', 'PhotoResultView', 'RoutePanel',
+    'ChatComposer', 'CollectionPicker', 'ArtworkCandidate', 'PhotoResultView', 'RoutePanel', 'PagesVisitor',
   ].map(name => [name, function Placeholder() {}]));
   const hooks = {
     useState(initial) {
@@ -70,6 +70,7 @@ async function mount() {
     URL: {createObjectURL() {return 'blob:local-test-photo';}, revokeObjectURL() {}},
     require(id) {
       if (id === 'react') return hooks;
+      if (id === '@/lib/site-mode') return {staticDemo:false};
       if (id === '@/lib/museum-api') return network;
       if (id === '@/lib/museum-types') return {workName: work => work.title};
       if (id === '@/lib/request-id') return {createRequestId: () => 'request-' + ++nextId};
@@ -87,7 +88,9 @@ async function mount() {
   }).outputText, context);
   function render() {
     cursor = 0;
-    const tree = context.exports.default();
+    const root = context.exports.default();
+    // The default entry chooses static vs live; exercise the real live child.
+    const tree = typeof root.type === 'function' ? root.type(root.props) : root;
     while (effects.length) effects.shift()();
     return tree;
   }

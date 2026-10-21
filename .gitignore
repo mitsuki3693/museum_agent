@@ -4,6 +4,9 @@
 .venv/
 node_modules/
 .next/
+.next-pages/
+.pages-build/
+out/
 __pycache__/
 .pytest_cache/
 *.pyc

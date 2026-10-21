@@ -1,4 +1,5 @@
 "use client";
+import {sitePath} from "@/lib/site-mode";
 import {useState} from "react";
 import {initialNote, questions, reminder, samples, sources} from "@/lib/conservation-demo";
 import s from "./page.module.css";
@@ -45,9 +46,9 @@ export default function ConservationDemo() {
     const link=document.createElement("a");link.href=url;link.download="MUSE-Care-DEMO-C03-001.md";link.click();window.setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
   return <main className={s.page}>
-    <header className={s.header}><a className={s.brand} href="/">MUSE.<span>CARE</span></a><span className={s.role}>文保人员 · 演示角色</span><a href="/staff-demo">馆方协作 ↗</a></header>
+    <header className={s.header}><a className={s.brand} href={sitePath("/")}>MUSE.<span>CARE</span></a><span className={s.role}>文保人员 · 演示角色</span><a href={sitePath("/staff-demo/")}>馆方协作 ↗</a></header>
     <div className={s.workspace}>
-      <nav className={s.nav} aria-label="文保工作台导航"><span className={s.navTitle}>CONSERVATION</span><a className={s.navActive} href="#environment">环境与提醒</a><a href="#assistant">文保知识助手</a><a href="#review">人工复核</a><a href="#records">复核记录{record && <span>1</span>}</a><div className={s.navFoot}>独立模拟工作台<br/>公开演示 · 未连接设备<br/><a href="/">返回游客端 ↗</a></div></nav>
+      <nav className={s.nav} aria-label="文保工作台导航"><span className={s.navTitle}>CONSERVATION</span><a className={s.navActive} href="#environment">环境与提醒</a><a href="#assistant">文保知识助手</a><a href="#review">人工复核</a><a href="#records">复核记录{record && <span>1</span>}</a><div className={s.navFoot}>独立模拟工作台<br/>公开演示 · 未连接设备<br/><a href={sitePath("/")}>返回游客端 ↗</a></div></nav>
       <div className={s.content}>
         <div className={s.heading}><div><span className={s.eyebrow}>COLLECTION CARE / 预防性保护</span><h1>让每一次判断，都有依据。</h1><p>关注环境变化，核对资料，再记录下一步。</p></div><button className="quiet" onClick={reset}>重置演示</button></div>
         <div className={s.banner}><strong>模拟展示</strong><span>环境与藏品信息为虚构案例；问答为预置内容。未连接真实监测、内部资料或设备控制。</span></div>
@@ -83,7 +84,7 @@ export default function ConservationDemo() {
           <div className={s.panelHead}><h2>复核记录</h2>{record && <button className="quiet" onClick={exportRecord}>导出模拟记录</button>}</div>
           {record ? <div className={s.record} role="status"><span className={s.recordDot}/><div><strong>已记录 · 待复测</strong><small>{record.createdAt} · 演示角色 · DEMO-C03-001</small><p>{record.note}</p><p className={s.chartNote}>依据快照：{record.sources.join("；")}。当前没有新的复测数据。</p></div></div> : <div className={s.noRecord}>本轮还没有复核记录。完成上方复核后，记录会出现在这里。</div>}
         </section>
-        <footer className={s.footer}>本演示不保存到服务器，刷新或重置会清空记录。角色标记不代表真实登录权限；正式内部资料仍需身份认证与服务端授权。<a href="/staff-demo">查看客流分流案例 ↗</a></footer>
+        <footer className={s.footer}>本演示不保存到服务器，刷新或重置会清空记录。角色标记不代表真实登录权限；正式内部资料仍需身份认证与服务端授权。<a href={sitePath("/staff-demo/")}>查看客流分流案例 ↗</a></footer>
       </div>
     </div>
   </main>;

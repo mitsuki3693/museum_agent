@@ -1,4 +1,5 @@
 "use client";
+import {staticDemo, sitePath} from "@/lib/site-mode";
 import {useEffect,useState} from "react";
 import s from "./review.module.css";
 import EvaluationPanel,{type EvaluationData} from "./EvaluationPanel";
@@ -28,7 +29,8 @@ function TraceRow({trace,kind,feedback,save,disabled}:{trace:Trace;kind:"text"|"
    <button disabled={disabled} onClick={async()=>setSaved(await save(trace._id,kind,{...review,regression_trace_id:review.regression_trace_id||undefined}))}>保存复盘</button>{saved&&<span role="status"> 已保存</span>}
   </details></article>;
 }
-export default function ReviewPage(){
+export default function ReviewPage(){return staticDemo ? <main className="ops-shell"><h1>运行记录留在本地</h1><p>公开演示不提供管理登录，不展示真实对话、反馈或备份。</p><a href={sitePath("/")}>返回 MUSE</a></main> : <LiveReviewPage/>;}
+function LiveReviewPage(){
  const [token,setToken]=useState("");const [data,setData]=useState<Data|null>(null);const [ops,setOps]=useState<Ops|null>(null);
  const [evaluations,setEvaluations]=useState<EvaluationData|null>(null);const [view,setView]=useState("traces");
  useEffect(()=>{if(window.location.hash==="#evaluations")setView("evaluations");},[]);
