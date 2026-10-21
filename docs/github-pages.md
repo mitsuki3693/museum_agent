@@ -36,3 +36,5 @@ Do not add API keys to any NEXT_PUBLIC variable.
 Automated checks cover preset matching, unsupported-question handling, static assets and absence of network operations in static interaction components.
 Browser acceptance must separately verify mobile/desktop layout, under-prefix links, images, styles, local upload preview, map playback and conservation controls.
 Static interactions and feedback are not model evaluations, user adoption or a live service deployment.
+
+On 2026-10-21, the isolated static build and all 30 frontend tests passed locally. Browser checks at desktop and 390px mobile width verified the public-mode notice, three loaded images, brief/child explanations, local-only photo preview, staff evidence-to-diversion interaction, animated route progress, and conservation evidence-to-review-record interaction. No model/API calls were made for this acceptance pass. Browser speech availability remains device-dependent.
