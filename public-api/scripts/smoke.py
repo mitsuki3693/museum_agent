@@ -7,7 +7,7 @@ body = {"workId": "artic-16568", "question": "请用两句话给孩子介绍这�
 request = urllib.request.Request(
     "https://muse-public-ai.muse-public-api.workers.dev/chat",
     data=json.dumps(body).encode(),
-    headers={"Origin": "https://mitsuki3693.github.io", "Content-Type": "application/json"},
+    headers={"Origin": "https://mitsuki3693.github.io", "Content-Type": "application/json", "User-Agent": "MUSE-release-check/1.0"},
 )
 started = time.monotonic()
 with urllib.request.urlopen(request, timeout=40) as response:

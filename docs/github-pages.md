@@ -1,7 +1,7 @@
 # MUSE public static demonstration
 
-The GitHub Pages edition is an explicitly labelled, backend-free product walkthrough.
-It does not execute retrieval, vision models, DeepSeek, MongoDB or evaluation pipelines.
+The GitHub Pages edition can operate as a backend-free walkthrough or connect to the optional [public AI explanation service](public-ai.md) via the repository variable `MUSE_PUBLIC_AI_URL`.
+Without that variable it does not execute any model. With it, selected-work questions and style requests call DeepSeek through a quota-limited Cloudflare Worker. Neither mode executes the full local retrieval/vision/MongoDB/evaluation pipelines.
 The normal local application remains the default `npm run build` / `npm run dev` mode.
 
 ## Included
