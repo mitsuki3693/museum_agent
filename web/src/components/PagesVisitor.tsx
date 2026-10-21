@@ -13,10 +13,11 @@ export default function PagesVisitor(){
   const [query,setQuery]=useState(""),[photo,setPhoto]=useState<File|null>(null),[preview,setPreview]=useState("");
   const [error,setError]=useState(""),[browse,setBrowse]=useState(false),[feedback,setFeedback]=useState<Record<number,string>>({});
   const end=useRef<HTMLDivElement>(null), input=useRef<HTMLInputElement>(null);
+  const latestTurn=useRef<HTMLElement|null>(null);
   const [busy,setBusy]=useState(false);
   const pending=useRef<AbortController|null>(null),generation=useRef(0);
   useEffect(()=>{if(!photo){setPreview("");return;} const url=URL.createObjectURL(photo);setPreview(url);return()=>URL.revokeObjectURL(url);},[photo]);
-  useEffect(()=>{if(turns.length)end.current?.scrollIntoView({block:"end"});},[turns]);
+  useEffect(()=>{if(busy)end.current?.scrollIntoView({block:"end"});else if(turns.length)latestTurn.current?.scrollIntoView({block:"start"});},[turns,busy]);
   useEffect(()=>()=>{window.speechSynthesis?.cancel();pending.current?.abort();},[]);
   function append(turn:Turn){setTurns(old=>[...old,turn]);}
   function cancel(){generation.current++;pending.current?.abort();pending.current=null;setBusy(false);}
@@ -64,13 +65,14 @@ export default function PagesVisitor(){
       </div></div>
       {preview&&<div className="pages-photo"><img src={preview} alt="你选择的照片，仅本机预览"/><div><strong>照片仅预览，没有运行识别</strong><p>从下方手动选择一件示例，体验确认后讲解的流程。选择不代表照片识别成功。</p><button className="quiet" onClick={()=>setPhoto(null)}>移除照片</button></div></div>}
       {browse&&<section aria-label="示例馆藏"><h2>选择一件示例作品</h2>{cards(demoWorks)}</section>}
-      <div className="turns" aria-live="polite">{turns.map((turn,i)=><article className="turn" key={i}><div className="user-message"><p>{turn.question}</p></div><div className="assistant-message"><span className="assistant-avatar" aria-hidden="true">m</span><div className="answer"><div className="answer-label">MUSE <span>{turn.kind==="ai"?"AI 生成 · 请核对来源":turn.kind==="error"?"暂未完成":"预置示例"}</span></div><p className="answer-text">{turn.answer}</p>{turn.candidates&&cards(turn.candidates)}
+      <div className="turns" aria-live="polite">{turns.map((turn,i)=><article className="turn" key={i} ref={i===turns.length-1?latestTurn:undefined}><div className="user-message"><p>{turn.question}</p></div><div className="assistant-message"><span className="assistant-avatar" aria-hidden="true">m</span><div className="answer"><div className="answer-label">MUSE <span>{turn.kind==="ai"?"AI 生成 · 请核对来源":turn.kind==="error"?"暂未完成":"预置示例"}</span></div><p className="answer-text">{turn.answer}</p>{turn.candidates&&cards(turn.candidates)}
         {turn.work&&<><div className="answer-actions">{turn.kind!=="error"&&<ListenButton text={turn.answer}/>}<button className="quiet" disabled={busy} onClick={()=>choose(turn.work!,"brief")}>简明版</button><button className="quiet" disabled={busy} onClick={()=>choose(turn.work!,"children")}>讲给孩子听</button><button className="quiet" disabled={busy} onClick={()=>choose(turn.work!,"deep")}>深入一点</button>{publicAiUrl&&<button className="quiet" onClick={()=>{cancel();setSelected(turn.work!);append({question:"查看预置讲解",answer:turn.work!.brief,work:turn.work});}}>查看预置讲解</button>}</div><details className="pages-source"><summary>查看资料来源与示例说明</summary><p>{turn.kind==="ai"?"AI 根据本项目整理的 AIC 公开资料摘要生成；并非官方讲解词，也未经过逐条事实核验。请结合馆方来源判断。":"依据芝加哥艺术博物馆公开编目，由本项目编写中文示例；不是馆方官方讲解词。"}</p><a href={sourceFor(turn.work)} target="_blank" rel="noreferrer">{turn.work.title} · 馆方页面</a></details></>}
         <div className="pages-feedback"><span>体验反馈（仅本页）</span>{["有帮助","没有解答"].map(kind=><button className="quiet" key={kind} aria-pressed={feedback[i]===kind} onClick={()=>setFeedback(old=>({...old,[i]:kind}))}>{kind}{feedback[i]===kind?" · 已选":""}</button>)}</div>
       </div></div></article>)}</div>
+      {busy&&<p role="status">正在根据资料生成讲解… <button className="quiet" onClick={cancel}>取消</button></p>}<div ref={end}/>
       <nav className="pages-links" aria-label="更多演示"><a href={sitePath("route-demo/")}>路线与设施示意</a><a href={sitePath("conservation-demo/")}>文保工作台</a><a href="https://github.com/mitsuki3693/museum_agent" target="_blank" rel="noreferrer">项目代码与评测</a></nav>
       <details className="pages-about"><summary>关于这个版本与图片来源</summary><p>MUSE 是个人项目，不代表 V&A 或 AIC 官方产品。本页只展示三件 AIC 作品；完整本地版的检索、视觉核对及运行记录未在这里执行。</p><p>三张图片为 AIC 标记的公共领域作品，按 CC0 开放。中文讲解为项目自编摘要，来源可从每件作品查看。路线图和客流为项目自编的虚构案例。</p><a href="https://www.artic.edu/open-access/open-access-images" target="_blank" rel="noreferrer">AIC 开放图片说明</a><p>真实部署与评测范围请查看仓库文档。本页操作不作为真实模型评测成绩。{publicAiUrl&&" AI调用按网络地址限制频率和日额度，共享网络会共享额度。服务端只保留限额计数和每天变化的匿名标识，不主动保存对话；Cloudflare和DeepSeek按各自服务规则处理请求。"}</p></details>
-      {busy&&<p role="status">正在根据资料生成讲解… <button className="quiet" onClick={cancel}>取消</button></p>}<div ref={end}/>
+      
     </div></section>
     <footer className="chat-footer"><div className="chat-width">{selected&&<div className="context-chip"><span>正在聊 · {selected.name}</span><button className="quiet" onClick={()=>{cancel();setSelected(null);setBrowse(true);}}>换一件</button></div>}
       <form className="composer" onSubmit={e=>{e.preventDefault();send();}}><label className="sr-only" htmlFor="demo-question">输入示例问题</label><textarea id="demo-question" rows={2} maxLength={600} placeholder={selected?"试试：作者是谁？什么年代？是什么材质？":"试试：我想看看睡莲"} value={query} onChange={e=>setQuery(e.target.value)}/><div className="composer-actions"><input ref={input} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>{selectPhoto(e.target.files?.[0]);e.target.value="";}}/><button type="button" className="quiet" onClick={()=>input.current?.click()}>照片预览</button><button className="send-button" disabled={busy||!query.trim()}>发送</button></div></form>

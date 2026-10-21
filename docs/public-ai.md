@@ -34,4 +34,11 @@ Run `npx wrangler deploy --dry-run --outdir .wrangler/dry-run` and `npm test` in
 
 The manual **Check public AI endpoint** workflow additionally sends exactly one public sample question through the deployed service; it consumes one quota reservation and one model call. A successful run establishes connectivity for that environment, not universal network availability.
 
+### Release check — 2026-10-21
+
+- 33 frontend checks and 9 API/runtime checks passed; the AI-enabled Pages build passed.
+- Real deployed Worker → DeepSeek → source-linked response succeeded. On the public GitHub Pages site, a default explanation, a child-friendly rewrite, and the follow-up “你刚才说的水面通道是什么意思？” all returned labelled AI answers. The follow-up explained the phrase using the selected work's context.
+- Initial newly-created Worker domain HTTPS failures later cleared without disabling certificate verification. CLI smoke checks use an explicit application User-Agent; a Python default-User-Agent request received 403 before a later application-identified request succeeded. Browser CORS preflight and response delivery were verified through the actual UI.
+- This is connectivity and interaction acceptance on three public works, not an answer-accuracy, latency percentile, load or production-use study. Visual identification and the full local RAG stack remain outside this release.
+
 References: [Cloudflare free SQLite Durable Objects](https://developers.cloudflare.com/changelog/post/2025-04-07-durable-objects-free-tier/), [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/), [DeepSeek Chat API](https://api-docs.deepseek.com/api/create-chat-completion/).
