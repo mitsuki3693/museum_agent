@@ -32,7 +32,7 @@
 MUSEUM_STORAGE=mongo
 MONGODB_URI=mongodb://127.0.0.1:27017
 MONGODB_DB=museum_agent
-MUSEUM_ADMIN_TOKEN=设置独立随机凭据
+MUSEUM_ADMIN_TOKEN=
 MUSEUM_MONGODUMP=.runtime/tools/mongodb/mongodb-database-tools-windows-x86_64-100.19.0/bin/mongodump.exe
 MUSEUM_BACKUP_DIR=.runtime/backups
 MUSEUM_DAILY_BACKUP=true
