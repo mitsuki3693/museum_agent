@@ -1,0 +1,21 @@
+name: Check public AI endpoint
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: public-api/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: public-api
+      - run: npx wrangler deploy --dry-run --outdir .wrangler/dry-run && npm test
+        working-directory: public-api
+      - name: One live public-catalogue question
+        run: python public-api/scripts/smoke.py

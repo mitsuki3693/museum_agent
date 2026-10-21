@@ -25,6 +25,7 @@ jobs:
         working-directory: web
         env:
           NEXT_PUBLIC_BASE_PATH: /museum_agent
+          NEXT_PUBLIC_MUSE_AI_URL: ${{ vars.MUSE_PUBLIC_AI_URL }}
       - run: node --test tests/pages-static.test.cjs
         working-directory: web
       - uses: actions/upload-pages-artifact@v3

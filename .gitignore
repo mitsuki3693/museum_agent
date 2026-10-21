@@ -3,6 +3,8 @@
 !.env.example
 .venv/
 node_modules/
+.wrangler/
+.dev.vars*
 .next/
 .next-pages/
 .pages-build/
