@@ -128,7 +128,7 @@ async def test_combined_followup_selects_recomposes_and_reviews(museum_settings)
     assert result['status'] == 'answered' and fake.calls == 5
     assert result['claims'] == draft()['claims']
     trace = await store.get('museum_traces',result['trace_id'])
-    assert trace['prompt_version'] == 'museum-grounded-v15-bounded-fact-reselection-bounded-v1-review-entailment_v1'
+    assert trace['prompt_version'] == 'museum-grounded-v15-bounded-fact-reselection-comparison-coverage-v1-s2-bounded-v1-review-entailment_v1'
     generations = [a for a in trace['attempts'] if 'draft' in a]
     assert len(generations) == 2
     assert generations[0]['draft'] == excessive and generations[0]['verdict'] is None
@@ -343,7 +343,7 @@ async def test_selected_spans_can_join_only_with_original_contiguous_coverage(mu
 @pytest.mark.parametrize('response', [TimeoutError('private provider body'), {'facts':'malformed'}])
 async def test_fact_service_failure_is_not_evidence_of_absence(museum_settings, response):
     museum_settings.museum_answer_policy = 'facts'
-    count = 2 if isinstance(response, TimeoutError) else 1
+    count = 2  # One retry/reselection for transient failures or malformed facts.
     e, store, fake = await engine(museum_settings, [response] * count)
     result = await e.answer('哪里制作？', {'_id':'outage'}, 'brief', 'test-1')
     assert result['status'] == 'service_unavailable'
@@ -388,7 +388,7 @@ def test_health_reports_actual_answer_policy(museum_settings, policy, version):
     with TestClient(create_app(museum_settings)) as client:
         health = client.get('/api/museum/health').json()
         assert health['answer_policy'] == policy
-        assert health['prompt_version'] == version
+        assert health['prompt_version'] == version + '-comparison-coverage-v1' + ('-s2' if policy == 'facts' else '')
 
 def get_session(client):
     token=client.post('/api/museum/sessions').json()['token']

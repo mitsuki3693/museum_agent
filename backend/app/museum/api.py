@@ -59,7 +59,7 @@ class EvalRunRequest(BaseModel):
     dataset_hash: str = Field(min_length=64, max_length=64)
     corpus_hash: str = Field(min_length=64, max_length=64)
     model: str = Field(max_length=100)
-    prompt_version: str = Field(max_length=100)
+    prompt_version: str = Field(max_length=160)
     embedding_model: str = Field(default="", max_length=150)
     human_reviewed: bool = False
     online_ab: Literal[False] = False

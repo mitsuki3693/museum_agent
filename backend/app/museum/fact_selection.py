@@ -9,7 +9,9 @@ class Fact(BaseModel):
     aspect: Literal['place', 'style', 'material', 'maker', 'date', 'other']
     scope: Literal['production', 'decoration', 'other']
     source_id: str = Field(min_length=1, max_length=100)
-    value: str = Field(min_length=1, max_length=400)
+    # A literal fact may equal its entire allowed quote. Both must still be
+    # continuous substrings of the original source; no evidence is truncated.
+    value: str = Field(min_length=1, max_length=1200)
     quote: str = Field(min_length=4, max_length=1200)
 
 
@@ -25,7 +27,10 @@ PROMPT = (
     '每条事实包含 aspect(place/style/material/maker/date/other)、scope(production/decoration/other)、'
     'source_id、value、quote。value 必须是 quote 中逐字子串，quote 必须是对应来源中连续逐字原文。'
     'quote 尽量保留完整对象和关系句；不要翻译 value，不添加来源之外的国家、解释或否定结论。'
+    'value 优先用简短原文短语，value 和 quote 均不超过1200字符；用途和外形的 aspect 都使用 other。'
     '只选与当前问题有关的最多4条；资料不涉及所问事项则 facts=[]，不拿其他属性凑答案。'
+    '若问题比较多件作品，围绕所问维度为各件分别选取原文；外形优先完整 physicalDescription，'
+    '不要只挑第一件或用泛泛的材质年代替代所问的用途和外形；未记载的用途不能从名称推断。'
     '只返回 JSON {"facts":[{"aspect":"place","scope":"production","source_id":"...",'
     '"value":"...","quote":"..."}]}。'
 )

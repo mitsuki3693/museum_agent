@@ -1,0 +1,135 @@
+{
+  "version": "acceptance20-20261031-v2",
+  "dataset_hash": "61f5be695aee59ca983ebc562065b386a9cf2c71174546e95e97995eed1397ae",
+  "corpus_hash": "2982cdf4a225d4c563f80138a9e858f31671797f7cd931b17b4cfda8487fb7a7",
+  "scope": "New agent-authored text acceptance tasks. Separate from original40; not random sampling or independent blind test. Sources inspected before execution. No image/UI quality claim.",
+  "status": "executed_with_targeted_repairs_awaiting_human_review",
+  "tasks": 20,
+  "steps": 26,
+  "human_reviewed": false,
+  "independent_blind_test": false,
+  "original40": "Preserved unchanged. User-reported successful retest is distinct from per-trace adjudication.",
+  "cases": [
+    {
+      "id": "N01",
+      "category": "discovery",
+      "steps": 1,
+      "case_hash": "d2989c582f84e15059918a72cdb4058692e525578395f36ad1da6e9ffc1ffe63"
+    },
+    {
+      "id": "N02",
+      "category": "discovery",
+      "steps": 1,
+      "case_hash": "0b23485dbfe747c92aabf4c81b512779bc03e4e0cf5587a85f73e8bfe68271a1"
+    },
+    {
+      "id": "N03",
+      "category": "discovery",
+      "steps": 1,
+      "case_hash": "1066c14bdb3726637ccd6a57ae5765cd7aa885d1d637b571e1ab9f1d807bd554"
+    },
+    {
+      "id": "N04",
+      "category": "discovery",
+      "steps": 1,
+      "case_hash": "843fd676db94e3e9b3eb2f38d63ee72c627f7695155614fb91be5ecb17510976"
+    },
+    {
+      "id": "N05",
+      "category": "discovery",
+      "steps": 1,
+      "case_hash": "e986cabc03043db9f69277898427c777bbb7f84c5908f26653f6f45d031f46d9"
+    },
+    {
+      "id": "N06",
+      "category": "answer",
+      "steps": 1,
+      "case_hash": "a9a58e427115cda5b43fbeefa04e865ccbf2ca8b965bb3c0365c41b705e6dc10"
+    },
+    {
+      "id": "N07",
+      "category": "answer",
+      "steps": 1,
+      "case_hash": "99a8dc7d796332122e55848d5b0706cdd001a399f09c8bbe9b27e772ddad6733"
+    },
+    {
+      "id": "N08",
+      "category": "answer",
+      "steps": 1,
+      "case_hash": "19b7dafbaf5ea2af062b435ca6b227d3f8243b3c5df958b56ba1a152ab57bb2f"
+    },
+    {
+      "id": "N09",
+      "category": "answer",
+      "steps": 1,
+      "case_hash": "12ccb99d62f0cac0dd0eb8bc68a1b6e788158bba27d25a304918bd7f551e0206"
+    },
+    {
+      "id": "N10",
+      "category": "answer",
+      "steps": 1,
+      "case_hash": "4f15c286f96815bb3c82d16483c2f0c790a212033e7a14c46de861392386ee55"
+    },
+    {
+      "id": "N11",
+      "category": "multi_turn",
+      "steps": 2,
+      "case_hash": "756e5916caa59863c6490c1a7a4b07cf59d740ea9722a731c87ac50366fdb366"
+    },
+    {
+      "id": "N12",
+      "category": "multi_turn",
+      "steps": 3,
+      "case_hash": "bead91fb17429c21ccbb53b761d4943438b461eb58967c6e819a5d8a0f67f057"
+    },
+    {
+      "id": "N13",
+      "category": "multi_turn",
+      "steps": 2,
+      "case_hash": "65a27bc25dea279be541176914084c1fdaea0d717b0e3d84c051addfccee01d5"
+    },
+    {
+      "id": "N14",
+      "category": "multi_turn",
+      "steps": 2,
+      "case_hash": "e3dae92513c61f08b67f7bd2dddad43c3c7d1a303befd8e16fcc55c84df480f4"
+    },
+    {
+      "id": "N15",
+      "category": "multi_turn",
+      "steps": 2,
+      "case_hash": "190a407be849fd852df1bcc64c83334c8de69f58001f26dd7ec9de035f75e8ff"
+    },
+    {
+      "id": "N16",
+      "category": "boundary",
+      "steps": 1,
+      "case_hash": "3fee5c2d61366b736e369a029d4123bbc84638afc8cfb5c231881289bb00681c"
+    },
+    {
+      "id": "N17",
+      "category": "boundary",
+      "steps": 1,
+      "case_hash": "26112eb3426bfe163bf0cc3e0ac4a137a0717e9e661385c15be848318b97e71b"
+    },
+    {
+      "id": "N18",
+      "category": "boundary",
+      "steps": 1,
+      "case_hash": "47c5813bb7d08c4efbec9d44436e3220fb1e2d500bf5ae5c49d7cbc7fa134729"
+    },
+    {
+      "id": "N19",
+      "category": "boundary",
+      "steps": 1,
+      "case_hash": "f859645d96a4ee20ef0aab32134d629cbff61ff5538d8b410c3cfcafa116ed51"
+    },
+    {
+      "id": "N20",
+      "category": "boundary",
+      "steps": 1,
+      "case_hash": "c4f58215c9c41a6b531643a876ac9096824133ece334e88f5224e8c176e66b5d"
+    }
+  ],
+  "result_summary": "docs/acceptance20-results.json"
+}
